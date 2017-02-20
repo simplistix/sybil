@@ -1,0 +1,31 @@
+language: python
+
+# for container-y goodness:
+sudo: false
+
+python:
+  - "2.7"
+  - "3.4"
+  - "3.5"
+  - "3.6"
+
+install:
+  - "pip install -Ue .[test,build]"
+
+# command to run tests, e.g. python setup.py test
+script: coverage run --source sybil -m py.test
+
+after_success:
+  - coveralls
+
+deploy:
+  provider: pypi
+  user: chrisw
+  password:
+    secure: wmGBXq22h5pNN7oJOGv9GQYXPruZkHKycpjt7UMR6kXFJqyfDpdn19JkH0HdjuAgcUhRAyCCloFSElGZdHAwaIkB03aUFVlmj0YKs/MhX+AaJS1OzyJYvondmcytuXD+KM9NKMRVW0R/wXhGRmQV4YCoKPuR0RNu3iJ9nNYg589fR/590d2gZUP0IVkRJy00LKCukQsHG9+ITIc7Lp+dA++pdpexSRq5evwiizM9mzIOP3+4GbSiFD397fU3npe5ZRlqfJKwaeZoSZXolRFEwObBFqxTL0kQ1hFdt9VGF3oFUcKSQIReQ8a0gkftA+q7KRaIXfXHJkXZJZFpFFw6an+hfIDzNODS3TmUVh6ArMBVNC9P5QcY2NV3eb32ctPVq0eAPtFqG6Bo7Wr+PqhYo2UYQYAV9VAJ9+G1SZ45eJvOX3bnsI0VAxdF57owRHhqtijbLZKYdWhGrg7gB7UR/ztJkZgNrwnmPxNfYuYiIpRta2/d8Lnm7Lz1Eao/lq7Dk0HJ34hr7ROjTKEI4e2xX6khNW+2SV9V69ivInmX4EQIuq1vTnRRPgWGs6Rru/yLP6Hy0AysHZyVSDfkk1JWT7U9QAFiMxinQK9hGllwZGyvN7h1373rknK+2ZTn7lyYWQtZ+zRvz2GYEcrn8bdH/Sj2P37jdSD7COR13Sp6MD4=
+  on:
+    tags: true
+    repo: cjw296/sybil
+    python: "3.6"
+  skip_cleanup: true
+  distributions: "sdist bdist_wheel"
