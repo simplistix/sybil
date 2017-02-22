@@ -1,9 +1,9 @@
 |Travis|_ |Coveralls|_ |Docs|_
 
-.. |Travis| image:: https://api.travis-ci.org/cjw296/sybil.png?branch=master
+.. |Travis| image:: https://api.travis-ci.org/cjw296/sybil.svg?branch=master
 .. _Travis: https://travis-ci.org/cjw296/sybil
 
-.. |Coveralls| image:: https://coveralls.io/repos/cjw296/sybil/badge.png?branch=master
+.. |Coveralls| image:: https://coveralls.io/repos/cjw296/sybil/badge.svg?branch=master
 .. _Coveralls: https://coveralls.io/r/cjw296/sybil?branch=master
 
 .. |Docs| image:: https://readthedocs.org/projects/sybil/badge/?version=latest
