@@ -4,3 +4,4 @@
 /lib
 .coverage*
 _build/
+.cache/
