@@ -33,13 +33,8 @@ setup(
     extras_require=dict(
         test=[
             'coveralls',
-            'jinja2',
-            'manuel',
-            'mock',
             'nose',
-            'nose-cov',
-            'nose-fixes',
-            'testfixtures',
+            'pytest',
             ],
         build=['sphinx', 'pkginfo', 'setuptools-git', 'twine', 'wheel']
     ),

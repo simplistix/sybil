@@ -5,3 +5,4 @@
 .coverage*
 _build/
 .cache/
+pytestdebug.log
