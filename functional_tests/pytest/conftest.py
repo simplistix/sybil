@@ -1,11 +1,6 @@
 import pytest
 
 
-def pytest_collect_file(parent, path):
-    if path.ext == ".rst":
-        return DummyFile(path, parent)
-
-
 class DummyFile(pytest.File):
     def collect(self):
         yield DummyItem(self, self)
@@ -18,3 +13,13 @@ class DummyItem(pytest.Item):
 
     def runtest(self):
         assert self.pytest_file.fspath.read() == 'I am doc.\n'
+
+
+class Sybil(object):
+
+    def pytest(self, parent, path):
+        if path.ext == ".rst":
+            return DummyFile(path, parent)
+
+
+pytest_collect_file = Sybil().pytest

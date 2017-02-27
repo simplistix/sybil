@@ -1,17 +1,23 @@
 from unittest import TestCase, TestSuite
 
 
-class TestTest(TestCase):
+class Sybil(object):
 
-    def test_one(sel):
-        pass
+    def __init__(self):
+        class TestTest(TestCase):
 
-    def test_two(sel):
-        pass
+            def test_one(sel):
+                pass
+
+            def test_two(sel):
+                pass
+        self.things = TestTest
+
+    def unittest(self, loader, tests, pattern):
+        suite = TestSuite()
+        tests = loader.loadTestsFromTestCase(self.things)
+        suite.addTests(tests)
+        return suite
 
 
-def load_tests(loader, tests, pattern):
-    suite = TestSuite()
-    tests = loader.loadTestsFromTestCase(TestTest)
-    suite.addTests(tests)
-    return suite
+load_tests = Sybil().unittest
