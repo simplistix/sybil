@@ -3,8 +3,9 @@ from bisect import bisect
 
 class Document(object):
 
-    def __init__(self, text):
+    def __init__(self, text, path):
         self.text = text
+        self.path = path
         self.end = len(text)
         self.regions = []
 

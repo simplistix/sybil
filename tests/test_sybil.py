@@ -20,7 +20,7 @@ class TestRegion(object):
 
 @pytest.fixture()
 def document():
-    return Document('ABCDEFGH')
+    return Document('ABCDEFGH', '/the/path')
 
 
 class TestDocument(object):
