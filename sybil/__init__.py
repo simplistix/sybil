@@ -1,6 +1,36 @@
 from bisect import bisect
 
 
+class Region(object):
+
+    def __init__(self, start, end, parsed, evaluator):
+        self.start, self.end, self.parsed, self.evaluator = (
+            start, end, parsed, evaluator
+        )
+
+    def __repr__(self):
+        return '<Region start={} end={} {!r}>'.format(
+            self.start, self.end, self.evaluator
+        )
+
+
+class Example(object):
+
+    def __init__(self, path, line, column, region):
+        self.path = path
+        self.line = line
+        self.column = column
+        self.region = region
+
+    def __repr__(self):
+        return '<Example path={} line={} column={} using {!r}>'.format(
+            self.path, self.line, self.column, self.region.evaluator
+        )
+
+    def evaluate(self, namespace):
+        return self.region.evaluator(self.region.parsed, namespace)
+
+
 class Document(object):
 
     def __init__(self, text, path):
@@ -27,21 +57,10 @@ class Document(object):
         self.regions.insert(index, entry)
 
     def __iter__(self):
+        line = 1
+        place = 0
         for _, region in self.regions:
-            yield region
-
-
-class Region(object):
-
-    def __init__(self, start, end, parsed, evaluator):
-        self.start, self.end, self.parsed, self.evaluator = (
-            start, end, parsed, evaluator
-        )
-
-    def __repr__(self):
-        return '<Region start={} end={} {!r}>'.format(
-            self.start, self.end, self.evaluator
-        )
-
-    def evaluate(self, namespace):
-        self.evaluator(self.parsed, namespace)
+            line += self.text.count('\n', place, region.start)
+            line_start = self.text.rfind('\n', place, region.start)
+            place = region.start
+            yield Example(self.path, line, region.start-line_start, region)
