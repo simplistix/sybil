@@ -64,3 +64,18 @@ class Document(object):
             line_start = self.text.rfind('\n', place, region.start)
             place = region.start
             yield Example(self.path, line, region.start-line_start, region)
+
+
+class Sybil(object):
+
+    def __init__(self, parsers):
+        self.parsers = parsers
+
+    def parse(self, path):
+        with open(path) as source:
+            text = source.read()
+        document = Document(text, path)
+        for parser in self.parsers:
+            for region in parser(document):
+                document.add(region)
+        return document

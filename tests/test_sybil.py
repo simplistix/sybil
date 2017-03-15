@@ -1,6 +1,10 @@
+import re
+from functools import partial
+
 import pytest
 
-from sybil import Document, Region, Example
+from sybil import Document, Region, Example, Sybil
+from tests.helpers import sample_path
 
 
 @pytest.fixture()
@@ -116,3 +120,42 @@ class TestDocument(object):
         document.add(Region(i('R4')+3, len(text), None, None))
         assert ([(e.line, e.column) for e in document] ==
                 [(1, 1), (2, 6), (4, 4)])
+
+
+def check(letter, parsed, namespace):
+    assert namespace == 42
+    text, expected = parsed
+    assert set(text) == {letter}
+    actual = text.count(letter)
+    if actual != expected:
+        return '{} count was {} instead of {}'.format(
+            letter, actual, expected
+        )
+    # This would normally be wrong, but handy for testing here:
+    return '{} count was {}, as expected'.format(letter, actual)
+
+
+def parse_for_x(document):
+    for m in re.finditer('(X+) (\d+) check', document.text):
+        yield Region(m.start(), m.end(),
+                     (m.group(1), int(m.group(2))),
+                     partial(check, 'X'))
+
+
+def parse_for_y(document):
+    for m in re.finditer('(Y+) (\d+) check', document.text):
+        yield Region(m.start(), m.end(),
+                     (m.group(1), int(m.group(2))),
+                     partial(check, 'Y'))
+
+
+class TestSybil(object):
+
+    def test_parse(self):
+        sybil = Sybil([parse_for_x, parse_for_y])
+        document = sybil.parse(sample_path('sample.txt'))
+        assert ([e.evaluate(42) for e in document] ==
+                ['X count was 4, as expected',
+                 'Y count was 3, as expected',
+                 'X count was 3 instead of 4',
+                 'Y count was 3, as expected'])
