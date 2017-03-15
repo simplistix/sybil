@@ -1,5 +1,8 @@
 from bisect import bisect
+from glob import glob
+from os.path import join, dirname, abspath
 
+import sys
 
 class Region(object):
 
@@ -68,8 +71,11 @@ class Document(object):
 
 class Sybil(object):
 
-    def __init__(self, parsers):
+    def __init__(self, parsers, pattern, path='.'):
         self.parsers = parsers
+        start_dir = dirname(sys._getframe(1).f_globals.get('__file__'))
+        self.path = abspath(join(start_dir, path))
+        self.pattern = pattern
 
     def parse(self, path):
         with open(path) as source:
@@ -79,3 +85,8 @@ class Sybil(object):
             for region in parser(document):
                 document.add(region)
         return document
+
+    def all_examples(self):
+        for path in glob(join(self.path, self.pattern)):
+            for example in self.parse(path):
+                yield example

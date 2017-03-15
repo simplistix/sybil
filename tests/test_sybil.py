@@ -149,13 +149,33 @@ def parse_for_y(document):
                      partial(check, 'Y'))
 
 
+def parse_first_line(document):
+    line = document.text.split('\n', 1)[0]
+    yield Region(0, len(line), line, None)
+
+
 class TestSybil(object):
 
     def test_parse(self):
-        sybil = Sybil([parse_for_x, parse_for_y])
+        sybil = Sybil([parse_for_x, parse_for_y], '*')
         document = sybil.parse(sample_path('sample.txt'))
         assert ([e.evaluate(42) for e in document] ==
                 ['X count was 4, as expected',
                  'Y count was 3, as expected',
                  'X count was 3 instead of 4',
                  'Y count was 3, as expected'])
+
+    def test_all_examples(self):
+        sybil = Sybil([parse_first_line], '__init__.py')
+        assert ([e.region.parsed for e in sybil.all_examples()] ==
+                ['# believe it or not,'])
+
+    def test_all_examples_with_path(self):
+        sybil = Sybil([parse_for_x, parse_for_y],
+                      path='./samples', pattern='*.txt')
+        assert ([e.evaluate(42) for e in sybil.all_examples()] ==
+                ['X count was 4, as expected',
+                 'Y count was 3, as expected',
+                 'X count was 3 instead of 4',
+                 'Y count was 3, as expected'])
+
