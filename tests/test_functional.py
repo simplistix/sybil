@@ -29,7 +29,7 @@ def test_unittest():
     assert main.result.failures == []
 
 
-def test_nose():
+def test_nose(capsys):
     class ResultStoringMain(NoseMain):
         def runTests(self):
             self.testRunner = NoseRunner(stream=self.config.stream,
@@ -41,5 +41,13 @@ def test_nose():
         module=None,
         argv=['x', join(functional_test_dir, 'nose')]
     )
-    assert main.result.testsRun == 3
-    assert main.result.failures == []
+    assert main.result.testsRun == 4
+    assert len(main.result.failures) == 1
+
+    out, err = capsys.readouterr()
+    assert out==''
+    assert 'FAIL: tests.test_docs' in err
+    assert 'sample.txt line=5 column=1 using functools.partial' in err
+    assert ('sample.txt, line 5, column 1 did not evaluate as expected:\n'
+            'X count was 3 instead of 4') in err
+

@@ -4,6 +4,8 @@ from os.path import join, dirname, abspath
 
 import sys
 
+from .integration.nose import nose_integration
+
 class Region(object):
 
     def __init__(self, start, end, parsed, evaluator):
@@ -90,3 +92,6 @@ class Sybil(object):
         for path in glob(join(self.path, self.pattern)):
             for example in self.parse(path):
                 yield example
+
+    def nose(self, name=None):
+        return nose_integration(self, name)
