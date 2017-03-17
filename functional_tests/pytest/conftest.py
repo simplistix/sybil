@@ -1,25 +1,28 @@
-import pytest
+import re
+from functools import partial
+from sybil import Region, Sybil
 
 
-class DummyFile(pytest.File):
-    def collect(self):
-        yield DummyItem(self, self)
+def check(letter, parsed, namespace):
+    text, expected = parsed
+    actual = text.count(letter)
+    if actual != expected:
+        message = '{} count was {} instead of {}'.format(
+            letter, actual, expected
+        )
+        if letter=='X':
+            raise ValueError(message)
+        return message
 
 
-class DummyItem(pytest.Item):
-    def __init__(self, pytest_file, parent):
-        super(DummyItem, self).__init__(pytest_file.name, parent)
-        self.pytest_file = pytest_file
-
-    def runtest(self):
-        assert self.pytest_file.fspath.read() == 'I am doc.\n'
+def parse_for(letter, document):
+    for m in re.finditer('(%s+) (\d+) check' % letter, document.text):
+        yield Region(m.start(), m.end(),
+                     (m.group(1), int(m.group(2))),
+                     partial(check, letter))
 
 
-class Sybil(object):
-
-    def pytest(self, parent, path):
-        if path.ext == ".rst":
-            return DummyFile(path, parent)
-
-
-pytest_collect_file = Sybil().pytest
+pytest_collect_file = Sybil(
+    parsers=[partial(parse_for, 'X'), partial(parse_for, 'Y')],
+    pattern='*.rst'
+).pytest()

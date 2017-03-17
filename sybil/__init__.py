@@ -5,6 +5,7 @@ from os.path import join, dirname, abspath
 import sys
 
 from .integration.nose import nose_integration
+from .integration.pytest import pytest_integration
 
 class Region(object):
 
@@ -95,3 +96,6 @@ class Sybil(object):
 
     def nose(self, name=None):
         return nose_integration(self, name)
+
+    def pytest(self):
+        return pytest_integration(self)

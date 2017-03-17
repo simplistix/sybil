@@ -6,18 +6,41 @@ from unittest.main import main as unittest_main
 functional_test_dir = join(*(split(__file__)[:-2]+('functional_tests', )))
 
 
-def test_pytest():
+class Finder(object):
+
+    def __init__(self, text):
+        self.text = text
+        self.index = 0
+
+    def then_find(self, substring):
+        assert substring in self.text[self.index:]
+        self.index = self.text.index(substring, self.index)
+
+
+def test_pytest(capsys):
 
     class CollectResults:
         def pytest_sessionfinish(self, session):
             self.session = session
 
     results = CollectResults()
-    return_code = pytest_main(['-qq', join(functional_test_dir, 'pytest')],
+    return_code = pytest_main(['-v', join(functional_test_dir, 'pytest')],
                               plugins=[results])
-    assert return_code == 0
-    assert results.session.testsfailed == 0
-    assert results.session.testscollected == 1
+    assert return_code == 1
+    assert results.session.testsfailed == 2
+    assert results.session.testscollected == 8
+
+    out, err = capsys.readouterr()
+    out = Finder(out)
+    out.then_find('fail.rst::line:1,column:1')
+    out.then_find('fail.rst PASSED')
+    out.then_find('fail.rst::line:3,column:1')
+    out.then_find('fail.rst FAILED')
+    out.then_find('_ fail.rst line=3 column=1 _')
+    out.then_find('Y count was 3 instead of 2')
+    out.then_find('functional_tests/pytest/fail.rst:3: SybilFailure')
+    out.then_find('_ fail.rst line=5 column=1 _')
+    out.then_find('ValueError: X count was 3 instead of 4')
 
 
 def test_unittest():
@@ -46,8 +69,9 @@ def test_nose(capsys):
 
     out, err = capsys.readouterr()
     assert out==''
-    assert 'FAIL: tests.test_docs' in err
-    assert 'sample.txt line=5 column=1 using functools.partial' in err
-    assert ('sample.txt, line 5, column 1 did not evaluate as expected:\n'
-            'X count was 3 instead of 4') in err
+    err = Finder(err)
+    err.then_find('FAIL: tests.test_docs')
+    err.then_find('sample.txt line=5 column=1 using ')
+    err.then_find('sample.txt, line 5, column 1 did not evaluate as expected:')
+    err.then_find('\nX count was 3 instead of 4')
 
