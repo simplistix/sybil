@@ -3,8 +3,11 @@ from functools import partial
 
 import pytest
 
-from sybil import Document, Region, Example, Sybil
-from tests.helpers import sample_path
+from sybil import Sybil, Region
+from sybil.document import Document
+from sybil.example import Example, SybilFailure
+
+from .helpers import sample_path
 
 
 @pytest.fixture()
@@ -27,16 +30,38 @@ class TestExample(object):
         assert (repr(example) ==
                 "<Example path=/the/path line=1 column=2 using 'evaluator'>")
 
-    def test_evaluate(self):
+    def test_evaluate_okay(self):
         def evaluator(parsed, namespace):
             namespace['parsed'] = parsed
-            return 'foo!'
         region = Region(0, 1, 'the data', evaluator)
         example = Example('/the/path', 1, 2, region)
         namespace = {}
         result = example.evaluate(namespace)
-        assert result == 'foo!'
+        assert result is None
         assert namespace == {'parsed': 'the data'}
+
+    def test_evaluate_not_okay(self):
+        def evaluator(parsed, namespace):
+            return 'foo!'
+        region = Region(0, 1, 'the data', evaluator)
+        example = Example('/the/path', 1, 2, region)
+        with pytest.raises(SybilFailure) as excinfo:
+            example.evaluate({})
+        assert str(excinfo.value) == (
+            'Example at /the/path, line 1, column 2 did not evaluate as '
+            'expected:\nfoo!'
+        )
+        assert excinfo.value.example is example
+        assert excinfo.value.result == 'foo!'
+
+    def test_evaluate_raises_exception(self):
+        def evaluator(parsed, namespace):
+            raise ValueError('foo!')
+        region = Region(0, 1, 'the data', evaluator)
+        example = Example('/the/path', 1, 2, region)
+        with pytest.raises(ValueError) as excinfo:
+            example.evaluate({})
+        assert str(excinfo.value) == 'foo!'
 
 
 class TestDocument(object):
@@ -156,10 +181,14 @@ def parse_first_line(document):
 
 class TestSybil(object):
 
+    def _evaluate_examples(self, examples, namespace):
+        return [e.region.evaluator(e.region.parsed, namespace)
+                for e in examples]
+
     def test_parse(self):
         sybil = Sybil([parse_for_x, parse_for_y], '*')
         document = sybil.parse(sample_path('sample.txt'))
-        assert ([e.evaluate(42) for e in document] ==
+        assert (self._evaluate_examples(document, 42) ==
                 ['X count was 4, as expected',
                  'Y count was 3, as expected',
                  'X count was 3 instead of 4',
@@ -173,7 +202,7 @@ class TestSybil(object):
     def test_all_examples_with_path(self):
         sybil = Sybil([parse_for_x, parse_for_y],
                       path='./samples', pattern='*.txt')
-        assert ([e.evaluate(42) for e in sybil.all_examples()] ==
+        assert (self._evaluate_examples(sybil.all_examples(), 42) ==
                 ['X count was 4, as expected',
                  'Y count was 3, as expected',
                  'X count was 3 instead of 4',

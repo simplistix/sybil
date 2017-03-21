@@ -1,10 +1,5 @@
 def check(example, namespace):
-    errors = example.evaluate(namespace)
-    if errors:
-        raise AssertionError((
-            'Example at {}, line {}, column {} did not evaluate as expected:\n'
-            '{}'
-        ).format(example.path, example.line, example.column, errors))
+    example.evaluate(namespace)
 
 
 def nose_integration(sybil, name):

@@ -3,8 +3,7 @@ from __future__ import absolute_import
 import pytest
 from _pytest._code.code import TerminalRepr
 
-
-class SybilFailure(AssertionError): pass
+from ..example import SybilFailure
 
 
 class SybilFailureRepr(TerminalRepr):
@@ -37,9 +36,7 @@ class SybilItem(pytest.Item):
         return self.example.path, self.example.line, info
 
     def runtest(self):
-        result = self.example.evaluate(self.namespace)
-        if result:
-            raise SybilFailure(result)
+        self.example.evaluate(self.namespace)
 
     def repr_failure(self, excinfo):
         if isinstance(excinfo.value, SybilFailure):
