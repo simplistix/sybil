@@ -79,7 +79,7 @@ def test_nose(capsys):
         module=None,
         argv=['x', '-v', join(functional_test_dir, 'nose')]
     )
-    assert main.result.testsRun == 8
+    assert main.result.testsRun == 9
     assert len(main.result.failures) == 1
     assert len(main.result.errors) == 1
 

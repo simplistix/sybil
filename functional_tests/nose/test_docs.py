@@ -25,8 +25,13 @@ def parse_for(letter, document):
                      partial(check, letter))
 
 
+def sybil_setup(namespace):
+    print('sybil setup')
+    namespace['x'] = 0
 
 
+def sybil_teardown(namespace):
+    print('sybil teardown', namespace['x'])
 
 
 load_tests = Sybil(
