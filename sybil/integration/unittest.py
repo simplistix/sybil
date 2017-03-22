@@ -22,7 +22,7 @@ class TestCase(BaseTestCase):
 
 def unittest_integration(sybil):
 
-    def load_tests(loader, tests, pattern):
+    def load_tests(loader=None, tests=None, pattern=None):
         suite = TestSuite()
         for example in sybil.all_examples():
             suite.addTest(TestCase(example))

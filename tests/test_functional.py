@@ -53,7 +53,7 @@ def test_unittest(capsys):
     assert len(main.result.errors) == 1
 
     out, err = capsys.readouterr()
-    assert out==''
+    assert out == ''
     err = Finder(err)
     err.then_find('fail.rst,line:1,column:1 ... ok')
     err.then_find('fail.rst,line:3,column:1 ... FAIL')
@@ -77,16 +77,23 @@ def test_nose(capsys):
 
     main = ResultStoringMain(
         module=None,
-        argv=['x', join(functional_test_dir, 'nose')]
+        argv=['x', '-v', join(functional_test_dir, 'nose')]
     )
-    assert main.result.testsRun == 4
+    assert main.result.testsRun == 8
     assert len(main.result.failures) == 1
+    assert len(main.result.errors) == 1
 
     out, err = capsys.readouterr()
-    assert out==''
+    assert out == ''
     err = Finder(err)
-    err.then_find('FAIL: tests.test_docs')
-    err.then_find('sample2.txt line=1 column=1 using ')
-    err.then_find('sample2.txt, line 1, column 1 did not evaluate as expected:')
-    err.then_find('\nX count was 3 instead of 4')
+    err.then_find('fail.rst,line:1,column:1 ... ok')
+    err.then_find('fail.rst,line:3,column:1 ... FAIL')
+    err.then_find('fail.rst,line:5,column:1 ... ERROR')
+    err.then_find('fail.rst,line:7,column:1 ... ok')
+    err.then_find('ERROR: ')
+    err.then_find('fail.rst,line:5,column:1')
+    err.then_find('ValueError: X count was 3 instead of 4')
+    err.then_find('FAIL:')
+    err.then_find('fail.rst,line:3,column:1')
+    err.then_find('Y count was 3 instead of 2')
 

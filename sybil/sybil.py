@@ -3,7 +3,6 @@ from glob import glob
 from os.path import join, dirname, abspath
 
 from .document import Document
-from .integration.nose import nose_integration
 from .integration.pytest import pytest_integration
 from .integration.unittest import unittest_integration
 
@@ -30,11 +29,10 @@ class Sybil(object):
             for example in self.parse(path):
                 yield example
 
-    def nose(self, name=None):
-        return nose_integration(self, name)
-
     def pytest(self):
         return pytest_integration(self)
 
     def unittest(self):
         return unittest_integration(self)
+
+    nose = unittest

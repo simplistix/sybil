@@ -38,4 +38,9 @@ setup(
             ],
         build=['sphinx', 'pkginfo', 'setuptools-git', 'twine', 'wheel']
     ),
+    entry_points = {
+        'nose.plugins.0.10': [
+            'sybil = sybil.integration.nose:Plugin'
+            ]
+        },
 )
