@@ -23,11 +23,10 @@ class SybilFailureRepr(TerminalRepr):
 
 class SybilItem(pytest.Item):
 
-    def __init__(self, parent, example, namespace):
+    def __init__(self, parent, example):
         name = 'line:{},column:{}'.format(example.line, example.column)
         super(SybilItem, self).__init__(name, parent)
         self.example = example
-        self.namespace = namespace
 
     def reportinfo(self):
         info = '%s line=%i column=%i' % (
@@ -36,7 +35,7 @@ class SybilItem(pytest.Item):
         return self.example.path, self.example.line, info
 
     def runtest(self):
-        self.example.evaluate(self.namespace)
+        self.example.evaluate()
 
     def repr_failure(self, excinfo):
         if isinstance(excinfo.value, SybilFailure):
@@ -49,11 +48,10 @@ class SybilFile(pytest.File):
     def __init__(self, path, parent, sybil):
         super(SybilFile, self).__init__(path, parent)
         self.sybil = sybil
-        self.namespace = {}
 
     def collect(self):
         for example in self.sybil.parse(self.fspath.strpath):
-            yield SybilItem(self, example, self.namespace)
+            yield SybilItem(self, example)
 
 
 def pytest_integration(sybil):

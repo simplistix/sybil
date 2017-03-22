@@ -1,7 +1,3 @@
 XXXX 4 check
 
 YYY 3 check
-
-XXX 4 check
-
-YYY 3 check

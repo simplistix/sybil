@@ -1,5 +1,8 @@
+from __future__ import print_function
+
 import re
 from functools import partial
+from os.path import split
 
 import pytest
 
@@ -26,7 +29,7 @@ class TestExample(object):
 
     def test_repr(self):
         region = Region(0, 1, 'parsed', 'evaluator')
-        example = Example('/the/path', 1, 2, region)
+        example = Example('/the/path', 1, 2, region, {})
         assert (repr(example) ==
                 "<Example path=/the/path line=1 column=2 using 'evaluator'>")
 
@@ -34,9 +37,9 @@ class TestExample(object):
         def evaluator(parsed, namespace):
             namespace['parsed'] = parsed
         region = Region(0, 1, 'the data', evaluator)
-        example = Example('/the/path', 1, 2, region)
         namespace = {}
-        result = example.evaluate(namespace)
+        example = Example('/the/path', 1, 2, region, namespace)
+        result = example.evaluate()
         assert result is None
         assert namespace == {'parsed': 'the data'}
 
@@ -44,9 +47,9 @@ class TestExample(object):
         def evaluator(parsed, namespace):
             return 'foo!'
         region = Region(0, 1, 'the data', evaluator)
-        example = Example('/the/path', 1, 2, region)
+        example = Example('/the/path', 1, 2, region, {})
         with pytest.raises(SybilFailure) as excinfo:
-            example.evaluate({})
+            example.evaluate()
         assert str(excinfo.value) == (
             'Example at /the/path, line 1, column 2 did not evaluate as '
             'expected:\nfoo!'
@@ -58,9 +61,9 @@ class TestExample(object):
         def evaluator(parsed, namespace):
             raise ValueError('foo!')
         region = Region(0, 1, 'the data', evaluator)
-        example = Example('/the/path', 1, 2, region)
+        example = Example('/the/path', 1, 2, region, {})
         with pytest.raises(ValueError) as excinfo:
-            example.evaluate({})
+            example.evaluate()
         assert str(excinfo.value) == 'foo!'
 
 
@@ -187,11 +190,9 @@ class TestSybil(object):
 
     def test_parse(self):
         sybil = Sybil([parse_for_x, parse_for_y], '*')
-        document = sybil.parse(sample_path('sample.txt'))
+        document = sybil.parse(sample_path('sample1.txt'))
         assert (self._evaluate_examples(document, 42) ==
                 ['X count was 4, as expected',
-                 'Y count was 3, as expected',
-                 'X count was 3 instead of 4',
                  'Y count was 3, as expected'])
 
     def test_all_examples(self):
@@ -208,3 +209,35 @@ class TestSybil(object):
                  'X count was 3 instead of 4',
                  'Y count was 3, as expected'])
 
+
+def check_into_namespace(parsed, namespace):
+    if 'parsed' not in namespace:
+        namespace['parsed'] = []
+    namespace['parsed'].append(parsed)
+    print(namespace['parsed'])
+
+
+def parse(document):
+    for m in re.finditer('([XY]+) (\d+) check', document.text):
+        yield Region(m.start(), m.end(), m.start(), check_into_namespace)
+
+
+def test_namespace(capsys):
+    sybil = Sybil([parse],
+                  path='./samples', pattern='*.txt')
+    for example in sybil.all_examples():
+        print(split(example.path)[-1], example.line)
+        example.evaluate()
+
+    out, _ = capsys.readouterr()
+    assert out.split('\n') == [
+        'sample1.txt 1',
+        '[0]',
+        'sample1.txt 3',
+        '[0, 14]',
+        'sample2.txt 1',
+        '[0]',
+        'sample2.txt 3',
+        '[0, 13]',
+        ''
+    ]

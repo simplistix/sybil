@@ -1,13 +1,12 @@
-def check(example, namespace):
-    example.evaluate(namespace)
+def check(example):
+    example.evaluate()
 
 
 def nose_integration(sybil, name):
 
     def test_examples():
-        namespace = {}
         for example in sybil.all_examples():
-            yield check, example, namespace
+            yield check, example
 
     if name:
         test_examples.__name__ = name

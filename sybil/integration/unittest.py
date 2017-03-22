@@ -5,13 +5,12 @@ from unittest import TestCase as BaseTestCase, TestSuite
 
 class TestCase(BaseTestCase):
 
-    def __init__(self, example, namespace):
+    def __init__(self, example):
         BaseTestCase.__init__(self)
         self.example = example
-        self.namespace = namespace
 
     def runTest(self):
-        self.example.evaluate(self.namespace)
+        self.example.evaluate()
 
     def id(self):
         return '{},line:{},column:{}'.format(
@@ -24,10 +23,9 @@ class TestCase(BaseTestCase):
 def unittest_integration(sybil):
 
     def load_tests(loader, tests, pattern):
-        namespace = {}
         suite = TestSuite()
         for example in sybil.all_examples():
-            suite.addTest(TestCase(example, namespace))
+            suite.addTest(TestCase(example))
         return suite
 
     return load_tests

@@ -11,18 +11,19 @@ class SybilFailure(AssertionError):
 
 class Example(object):
 
-    def __init__(self, path, line, column, region):
+    def __init__(self, path, line, column, region, namespace):
         self.path = path
         self.line = line
         self.column = column
         self.region = region
+        self.namespace = namespace
 
     def __repr__(self):
         return '<Example path={} line={} column={} using {!r}>'.format(
             self.path, self.line, self.column, self.region.evaluator
         )
 
-    def evaluate(self, namespace):
-        result = self.region.evaluator(self.region.parsed, namespace)
+    def evaluate(self):
+        result = self.region.evaluator(self.region.parsed, self.namespace)
         if result:
             raise SybilFailure(self, result)

@@ -10,6 +10,7 @@ class Document(object):
         self.path = path
         self.end = len(text)
         self.regions = []
+        self.namespace = {}
 
     def add(self, region):
         if region.start < 0:
@@ -35,4 +36,6 @@ class Document(object):
             line += self.text.count('\n', place, region.start)
             line_start = self.text.rfind('\n', place, region.start)
             place = region.start
-            yield Example(self.path, line, region.start-line_start, region)
+            yield Example(self.path,
+                          line, region.start-line_start,
+                          region, self.namespace)

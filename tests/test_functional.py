@@ -86,7 +86,7 @@ def test_nose(capsys):
     assert out==''
     err = Finder(err)
     err.then_find('FAIL: tests.test_docs')
-    err.then_find('sample.txt line=5 column=1 using ')
-    err.then_find('sample.txt, line 5, column 1 did not evaluate as expected:')
+    err.then_find('sample2.txt line=1 column=1 using ')
+    err.then_find('sample2.txt, line 1, column 1 did not evaluate as expected:')
     err.then_find('\nX count was 3 instead of 4')
 
