@@ -5,6 +5,7 @@ from os.path import join, dirname, abspath
 from .document import Document
 from .integration.nose import nose_integration
 from .integration.pytest import pytest_integration
+from .integration.unittest import unittest_integration
 
 
 class Sybil(object):
@@ -34,3 +35,6 @@ class Sybil(object):
 
     def pytest(self):
         return pytest_integration(self)
+
+    def unittest(self):
+        return unittest_integration(self)

@@ -1,23 +1,29 @@
-from unittest import TestCase, TestSuite
+import re
+from functools import partial
+
+from sybil import Sybil, Region
 
 
-class Sybil(object):
-
-    def __init__(self):
-        class TestTest(TestCase):
-
-            def test_one(sel):
-                pass
-
-            def test_two(sel):
-                pass
-        self.things = TestTest
-
-    def unittest(self, loader, tests, pattern):
-        suite = TestSuite()
-        tests = loader.loadTestsFromTestCase(self.things)
-        suite.addTests(tests)
-        return suite
+def check(letter, parsed, namespace):
+    text, expected = parsed
+    actual = text.count(letter)
+    if actual != expected:
+        message = '{} count was {} instead of {}'.format(
+            letter, actual, expected
+        )
+        if letter=='X':
+            raise ValueError(message)
+        return message
 
 
-load_tests = Sybil().unittest
+def parse_for(letter, document):
+    for m in re.finditer('(%s+) (\d+) check' % letter, document.text):
+        yield Region(m.start(), m.end(),
+                     (m.group(1), int(m.group(2))),
+                     partial(check, letter))
+
+
+load_tests = Sybil(
+    [partial(parse_for, 'X'), partial(parse_for, 'Y')],
+    path='../pytest', pattern='*.rst'
+).unittest()
