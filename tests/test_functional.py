@@ -52,9 +52,6 @@ def test_unittest(capsys):
         exit=False, module=None, testRunner=runner,
         argv=['x', 'discover', '-v', join(functional_test_dir, 'unittest')]
     )
-    assert main.result.testsRun == 8
-    assert len(main.result.failures) == 1
-    assert len(main.result.errors) == 1
     out, err = capsys.readouterr()
     assert err == ''
     out = Finder(out)
@@ -69,6 +66,9 @@ def test_unittest(capsys):
     out.then_find('fail.rst,line:3,column:1')
     out.then_find('Y count was 3 instead of 2')
     out.then_find('Ran 8 tests')
+    assert main.result.testsRun == 8
+    assert len(main.result.failures) == 1
+    assert len(main.result.errors) == 1
 
 
 def test_nose(capsys):
