@@ -24,10 +24,9 @@ class Sybil(object):
                 document.add(region)
         return document
 
-    def all_examples(self):
+    def all_documents(self):
         for path in glob(join(self.path, self.pattern)):
-            for example in self.parse(path):
-                yield example
+            yield self.parse(path)
 
     def pytest(self):
         return pytest_integration(self)

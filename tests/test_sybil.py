@@ -188,6 +188,11 @@ class TestSybil(object):
         return [e.region.evaluator(e.region.parsed, namespace)
                 for e in examples]
 
+    def _all_examples(self, sybil):
+        for document in sybil.all_documents():
+            for example in document:
+                yield example
+
     def test_parse(self):
         sybil = Sybil([parse_for_x, parse_for_y], '*')
         document = sybil.parse(sample_path('sample1.txt'))
@@ -195,15 +200,15 @@ class TestSybil(object):
                 ['X count was 4, as expected',
                  'Y count was 3, as expected'])
 
-    def test_all_examples(self):
+    def test_all_paths(self):
         sybil = Sybil([parse_first_line], '__init__.py')
-        assert ([e.region.parsed for e in sybil.all_examples()] ==
+        assert ([e.region.parsed for e in self._all_examples(sybil)] ==
                 ['# believe it or not,'])
 
-    def test_all_examples_with_path(self):
+    def test_all_paths_with_base_directory(self):
         sybil = Sybil([parse_for_x, parse_for_y],
                       path='./samples', pattern='*.txt')
-        assert (self._evaluate_examples(sybil.all_examples(), 42) ==
+        assert (self._evaluate_examples(self._all_examples(sybil), 42) ==
                 ['X count was 4, as expected',
                  'Y count was 3, as expected',
                  'X count was 3 instead of 4',
@@ -225,9 +230,10 @@ def parse(document):
 def test_namespace(capsys):
     sybil = Sybil([parse],
                   path='./samples', pattern='*.txt')
-    for example in sybil.all_examples():
-        print(split(example.path)[-1], example.line)
-        example.evaluate()
+    for document in sybil.all_documents():
+        for example in document:
+            print(split(example.path)[-1], example.line)
+            example.evaluate()
 
     out, _ = capsys.readouterr()
     assert out.split('\n') == [
