@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from nose.plugins import Plugin as NosePlugin
 from nose.loader import TestLoader
 
