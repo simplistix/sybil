@@ -1,10 +1,10 @@
+import sys
 from os.path import split, join
 from unittest.main import main as unittest_main
 from unittest.runner import TextTestRunner
 
 from nose.core import run_exit as NoseMain, TextTestRunner as NoseRunner
 from pytest import main as pytest_main
-from sybil.compat import StringIO
 
 functional_test_dir = join(*(split(__file__)[:-2]+('functional_tests', )))
 
@@ -46,9 +46,8 @@ def test_pytest(capsys):
     out.then_find('ValueError: X count was 3 instead of 4')
 
 
-def test_unittest():
-    buffer = StringIO()
-    runner = TextTestRunner(verbosity=2, stream=buffer)
+def test_unittest(capsys):
+    runner = TextTestRunner(verbosity=2, stream=sys.stdout)
     main = unittest_main(
         exit=False, module=None, testRunner=runner,
         argv=['x', 'discover', '-v', join(functional_test_dir, 'unittest')]
@@ -56,21 +55,20 @@ def test_unittest():
     assert main.result.testsRun == 8
     assert len(main.result.failures) == 1
     assert len(main.result.errors) == 1
-
-    buffer.seek(0)
-    err = buffer.getvalue()
-    err = Finder(err)
-    err.then_find('fail.rst,line:1,column:1 ... ok')
-    err.then_find('fail.rst,line:3,column:1 ... FAIL')
-    err.then_find('fail.rst,line:5,column:1 ... ERROR')
-    err.then_find('fail.rst,line:7,column:1 ... ok')
-    err.then_find('ERROR: ')
-    err.then_find('fail.rst,line:5,column:1')
-    err.then_find('ValueError: X count was 3 instead of 4')
-    err.then_find('FAIL:')
-    err.then_find('fail.rst,line:3,column:1')
-    err.then_find('Y count was 3 instead of 2')
-    err.then_find('Ran 8 tests')
+    out, err = capsys.readouterr()
+    assert err == ''
+    out = Finder(out)
+    out.then_find('fail.rst,line:1,column:1 ... ok')
+    out.then_find('fail.rst,line:3,column:1 ... FAIL')
+    out.then_find('fail.rst,line:5,column:1 ... ERROR')
+    out.then_find('fail.rst,line:7,column:1 ... ok')
+    out.then_find('ERROR: ')
+    out.then_find('fail.rst,line:5,column:1')
+    out.then_find('ValueError: X count was 3 instead of 4')
+    out.then_find('FAIL:')
+    out.then_find('fail.rst,line:3,column:1')
+    out.then_find('Y count was 3 instead of 2')
+    out.then_find('Ran 8 tests')
 
 
 def test_nose(capsys):
