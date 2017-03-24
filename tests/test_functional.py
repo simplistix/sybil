@@ -1,7 +1,10 @@
 from os.path import split, join
+from unittest.main import main as unittest_main
+from unittest.runner import TextTestRunner
+
 from nose.core import run_exit as NoseMain, TextTestRunner as NoseRunner
 from pytest import main as pytest_main
-from unittest.main import main as unittest_main
+from sybil.compat import StringIO
 
 functional_test_dir = join(*(split(__file__)[:-2]+('functional_tests', )))
 
@@ -43,17 +46,19 @@ def test_pytest(capsys):
     out.then_find('ValueError: X count was 3 instead of 4')
 
 
-def test_unittest(capsys):
+def test_unittest():
+    buffer = StringIO()
+    runner = TextTestRunner(verbosity=2, stream=buffer)
     main = unittest_main(
-        exit=False, module=None,
+        exit=False, module=None, testRunner=runner,
         argv=['x', 'discover', '-v', join(functional_test_dir, 'unittest')]
     )
     assert main.result.testsRun == 8
     assert len(main.result.failures) == 1
     assert len(main.result.errors) == 1
 
-    out, err = capsys.readouterr()
-    assert out == ''
+    buffer.seek(0)
+    err = buffer.getvalue()
     err = Finder(err)
     err.then_find('fail.rst,line:1,column:1 ... ok')
     err.then_find('fail.rst,line:3,column:1 ... FAIL')
@@ -65,6 +70,7 @@ def test_unittest(capsys):
     err.then_find('FAIL:')
     err.then_find('fail.rst,line:3,column:1')
     err.then_find('Y count was 3 instead of 2')
+    err.then_find('Ran 8 tests')
 
 
 def test_nose(capsys):
