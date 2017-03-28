@@ -81,7 +81,7 @@ def test_unittest(capsys):
 def test_nose(capsys):
     class ResultStoringMain(NoseMain):
         def runTests(self):
-            self.testRunner = NoseRunner(stream=self.config.stream,
+            self.testRunner = NoseRunner(stream=sys.stdout,
                                          verbosity=self.config.verbosity,
                                          config=self.config)
             self.result = self.testRunner.run(self.test)
@@ -95,16 +95,22 @@ def test_nose(capsys):
     assert len(main.result.errors) == 1
 
     out, err = capsys.readouterr()
-    assert out == ''
-    err = Finder(err)
-    err.then_find('fail.rst,line:1,column:1 ... ok')
-    err.then_find('fail.rst,line:3,column:1 ... FAIL')
-    err.then_find('fail.rst,line:5,column:1 ... ERROR')
-    err.then_find('fail.rst,line:7,column:1 ... ok')
-    err.then_find('ERROR: ')
-    err.then_find('fail.rst,line:5,column:1')
-    err.then_find('ValueError: X count was 3 instead of 4')
-    err.then_find('FAIL:')
-    err.then_find('fail.rst,line:3,column:1')
-    err.then_find('Y count was 3 instead of 2')
-
+    assert err == ''
+    out = Finder(out)
+    out.then_find('sybil setup')
+    out.then_find('fail.rst,line:1,column:1 ... 0\nok')
+    out.then_find('fail.rst,line:3,column:1 ... 1\nFAIL')
+    out.then_find('fail.rst,line:5,column:1 ... 2\nERROR')
+    out.then_find('fail.rst,line:7,column:1 ... 3\nok')
+    out.then_find('sybil teardown 4\nsybil setup')
+    out.then_find('pass.rst,line:1,column:1 ... 0\nok')
+    out.then_find('pass.rst,line:3,column:1 ... 1\nok')
+    out.then_find('pass.rst,line:5,column:1 ... 2\nok')
+    out.then_find('pass.rst,line:7,column:1 ... 3\nok')
+    out.then_find('sybil teardown 4')
+    out.then_find('ERROR: ')
+    out.then_find('fail.rst,line:5,column:1')
+    out.then_find('ValueError: X count was 3 instead of 4')
+    out.then_find('FAIL:')
+    out.then_find('fail.rst,line:3,column:1')
+    out.then_find('Y count was 3 instead of 2')
