@@ -13,11 +13,7 @@ class SybilLoader(TestLoader):
     def loadTestsFromModule(self, module, path=None, discovered=False):
         suite_func = getattr(module, self.test_suite_func, None)
         if suite_func is not None:
-            to_process = list(suite_func())
-            suite = self.suiteClass([])
-            for entity in to_process:
-                suite.addTest(entity)
-            return suite
+            return suite_func()
 
         return super(SybilLoader, self).loadTestsFromModule(
             module, path, discovered
