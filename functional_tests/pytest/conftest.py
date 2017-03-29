@@ -1,9 +1,12 @@
+from __future__ import print_function
 import re
 from functools import partial
 from sybil import Region, Sybil
 
 
 def check(letter, parsed, namespace):
+    print(namespace['x'], end=' ')
+    namespace['x'] += 1
     text, expected = parsed
     actual = text.count(letter)
     if actual != expected:
@@ -22,7 +25,17 @@ def parse_for(letter, document):
                      partial(check, letter))
 
 
+def sybil_setup(namespace):
+    print('sybil setup', end=' ')
+    namespace['x'] = 0
+
+
+def sybil_teardown(namespace):
+    print(' sybil teardown', namespace['x'], end=' ')
+
+
 pytest_collect_file = Sybil(
     parsers=[partial(parse_for, 'X'), partial(parse_for, 'Y')],
-    pattern='*.rst'
+    pattern='*.rst',
+    setup=sybil_setup, teardown=sybil_teardown
 ).pytest()

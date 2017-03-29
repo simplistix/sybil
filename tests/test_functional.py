@@ -27,7 +27,7 @@ def test_pytest(capsys):
             self.session = session
 
     results = CollectResults()
-    return_code = pytest_main(['-v', join(functional_test_dir, 'pytest')],
+    return_code = pytest_main(['-vs', join(functional_test_dir, 'pytest')],
                               plugins=[results])
     assert return_code == 1
     assert results.session.testsfailed == 2
@@ -36,9 +36,21 @@ def test_pytest(capsys):
     out, err = capsys.readouterr()
     out = Finder(out)
     out.then_find('fail.rst::line:1,column:1')
-    out.then_find('fail.rst PASSED')
+    out.then_find('fail.rst sybil setup 0 PASSED')
     out.then_find('fail.rst::line:3,column:1')
-    out.then_find('fail.rst FAILED')
+    out.then_find('fail.rst 1 FAILED')
+    out.then_find('fail.rst::line:5,column:1')
+    out.then_find('fail.rst 2 FAILED')
+    out.then_find('fail.rst::line:7,column:1')
+    out.then_find('fail.rst 3 PASSED sybil teardown 4')
+    out.then_find('pass.rst::line:1,column:1')
+    out.then_find('pass.rst sybil setup 0 PASSED')
+    out.then_find('pass.rst::line:3,column:1')
+    out.then_find('pass.rst 1 PASSED')
+    out.then_find('pass.rst::line:5,column:1')
+    out.then_find('pass.rst 2 PASSED')
+    out.then_find('pass.rst::line:7,column:1')
+    out.then_find('pass.rst 3 PASSED sybil teardown 4')
     out.then_find('_ fail.rst line=3 column=1 _')
     out.then_find('Y count was 3 instead of 2')
     out.then_find('functional_tests/pytest/fail.rst:3: SybilFailure')

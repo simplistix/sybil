@@ -50,8 +50,17 @@ class SybilFile(pytest.File):
         self.sybil = sybil
 
     def collect(self):
-        for example in self.sybil.parse(self.fspath.strpath):
+        self.document = self.sybil.parse(self.fspath.strpath)
+        for example in self.document:
             yield SybilItem(self, example)
+
+    def setup(self):
+        if self.sybil.setup:
+            self.sybil.setup(self.document.namespace)
+
+    def teardown(self):
+        if self.sybil.teardown:
+            self.sybil.teardown(self.document.namespace)
 
 
 def pytest_integration(sybil):
