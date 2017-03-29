@@ -1,11 +1,47 @@
 from __future__ import print_function
-import re
 from functools import partial
+import re
+
+import pytest
+
 from sybil import Region, Sybil
 
 
+@pytest.fixture(scope="function")
+def function_fixture():
+    print('function_fixture setup')
+    yield 'f'
+    print('function_fixture teardown')
+
+
+@pytest.fixture(scope="class")
+def class_fixture():
+    print('class_fixture setup')
+    yield 'c'
+    print(' class_fixture teardown')
+
+
+@pytest.fixture(scope="module")
+def module_fixture():
+    print('module_fixture setup')
+    yield 'm'
+    print('module_fixture teardown')
+
+
+@pytest.fixture(scope="session")
+def session_fixture():
+    print('session_fixture setup')
+    yield 's'
+    print('session_fixture teardown')
+
+
 def check(letter, parsed, namespace):
-    print(namespace['x'], end=' ')
+    for name in (
+        'x', 'session_fixture', 'module_fixture',
+        'class_fixture', 'function_fixture'
+    ):
+        print(namespace[name], end='')
+    print(end=' ')
     namespace['x'] += 1
     text, expected = parsed
     actual = text.count(letter)
@@ -31,11 +67,13 @@ def sybil_setup(namespace):
 
 
 def sybil_teardown(namespace):
-    print(' sybil teardown', namespace['x'], end=' ')
+    print('sybil teardown', namespace['x'])
 
 
 pytest_collect_file = Sybil(
     parsers=[partial(parse_for, 'X'), partial(parse_for, 'Y')],
     pattern='*.rst',
-    setup=sybil_setup, teardown=sybil_teardown
+    setup=sybil_setup, teardown=sybil_teardown,
+    fixtures=['function_fixture', 'class_fixture',
+              'module_fixture', 'session_fixture']
 ).pytest()

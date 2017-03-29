@@ -36,21 +36,53 @@ def test_pytest(capsys):
     out, err = capsys.readouterr()
     out = Finder(out)
     out.then_find('fail.rst::line:1,column:1')
-    out.then_find('fail.rst sybil setup 0 PASSED')
+    out.then_find('fail.rst sybil setup function_fixture setup\n'
+                  'class_fixture setup\n'
+                  'module_fixture setup\n'
+                  'session_fixture setup\n'
+                  '0smcf PASSED class_fixture teardown\n'
+                  'function_fixture teardown')
     out.then_find('fail.rst::line:3,column:1')
-    out.then_find('fail.rst 1 FAILED')
+    out.then_find('fail.rst function_fixture setup\n'
+                  'class_fixture setup\n'
+                  '1smcf FAILED class_fixture teardown\n'
+                  'function_fixture teardown')
     out.then_find('fail.rst::line:5,column:1')
-    out.then_find('fail.rst 2 FAILED')
+    out.then_find('fail.rst function_fixture setup\n'
+                  'class_fixture setup\n'
+                  '2smcf FAILED class_fixture teardown\n'
+                  'function_fixture teardown')
     out.then_find('fail.rst::line:7,column:1')
-    out.then_find('fail.rst 3 PASSED sybil teardown 4')
+    out.then_find('fail.rst function_fixture setup\n'
+                  'class_fixture setup\n'
+                  '3smcf PASSED class_fixture teardown\n'
+                  'function_fixture teardown\n'
+                  'module_fixture teardown\n'
+                  'sybil teardown 4')
     out.then_find('pass.rst::line:1,column:1')
-    out.then_find('pass.rst sybil setup 0 PASSED')
+    out.then_find('pass.rst sybil setup function_fixture setup\n'
+                  'class_fixture setup\n'
+                  'module_fixture setup\n'
+                  '0smcf PASSED class_fixture teardown\n'
+                  'function_fixture teardown')
     out.then_find('pass.rst::line:3,column:1')
-    out.then_find('pass.rst 1 PASSED')
+    out.then_find('pass.rst function_fixture setup\n'
+                  'class_fixture setup\n'
+                  '1smcf PASSED class_fixture teardown\n'
+                  'function_fixture teardown')
     out.then_find('pass.rst::line:5,column:1')
-    out.then_find('pass.rst 2 PASSED')
+    out.then_find('pass.rst function_fixture setup\n'
+                  'class_fixture setup\n'
+                  '2smcf PASSED class_fixture teardown\n'
+                  'function_fixture teardown')
     out.then_find('pass.rst::line:7,column:1')
-    out.then_find('pass.rst 3 PASSED sybil teardown 4')
+    out.then_find('pass.rst function_fixture setup\n'
+                  'class_fixture setup\n'
+                  '3smcf PASSED class_fixture teardown\n'
+                  'function_fixture teardown\n'
+                  'module_fixture teardown\n'
+                  'sybil teardown 4\n'
+                  'session_fixture teardown')
     out.then_find('_ fail.rst line=3 column=1 _')
     out.then_find('Y count was 3 instead of 2')
     out.then_find('functional_tests/pytest/fail.rst:3: SybilFailure')

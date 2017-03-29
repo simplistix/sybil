@@ -10,13 +10,14 @@ from .integration.unittest import unittest_integration
 class Sybil(object):
 
     def __init__(self, parsers, pattern, path='.',
-                 setup=None, teardown=None):
+                 setup=None, teardown=None, fixtures=()):
         self.parsers = parsers
         start_dir = dirname(sys._getframe(1).f_globals.get('__file__'))
         self.path = abspath(join(start_dir, path))
         self.pattern = pattern
         self.setup = setup
         self.teardown = teardown
+        self.fixtures = fixtures
 
     def parse(self, path):
         with open(path) as source:

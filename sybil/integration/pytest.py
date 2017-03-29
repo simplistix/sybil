@@ -2,6 +2,9 @@ from __future__ import absolute_import
 
 import pytest
 from _pytest._code.code import TerminalRepr
+from _pytest import fixtures
+from _pytest.fixtures import FuncFixtureInfo
+from _pytest.python import Module
 
 from ..example import SybilFailure
 
@@ -23,16 +26,35 @@ class SybilFailureRepr(TerminalRepr):
 
 class SybilItem(pytest.Item):
 
-    def __init__(self, parent, example):
+    def __init__(self, parent, sybil, example):
         name = 'line:{},column:{}'.format(example.line, example.column)
         super(SybilItem, self).__init__(name, parent)
         self.example = example
+        self.request_fixtures(sybil.fixtures)
+
+    def request_fixtures(self, names):
+        # pytest fixtures dance:
+        fm = self.session._fixturemanager
+        names_closure, arg2fixturedefs = fm.getfixtureclosure(names, self)
+        fixtureinfo = FuncFixtureInfo(names, names_closure, arg2fixturedefs)
+        self._fixtureinfo = fixtureinfo
+        self.funcargs = {}
+        self._request = fixtures.FixtureRequest(self)
 
     def reportinfo(self):
         info = '%s line=%i column=%i' % (
             self.fspath.basename, self.example.line, self.example.column
         )
         return self.example.path, self.example.line, info
+
+    def getparent(self, cls):
+        if cls is Module:
+            return self.parent
+
+    def setup(self):
+        fixtures.fillfixtures(self)
+        for name, fixture in self.funcargs.items():
+            self.example.namespace[name] = fixture
 
     def runtest(self):
         self.example.evaluate()
@@ -52,7 +74,7 @@ class SybilFile(pytest.File):
     def collect(self):
         self.document = self.sybil.parse(self.fspath.strpath)
         for example in self.document:
-            yield SybilItem(self, example)
+            yield SybilItem(self, self.sybil, example)
 
     def setup(self):
         if self.sybil.setup:
