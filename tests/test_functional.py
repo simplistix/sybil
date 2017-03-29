@@ -132,7 +132,7 @@ def test_nose(capsys):
 
     main = ResultStoringMain(
         module=None,
-        argv=['x', '-v', join(functional_test_dir, 'nose')]
+        argv=['x', '-vs', join(functional_test_dir, 'nose')]
     )
     assert main.result.testsRun == 9
     assert len(main.result.failures) == 1
