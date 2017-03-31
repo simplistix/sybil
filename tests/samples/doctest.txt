@@ -1,0 +1,19 @@
+This is some documentation.
+
+>>> y = 1
+>>> print('here is an example')
+here is an example
+
+This is some more documentation.
+
+>>> x = [
+...     1, 2, 3
+... ]
+
+Here's an exception with a traceback:
+
+>>> y = 2
+>>> raise Exception('uh oh')
+Traceback (most recent call last):
+...
+Exception: uh oh

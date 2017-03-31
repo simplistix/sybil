@@ -1,0 +1,6 @@
+>>> print("where's my output?")
+Not my output
+
+Here's an exception happening:
+
+>>> raise Exception('boom!')
