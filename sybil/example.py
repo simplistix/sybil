@@ -24,6 +24,6 @@ class Example(object):
         )
 
     def evaluate(self):
-        result = self.region.evaluator(self.region.parsed, self.namespace)
+        result = self.region.evaluate(self.namespace)
         if result:
             raise SybilFailure(self, result)
