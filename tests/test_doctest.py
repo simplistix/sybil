@@ -1,6 +1,7 @@
 from doctest import REPORT_NDIFF, ELLIPSIS
 
 from sybil import DocTestParser
+from sybil.parsers.doctest import FIX_BYTE_UNICODE_REPR
 from tests.helpers import document_from_sample
 
 
@@ -45,3 +46,13 @@ def test_fail_with_options():
         "    - Not my output\n"
         "    + where's my output?\n"
     )
+
+
+def test_literals():
+    document = document_from_sample('doctest_literals.txt')
+    regions = list(DocTestParser(FIX_BYTE_UNICODE_REPR)(document))
+    assert len(regions) == 4
+    assert regions[0].evaluate({}) == ''
+    assert regions[1].evaluate({}) == ''
+    assert regions[2].evaluate({}) == ''
+    assert regions[3].evaluate({}) == ''

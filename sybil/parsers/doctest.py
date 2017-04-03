@@ -1,14 +1,21 @@
 from __future__ import absolute_import
 
+import re
 from doctest import (
     DocTest as BaseDocTest,
     DocTestParser as BaseDocTestParser,
     DocTestRunner as BaseDocTestRunner,
     Example as DocTestExample,
     _unittest_reportflags,
+    register_optionflag
 )
 
+from ..compat import PY3
 from ..region import Region
+
+FIX_BYTE_UNICODE_REPR = register_optionflag('FIX_BYTE_UNICODE_REPR')
+BYTE_LITERAL = re.compile(r"b((['\"])[^\2]*\2)", re.MULTILINE)
+UNICODE_LITERAL = re.compile(r"u((['\"])[^\2]*\2)", re.MULTILINE)
 
 
 class DocTest(BaseDocTest):
@@ -23,12 +30,18 @@ class DocTestRunner(BaseDocTestRunner):
 
     def __init__(self, optionflags=0):
         optionflags |= _unittest_reportflags
-        BaseDocTestRunner.__init__(
-            self, verbose=False, optionflags=optionflags
-        )
+        BaseDocTestRunner.__init__(self, verbose=False, optionflags=optionflags)
 
     def _failure_header(self, test, example):
         return ''
+
+
+def fix_byte_unicode_repr(want):
+    if PY3:
+        pattern = UNICODE_LITERAL
+    else:
+        pattern = BYTE_LITERAL
+    return pattern.sub(r"\1", want)
 
 
 class DocTestParser(BaseDocTestParser):
@@ -53,6 +66,10 @@ class DocTestParser(BaseDocTestParser):
             # Extract info from the regexp match.
             (source, options, want, exc_msg) = \
                      self._parse_example(m, document.path, lineno)
+
+            if self.runner.optionflags & FIX_BYTE_UNICODE_REPR:
+                want = fix_byte_unicode_repr(want)
+
             # Create an Example, and add it to the list.
             if not self._IS_BLANK_OR_COMMENT(source):
                 yield Region(
