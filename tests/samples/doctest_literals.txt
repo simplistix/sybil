@@ -1,0 +1,11 @@
+>>> repr(b'foo')
+"b'foo'"
+
+>>> repr(u'foo')
+"u'foo'"
+
+>>> repr(b"'")
+'b"\'"'
+
+>>> repr(u"'")
+'u"\'"'
