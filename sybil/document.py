@@ -1,3 +1,4 @@
+import re
 from bisect import bisect
 
 from .example import Example
@@ -39,3 +40,13 @@ class Document(object):
             yield Example(self.path,
                           line, region.start-line_start,
                           region, self.namespace)
+
+    def find_region_sources(self, start_pattern, end_pattern):
+        for start_match in re.finditer(start_pattern, self.text):
+            source_start = start_match.end()
+            end_match = end_pattern.search(self.text, source_start)
+            if end_match is None:
+                continue
+            source_end = end_match.start()
+            source = self.text[source_start:source_end]
+            yield source_start, source_end, source
