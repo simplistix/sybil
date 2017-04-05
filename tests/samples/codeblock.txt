@@ -1,0 +1,26 @@
+This is a code block:
+
+.. code-block:: python
+
+  y += 1
+
+After this text is a code block that goes boom:
+
+.. code-block:: python
+
+  raise Exception('boom!')
+
+Now we have an invisible code block, great for setting things up or checking
+stuff within a doc:
+
+
+.. invisible-code-block: python
+
+  z += 1
+
+This paranoidly checks that we can use binary and unicode literals:
+
+.. code-block:: python
+
+  bin = b'x'
+  uni = u'x'
