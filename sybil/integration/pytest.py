@@ -1,12 +1,16 @@
 from __future__ import absolute_import
 
-import pytest
-from _pytest._code.code import TerminalRepr
+from inspect import getsourcefile
+from _pytest._code.code import TerminalRepr, Traceback
 from _pytest import fixtures
 from _pytest.fixtures import FuncFixtureInfo
 from _pytest.python import Module
+import pytest
 
 from ..example import SybilFailure
+from .. import region
+
+region_path = getsourcefile(region)
 
 
 class SybilFailureRepr(TerminalRepr):
@@ -58,6 +62,12 @@ class SybilItem(pytest.Item):
 
     def runtest(self):
         self.example.evaluate()
+
+    def _prunetraceback(self, excinfo):
+        # Messier than it could be because slicing a list subclass in
+        # Python 2 returns a list, not an instance of the subclass.
+        tb = excinfo.traceback.cut(path=region_path)[1]
+        excinfo.traceback = Traceback(tb._rawentry, excinfo)
 
     def repr_failure(self, excinfo):
         if isinstance(excinfo.value, SybilFailure):

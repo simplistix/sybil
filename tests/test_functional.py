@@ -34,6 +34,9 @@ def test_pytest(capsys):
     assert results.session.testscollected == 8
 
     out, err = capsys.readouterr()
+    # check we're trimming tracebacks:
+    assert 'sybil/region.py' not in out
+
     out = Finder(out)
     out.then_find('fail.rst::line:1,column:1')
     out.then_find('fail.rst sybil setup function_fixture setup\n'
