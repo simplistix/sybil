@@ -24,6 +24,9 @@ class CodeBlockParser(object):
         for start, end, source in document.find_region_sources(
             CODEBLOCK_START, CODEBLOCK_END
         ):
-            source = textwrap.dedent(source)
+            # There must be a nicer way to get code.co_firstlineno
+            # to be correct...
+            line_prefix = '\n' * document.text.count('\n', 0, start)
+            source = line_prefix + textwrap.dedent(source)
             code = compile(source, document.path, 'exec', dont_inherit=True)
             yield Region(start, end, code, evaluate_code_block)

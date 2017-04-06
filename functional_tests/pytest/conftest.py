@@ -5,6 +5,7 @@ import re
 import pytest
 
 from sybil import Region, Sybil
+from sybil.parsers.codeblock import CodeBlockParser
 
 
 @pytest.fixture(scope="function")
@@ -71,7 +72,9 @@ def sybil_teardown(namespace):
 
 
 pytest_collect_file = Sybil(
-    parsers=[partial(parse_for, 'X'), partial(parse_for, 'Y')],
+    parsers=[
+        partial(parse_for, 'X'), partial(parse_for, 'Y'), CodeBlockParser()
+    ],
     pattern='*.rst',
     setup=sybil_setup, teardown=sybil_teardown,
     fixtures=['function_fixture', 'class_fixture',

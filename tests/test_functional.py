@@ -30,8 +30,8 @@ def test_pytest(capsys):
     return_code = pytest_main(['-vs', join(functional_test_dir, 'pytest')],
                               plugins=[results])
     assert return_code == 1
-    assert results.session.testsfailed == 2
-    assert results.session.testscollected == 8
+    assert results.session.testsfailed == 3
+    assert results.session.testscollected == 9
 
     out, err = capsys.readouterr()
     # check we're trimming tracebacks:
@@ -59,9 +59,14 @@ def test_pytest(capsys):
     out.then_find('fail.rst function_fixture setup\n'
                   'class_fixture setup\n'
                   '3smcf PASSED class_fixture teardown\n'
+                  'function_fixture teardown')
+    out.then_find('fail.rst::line:9,column:23')
+    out.then_find('fail.rst function_fixture setup\n'
+                  'class_fixture setup\n'
+                  'FAILED class_fixture teardown\n'
                   'function_fixture teardown\n'
                   'module_fixture teardown\n'
-                  'sybil teardown 4')
+                  'sybil teardown 5')
     out.then_find('pass.rst::line:1,column:1')
     out.then_find('pass.rst sybil setup function_fixture setup\n'
                   'class_fixture setup\n'
@@ -91,6 +96,9 @@ def test_pytest(capsys):
     out.then_find('functional_tests/pytest/fail.rst:3: SybilFailure')
     out.then_find('_ fail.rst line=5 column=1 _')
     out.then_find('ValueError: X count was 3 instead of 4')
+    out.then_find('_ fail.rst line=9 column=23 _')
+    out.then_find(">       raise Exception('boom!')")
+    out.then_find('fail.rst:13: Exception')
 
 
 def test_unittest(capsys):
