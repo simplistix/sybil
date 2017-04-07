@@ -49,4 +49,4 @@ class Document(object):
                 continue
             source_end = end_match.start()
             source = self.text[source_start:source_end]
-            yield source_start, source_end, source
+            yield start_match, end_match, source
