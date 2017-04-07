@@ -3,8 +3,6 @@ from glob import glob
 from os.path import join, dirname, abspath
 
 from .document import Document
-from .integration.pytest import pytest_integration
-from .integration.unittest import unittest_integration
 
 
 class Sybil(object):
@@ -33,9 +31,11 @@ class Sybil(object):
             yield self.parse(path)
 
     def pytest(self):
+        from .integration.pytest import pytest_integration
         return pytest_integration(self)
 
     def unittest(self):
+        from .integration.unittest import unittest_integration
         return unittest_integration(self)
 
     nose = unittest
