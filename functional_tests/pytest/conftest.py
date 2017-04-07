@@ -73,7 +73,9 @@ def sybil_teardown(namespace):
 
 pytest_collect_file = Sybil(
     parsers=[
-        partial(parse_for, 'X'), partial(parse_for, 'Y'), CodeBlockParser()
+        partial(parse_for, 'X'),
+        partial(parse_for, 'Y'),
+        CodeBlockParser(['print_function'])
     ],
     pattern='*.rst',
     setup=sybil_setup, teardown=sybil_teardown,

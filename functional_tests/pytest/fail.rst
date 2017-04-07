@@ -1,3 +1,8 @@
+.. code-block:: python
+
+  print('x is currently:', x)
+  raise Exception('the start!')
+
 XXXX 4 check
 
 YYY 2 check

@@ -30,8 +30,8 @@ def test_pytest(capsys):
     return_code = pytest_main(['-vs', join(functional_test_dir, 'pytest')],
                               plugins=[results])
     assert return_code == 1
-    assert results.session.testsfailed == 3
-    assert results.session.testscollected == 9
+    assert results.session.testsfailed == 4
+    assert results.session.testscollected == 10
 
     out, err = capsys.readouterr()
     # check we're trimming tracebacks:
@@ -43,24 +43,30 @@ def test_pytest(capsys):
                   'class_fixture setup\n'
                   'module_fixture setup\n'
                   'session_fixture setup\n'
+                  'x is currently: 0\n'
+                  'FAILED class_fixture teardown\n'
+                  'function_fixture teardown')
+    out.then_find('fail.rst::line:6,column:1')
+    out.then_find('fail.rst function_fixture setup\n'
+                  'class_fixture setup\n'
                   '0smcf PASSED class_fixture teardown\n'
                   'function_fixture teardown')
-    out.then_find('fail.rst::line:3,column:1')
+    out.then_find('fail.rst::line:8,column:1')
     out.then_find('fail.rst function_fixture setup\n'
                   'class_fixture setup\n'
                   '1smcf FAILED class_fixture teardown\n'
                   'function_fixture teardown')
-    out.then_find('fail.rst::line:5,column:1')
+    out.then_find('fail.rst::line:10,column:1')
     out.then_find('fail.rst function_fixture setup\n'
                   'class_fixture setup\n'
                   '2smcf FAILED class_fixture teardown\n'
                   'function_fixture teardown')
-    out.then_find('fail.rst::line:7,column:1')
+    out.then_find('fail.rst::line:12,column:1')
     out.then_find('fail.rst function_fixture setup\n'
                   'class_fixture setup\n'
                   '3smcf PASSED class_fixture teardown\n'
                   'function_fixture teardown')
-    out.then_find('fail.rst::line:9,column:23')
+    out.then_find('fail.rst::line:14,column:1')
     out.then_find('fail.rst function_fixture setup\n'
                   'class_fixture setup\n'
                   'FAILED class_fixture teardown\n'
@@ -91,15 +97,36 @@ def test_pytest(capsys):
                   'module_fixture teardown\n'
                   'sybil teardown 4\n'
                   'session_fixture teardown')
-    out.then_find('_ fail.rst line=3 column=1 _')
+    out.then_find('_ fail.rst line=1 column=1 _')
+    out.then_find(  ">   raise Exception('the start!')")
+    out.then_find('_ fail.rst line=8 column=1 _')
     out.then_find('Y count was 3 instead of 2')
-    out.then_find('functional_tests/pytest/fail.rst:3: SybilFailure')
-    out.then_find('_ fail.rst line=5 column=1 _')
+    out.then_find('functional_tests/pytest/fail.rst:8: SybilFailure')
+    out.then_find('_ fail.rst line=10 column=1 _')
     out.then_find('ValueError: X count was 3 instead of 4')
-    out.then_find('_ fail.rst line=9 column=23 _')
+    out.then_find('_ fail.rst line=14 column=1 _')
     out.then_find(">       raise Exception('boom!')")
-    out.then_find('fail.rst:13: Exception')
+    out.then_find('fail.rst:18: Exception')
 
+
+def common_checks(out):
+    out.then_find('sybil setup')
+    out.then_find('fail.rst,line:6,column:1 ... 0\nok')
+    out.then_find('fail.rst,line:8,column:1 ... 1\nFAIL')
+    out.then_find('fail.rst,line:10,column:1 ... 2\nERROR')
+    out.then_find('fail.rst,line:12,column:1 ... 3\nok')
+    out.then_find('sybil teardown 4\nsybil setup')
+    out.then_find('pass.rst,line:1,column:1 ... 0\nok')
+    out.then_find('pass.rst,line:3,column:1 ... 1\nok')
+    out.then_find('pass.rst,line:5,column:1 ... 2\nok')
+    out.then_find('pass.rst,line:7,column:1 ... 3\nok')
+    out.then_find('sybil teardown 4')
+    out.then_find('ERROR: ')
+    out.then_find('fail.rst,line:10,column:1')
+    out.then_find('ValueError: X count was 3 instead of 4')
+    out.then_find('FAIL:')
+    out.then_find('fail.rst,line:8,column:1')
+    out.then_find('Y count was 3 instead of 2')
 
 def test_unittest(capsys):
     runner = TextTestRunner(verbosity=2, stream=sys.stdout)
@@ -110,23 +137,7 @@ def test_unittest(capsys):
     out, err = capsys.readouterr()
     assert err == ''
     out = Finder(out)
-    out.then_find('sybil setup')
-    out.then_find('fail.rst,line:1,column:1 ... 0\nok')
-    out.then_find('fail.rst,line:3,column:1 ... 1\nFAIL')
-    out.then_find('fail.rst,line:5,column:1 ... 2\nERROR')
-    out.then_find('fail.rst,line:7,column:1 ... 3\nok')
-    out.then_find('sybil teardown 4\nsybil setup')
-    out.then_find('pass.rst,line:1,column:1 ... 0\nok')
-    out.then_find('pass.rst,line:3,column:1 ... 1\nok')
-    out.then_find('pass.rst,line:5,column:1 ... 2\nok')
-    out.then_find('pass.rst,line:7,column:1 ... 3\nok')
-    out.then_find('sybil teardown 4')
-    out.then_find('ERROR: ')
-    out.then_find('fail.rst,line:5,column:1')
-    out.then_find('ValueError: X count was 3 instead of 4')
-    out.then_find('FAIL:')
-    out.then_find('fail.rst,line:3,column:1')
-    out.then_find('Y count was 3 instead of 2')
+    common_checks(out)
     out.then_find('Ran 8 tests')
     assert main.result.testsRun == 8
     assert len(main.result.failures) == 1
@@ -152,20 +163,4 @@ def test_nose(capsys):
     out, err = capsys.readouterr()
     assert err == ''
     out = Finder(out)
-    out.then_find('sybil setup')
-    out.then_find('fail.rst,line:1,column:1 ... 0\nok')
-    out.then_find('fail.rst,line:3,column:1 ... 1\nFAIL')
-    out.then_find('fail.rst,line:5,column:1 ... 2\nERROR')
-    out.then_find('fail.rst,line:7,column:1 ... 3\nok')
-    out.then_find('sybil teardown 4\nsybil setup')
-    out.then_find('pass.rst,line:1,column:1 ... 0\nok')
-    out.then_find('pass.rst,line:3,column:1 ... 1\nok')
-    out.then_find('pass.rst,line:5,column:1 ... 2\nok')
-    out.then_find('pass.rst,line:7,column:1 ... 3\nok')
-    out.then_find('sybil teardown 4')
-    out.then_find('ERROR: ')
-    out.then_find('fail.rst,line:5,column:1')
-    out.then_find('ValueError: X count was 3 instead of 4')
-    out.then_find('FAIL:')
-    out.then_find('fail.rst,line:3,column:1')
-    out.then_find('Y count was 3 instead of 2')
+    common_checks(out)

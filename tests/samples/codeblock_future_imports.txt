@@ -1,0 +1,9 @@
+.. invisible-code-block: python
+
+  print('pathalogical worst case for line numbers', file=buffer)
+
+More likely is one down here:
+
+.. code-block:: python
+
+  print('still should work and have good line numbers', file=buffer)

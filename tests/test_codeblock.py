@@ -1,4 +1,5 @@
 import pytest
+from sybil.compat import StringIO
 from sybil.parsers.codeblock import CodeBlockParser
 from tests.helpers import document_from_sample
 
@@ -22,3 +23,24 @@ def test_basic():
     assert namespace['bin'] == b'x'
     assert namespace['uni'] == u'x'
     assert '__builtins__' not in namespace
+
+
+def test_future_imports():
+    document = document_from_sample('codeblock_future_imports.txt')
+    regions = list(CodeBlockParser(['print_function'])(document))
+    assert len(regions) == 2
+    buffer = StringIO()
+    namespace = {'buffer': buffer}
+    assert regions[0].evaluate(namespace) is None
+    assert buffer.getvalue() == (
+        'pathalogical worst case for line numbers\n'
+    )
+    # the future import line drops the firstlineno by 1
+    assert regions[0].parsed.co_firstlineno == 2
+    assert regions[1].evaluate(namespace) is None
+    assert buffer.getvalue() == (
+        'pathalogical worst case for line numbers\n'
+        'still should work and have good line numbers\n'
+    )
+    # the future import line drops the firstlineno by 1
+    assert regions[1].parsed.co_firstlineno == 8
