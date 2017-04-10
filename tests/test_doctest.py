@@ -56,3 +56,11 @@ def test_literals():
     assert regions[1].evaluate({}) == ''
     assert regions[2].evaluate({}) == ''
     assert regions[3].evaluate({}) == ''
+
+
+def test_min_indent():
+    document = document_from_sample('doctest_min_indent.txt')
+    regions = list(DocTestParser()(document))
+    assert len(regions) == 1
+    namespace = document.namespace
+    assert regions[0].evaluate(namespace) == ''

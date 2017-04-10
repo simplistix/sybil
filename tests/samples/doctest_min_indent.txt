@@ -1,0 +1,4 @@
+  Just for the coverage:
+
+  >>> True
+  True
