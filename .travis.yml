@@ -13,7 +13,7 @@ install:
   - "pip install -Ue .[test,build]"
 
 # command to run tests, e.g. python setup.py test
-script: coverage run --source sybil,tests,functional_tests -m py.test
+script: coverage run --timid --source sybil,tests,functional_tests -m py.test
 
 after_success:
   - coveralls
