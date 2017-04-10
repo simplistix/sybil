@@ -149,13 +149,6 @@ class TestDocument(object):
         assert ([(e.line, e.column) for e in document] ==
                 [(1, 1), (2, 6), (4, 4)])
 
-    def test_find_region_sources_incomplete(self):
-        document = Document('X', '/dev/null')
-        start_pattern = re.compile('X')
-        end_pattern = re.compile('Y')
-        actual = list(document.find_region_sources(start_pattern, end_pattern))
-        assert [] == actual
-
 
 def check(letter, parsed, namespace):
     assert namespace == 42

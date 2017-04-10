@@ -18,14 +18,23 @@ def evaluate_code_block(code, namespace):
     del namespace['__builtins__']
 
 
+def find_region_sources(document, start_pattern, end_pattern):
+    for start_match in re.finditer(start_pattern, document.text):
+        source_start = start_match.end()
+        end_match = end_pattern.search(document.text, source_start)
+        source_end = end_match.start()
+        source = document.text[source_start:source_end]
+        yield start_match, end_match, source
+
+
 class CodeBlockParser(object):
 
     def __init__(self, future_imports=()):
         self.future_imports = future_imports
 
     def __call__(self, document):
-        for start_match, end_match, source in document.find_region_sources(
-            CODEBLOCK_START, CODEBLOCK_END
+        for start_match, end_match, source in find_region_sources(
+            document, CODEBLOCK_START, CODEBLOCK_END
         ):
             source = textwrap.dedent(source)
             # There must be a nicer way to get code.co_firstlineno
