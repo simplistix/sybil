@@ -3,6 +3,7 @@ import string
 from textwrap import dedent
 
 from sybil import Region
+from sybil.compat import StringIO
 
 CAPTURE_DIRECTIVE = re.compile(
     r'^(?P<indent>(\t| )*)\.\.\s*->\s*(?P<name>\S+).*$'
@@ -34,7 +35,9 @@ def indent_matches(line, indent):
 class DocumentReverseIterator(list):
 
     def __init__(self, document):
-        self[:] = document.text.splitlines(keepends=True)
+        # using splitlines(keepends=True) would be more explicit
+        # but Python 2 :-(
+        self[:] = StringIO(document.text)
         self.current_line = len(self)
         self.current_line_end_position = len(document.text)
 
