@@ -1,0 +1,6 @@
+The directive here is beyond the indentation of the block::
+
+    Block
+
+        .. -> foo
+

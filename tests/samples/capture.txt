@@ -1,0 +1,40 @@
+A simple example::
+
+  root.txt
+  subdir/
+  subdir/file.txt
+  subdir/logs/
+
+.. -> expected_listing
+
+Respecting indentation
+----------------------
+
+The text captured is determined by the indentation of the capture directive.
+
+::
+
+    First level of indentation.
+
+        Second level of indentation.
+
+            Third level of indentation.
+
+        .. -> foo
+
+Nested directives
+-----------------
+
+If two capture directives are nested, the outer one is effective.
+
+::
+
+    First level of indentation.
+
+        Second level of indentation.
+
+            Third level of indentation.
+
+        .. -> foo
+
+    .. -> bar
