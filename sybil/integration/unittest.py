@@ -16,7 +16,7 @@ class TestCase(BaseTestCase):
 
     def id(self):
         return '{},line:{},column:{}'.format(
-            self.example.path, self.example.line, self.example.column
+            self.example.document.path, self.example.line, self.example.column
         )
 
     __str__ = __repr__ = id

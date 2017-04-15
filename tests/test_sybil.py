@@ -27,9 +27,9 @@ class TestRegion(object):
 
 class TestExample(object):
 
-    def test_repr(self):
+    def test_repr(self, document):
         region = Region(0, 1, 'parsed', 'evaluator')
-        example = Example('/the/path', 1, 2, region, {})
+        example = Example(document, 1, 2, region, {})
         assert (repr(example) ==
                 "<Example path=/the/path line=1 column=2 using 'evaluator'>")
 
@@ -43,11 +43,11 @@ class TestExample(object):
         assert result is None
         assert namespace == {'parsed': 'the data'}
 
-    def test_evaluate_not_okay(self):
+    def test_evaluate_not_okay(self, document):
         def evaluator(parsed, namespace):
             return 'foo!'
         region = Region(0, 1, 'the data', evaluator)
-        example = Example('/the/path', 1, 2, region, {})
+        example = Example(document, 1, 2, region, {})
         with pytest.raises(SybilFailure) as excinfo:
             example.evaluate()
         assert str(excinfo.value) == (
@@ -137,7 +137,7 @@ class TestDocument(object):
 
     def test_example_path(self, document):
         document.add(Region(0, 1, None, None))
-        assert [e.path for e in document] == ['/the/path']
+        assert [e.document for e in document] == [document]
 
     def test_example_line_and_column(self):
         text = 'R1XYZ\nR2XYZ\nR3XYZ\nR4XYZ\nR4XYZ\n'
@@ -232,7 +232,7 @@ def test_namespace(capsys):
                   path='./samples', pattern='*.txt')
     for document in sybil.all_documents():
         for example in document:
-            print(split(example.path)[-1], example.line)
+            print(split(example.document.path)[-1], example.line)
             example.evaluate()
 
     out, _ = capsys.readouterr()

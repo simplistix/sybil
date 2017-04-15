@@ -4,15 +4,15 @@ class SybilFailure(AssertionError):
         super(SybilFailure, self).__init__((
             'Example at {}, line {}, column {} did not evaluate as expected:\n'
             '{}'
-        ).format(example.path, example.line, example.column, result))
+        ).format(example.document.path, example.line, example.column, result))
         self.example = example
         self.result = result
 
 
 class Example(object):
 
-    def __init__(self, path, line, column, region, namespace):
-        self.path = path
+    def __init__(self, document, line, column, region, namespace):
+        self.document = document
         self.line = line
         self.column = column
         self.region = region
@@ -20,7 +20,7 @@ class Example(object):
 
     def __repr__(self):
         return '<Example path={} line={} column={} using {!r}>'.format(
-            self.path, self.line, self.column, self.region.evaluator
+            self.document.path, self.line, self.column, self.region.evaluator
         )
 
     def evaluate(self):

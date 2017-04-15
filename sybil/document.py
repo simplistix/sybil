@@ -37,7 +37,7 @@ class Document(object):
             line += self.text.count('\n', place, region.start)
             line_start = self.text.rfind('\n', place, region.start)
             place = region.start
-            yield Example(self.path,
+            yield Example(self,
                           line, region.start-line_start,
                           region, self.namespace)
 

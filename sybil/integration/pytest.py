@@ -49,7 +49,7 @@ class SybilItem(pytest.Item):
         info = '%s line=%i column=%i' % (
             self.fspath.basename, self.example.line, self.example.column
         )
-        return self.example.path, self.example.line, info
+        return self.example.document.path, self.example.line, info
 
     def getparent(self, cls):
         if cls is Module:
