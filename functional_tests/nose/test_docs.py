@@ -6,10 +6,10 @@ from functools import partial
 from sybil import Sybil, Region
 
 
-def check(letter, parsed, namespace):
-    print(namespace['x'])
-    namespace['x'] += 1
-    text, expected = parsed
+def check(letter, example):
+    print(example.namespace['x'])
+    example.namespace['x'] += 1
+    text, expected = example.parsed
     actual = text.count(letter)
     if actual != expected:
         message = '{} count was {} instead of {}'.format(

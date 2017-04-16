@@ -13,9 +13,13 @@ class Example(object):
 
     def __init__(self, document, line, column, region, namespace):
         self.document = document
+        self.path = document.path
         self.line = line
         self.column = column
         self.region = region
+        self.start = region.start
+        self.end = region.end
+        self.parsed = region.parsed
         self.namespace = namespace
 
     def __repr__(self):
@@ -24,6 +28,6 @@ class Example(object):
         )
 
     def evaluate(self):
-        result = self.region.evaluate(self.namespace)
+        result = self.region.evaluator(self)
         if result:
             raise SybilFailure(self, result)

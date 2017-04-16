@@ -10,9 +10,9 @@ CAPTURE_DIRECTIVE = re.compile(
 )
 
 
-def evaluate_capture(parsed, namespace):
-    name, text = parsed
-    namespace[name] = text
+def evaluate_capture(example):
+    name, text = example.parsed
+    example.namespace[name] = text
 
 
 def indent_matches(line, indent):

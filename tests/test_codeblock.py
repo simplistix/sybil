@@ -1,7 +1,7 @@
 import pytest
 from sybil.compat import StringIO
 from sybil.parsers.codeblock import CodeBlockParser
-from tests.helpers import document_from_sample
+from tests.helpers import document_from_sample, evaluate_region
 
 
 def test_basic():
@@ -10,16 +10,16 @@ def test_basic():
     assert len(regions) == 4
     namespace = document.namespace
     namespace['y'] = namespace['z'] = 0
-    assert regions[0].evaluate(namespace) is None
+    assert evaluate_region(regions[0], namespace) is None
     assert namespace['y'] == 1
     assert namespace['z'] == 0
     with pytest.raises(Exception) as excinfo:
-        regions[1].evaluate(namespace)
+        evaluate_region(regions[1], namespace)
     assert str(excinfo.value) == 'boom!'
-    assert regions[2].evaluate(namespace) is None
+    assert evaluate_region(regions[2], namespace) is None
     assert namespace['y'] == 1
     assert namespace['z'] == 1
-    assert regions[3].evaluate(namespace) is None
+    assert evaluate_region(regions[3], namespace) is None
     assert namespace['bin'] == b'x'
     assert namespace['uni'] == u'x'
     assert '__builtins__' not in namespace
@@ -31,13 +31,13 @@ def test_future_imports():
     assert len(regions) == 2
     buffer = StringIO()
     namespace = {'buffer': buffer}
-    assert regions[0].evaluate(namespace) is None
+    assert evaluate_region(regions[0], namespace) is None
     assert buffer.getvalue() == (
         'pathalogical worst case for line numbers\n'
     )
     # the future import line drops the firstlineno by 1
     assert regions[0].parsed.co_firstlineno == 2
-    assert regions[1].evaluate(namespace) is None
+    assert evaluate_region(regions[1], namespace) is None
     assert buffer.getvalue() == (
         'pathalogical worst case for line numbers\n'
         'still should work and have good line numbers\n'

@@ -12,10 +12,10 @@ CODEBLOCK_END = re.compile(r'(\n\Z|\n(?=\S))')
 CODEBLOCK_INITIAL_WHITESPACE = re.compile('\s*')
 
 
-def evaluate_code_block(code, namespace):
-    exec(code, namespace)
+def evaluate_code_block(example):
+    exec(example.parsed, example.namespace)
     # exec adds __builtins__, we don't want it:
-    del namespace['__builtins__']
+    del example.namespace['__builtins__']
 
 
 class CodeBlockParser(object):

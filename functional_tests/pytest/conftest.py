@@ -36,7 +36,8 @@ def session_fixture():
     print('session_fixture teardown')
 
 
-def check(letter, parsed, namespace):
+def check(letter, example):
+    namespace = example.namespace
     for name in (
         'x', 'session_fixture', 'module_fixture',
         'class_fixture', 'function_fixture'
@@ -44,7 +45,7 @@ def check(letter, parsed, namespace):
         print(namespace[name], end='')
     print(end=' ')
     namespace['x'] += 1
-    text, expected = parsed
+    text, expected = example.parsed
     actual = text.count(letter)
     if actual != expected:
         message = '{} count was {} instead of {}'.format(

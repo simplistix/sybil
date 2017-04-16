@@ -87,7 +87,9 @@ class DocTestParser(BaseDocTestParser):
             # Update charno.
             charno = m.end()
 
-    def evaluate(self, example, namespace):
+    def evaluate(self, sybil_example):
+        example = sybil_example.parsed
+        namespace = sybil_example.namespace
         output = []
         self.runner.run(
             DocTest([example], namespace, name=None,

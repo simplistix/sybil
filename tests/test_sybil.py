@@ -33,18 +33,18 @@ class TestExample(object):
         assert (repr(example) ==
                 "<Example path=/the/path line=1 column=2 using 'evaluator'>")
 
-    def test_evaluate_okay(self):
-        def evaluator(parsed, namespace):
-            namespace['parsed'] = parsed
+    def test_evaluate_okay(self, document):
+        def evaluator(example):
+            example.namespace['parsed'] = example.parsed
         region = Region(0, 1, 'the data', evaluator)
         namespace = {}
-        example = Example('/the/path', 1, 2, region, namespace)
+        example = Example(document, 1, 2, region, namespace)
         result = example.evaluate()
         assert result is None
         assert namespace == {'parsed': 'the data'}
 
     def test_evaluate_not_okay(self, document):
-        def evaluator(parsed, namespace):
+        def evaluator(example):
             return 'foo!'
         region = Region(0, 1, 'the data', evaluator)
         example = Example(document, 1, 2, region, {})
@@ -57,11 +57,11 @@ class TestExample(object):
         assert excinfo.value.example is example
         assert excinfo.value.result == 'foo!'
 
-    def test_evaluate_raises_exception(self):
-        def evaluator(parsed, namespace):
+    def test_evaluate_raises_exception(self, document):
+        def evaluator(example):
             raise ValueError('foo!')
         region = Region(0, 1, 'the data', evaluator)
-        example = Example('/the/path', 1, 2, region, {})
+        example = Example(document, 1, 2, region, {})
         with pytest.raises(ValueError) as excinfo:
             example.evaluate()
         assert str(excinfo.value) == 'foo!'
@@ -215,7 +215,8 @@ class TestSybil(object):
                  'Y count was 3, as expected'])
 
 
-def check_into_namespace(parsed, namespace):
+def check_into_namespace(example):
+    parsed, namespace = example.region.parsed, example.namespace
     if 'parsed' not in namespace:
         namespace['parsed'] = []
     namespace['parsed'].append(parsed)

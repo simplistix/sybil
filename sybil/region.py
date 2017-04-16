@@ -9,6 +9,3 @@ class Region(object):
         return '<Region start={} end={} {!r}>'.format(
             self.start, self.end, self.evaluator
         )
-
-    def evaluate(self, namespace):
-        return self.evaluator(self.parsed, namespace)
