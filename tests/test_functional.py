@@ -1,12 +1,12 @@
 import sys
-from os.path import split, join
+from os.path import dirname, join
 from unittest.main import main as unittest_main
 from unittest.runner import TextTestRunner
 
 from nose.core import run_exit as NoseMain, TextTestRunner as NoseRunner
 from pytest import main as pytest_main
 
-functional_test_dir = join(*(split(__file__)[:-2]+('functional_tests', )))
+functional_test_dir = join(dirname(__file__), 'functional')
 
 
 class Finder(object):
@@ -101,7 +101,7 @@ def test_pytest(capsys):
     out.then_find(  ">   raise Exception('the start!')")
     out.then_find('_ fail.rst line=8 column=1 _')
     out.then_find('Y count was 3 instead of 2')
-    out.then_find('functional_tests/pytest/fail.rst:8: SybilFailure')
+    out.then_find('functional/pytest/fail.rst:8: SybilFailure')
     out.then_find('_ fail.rst line=10 column=1 _')
     out.then_find('ValueError: X count was 3 instead of 4')
     out.then_find('_ fail.rst line=14 column=1 _')
