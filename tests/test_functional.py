@@ -101,7 +101,7 @@ def test_pytest(capsys):
     out.then_find(  ">   raise Exception('the start!')")
     out.then_find('_ fail.rst line=8 column=1 _')
     out.then_find('Y count was 3 instead of 2')
-    out.then_find('functional/pytest/fail.rst:8: SybilFailure')
+    out.then_find('fail.rst:8: SybilFailure')
     out.then_find('_ fail.rst line=10 column=1 _')
     out.then_find('ValueError: X count was 3 instead of 4')
     out.then_find('_ fail.rst line=14 column=1 _')
@@ -128,11 +128,13 @@ def common_checks(out):
     out.then_find('fail.rst,line:8,column:1')
     out.then_find('Y count was 3 instead of 2')
 
+
 def test_unittest(capsys):
     runner = TextTestRunner(verbosity=2, stream=sys.stdout)
+    path = join(functional_test_dir, 'functional_unittest')
     main = unittest_main(
         exit=False, module=None, testRunner=runner,
-        argv=['x', 'discover', '-v', join(functional_test_dir, 'unittest')]
+        argv=['x', 'discover', '-v', '-t', path, '-s', path]
     )
     out, err = capsys.readouterr()
     assert err == ''
