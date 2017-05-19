@@ -1,7 +1,10 @@
 from os import chdir, getcwd
 from shutil import rmtree
 from tempfile import mkdtemp
-from sybil import Sybil, DocTestParser, CodeBlockParser
+from sybil import Sybil
+from sybil.parsers.codeblock import CodeBlockParser
+from sybil.parsers.doctest import DocTestParser
+
 
 def sybil_setup(namespace):
     # there are better ways to do temp directories, but it's a simple example:
