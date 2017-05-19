@@ -1,9 +1,8 @@
 import sys
-from os import pardir, getcwd, chdir
+from os import pardir
 from os.path import dirname, join
 from unittest.main import main as unittest_main
 from unittest.runner import TextTestRunner
-
 from nose.core import run_exit as NoseMain, TextTestRunner as NoseRunner
 from pytest import main as pytest_main
 
@@ -46,7 +45,7 @@ def test_nose(capsys):
 
     main = ResultStoringMain(
         module=None,
-        argv=['x', join(example_dir, 'nose')]
+        argv=['x', join(example_dir, 'example_nose')]
     )
     assert main.result.testsRun == 3
     assert len(main.result.failures) == 0

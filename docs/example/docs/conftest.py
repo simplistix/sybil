@@ -2,7 +2,9 @@ from os import chdir, getcwd
 from shutil import rmtree
 from tempfile import mkdtemp
 import pytest
-from sybil import Sybil, DocTestParser, CodeBlockParser
+from sybil import Sybil
+from sybil.parsers.codeblock import CodeBlockParser
+from sybil.parsers.doctest import DocTestParser
 
 @pytest.fixture(scope="module")
 def tempdir():

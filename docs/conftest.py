@@ -1,7 +1,7 @@
 from doctest import ELLIPSIS
-
-from sybil import Sybil, DocTestParser, CodeBlockParser
-from sybil.parsers.doctest import FIX_BYTE_UNICODE_REPR
+from sybil import Sybil
+from sybil.parsers.codeblock import CodeBlockParser
+from sybil.parsers.doctest import DocTestParser, FIX_BYTE_UNICODE_REPR
 
 pytest_collect_file = Sybil(
     parsers=[

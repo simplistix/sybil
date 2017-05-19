@@ -1,7 +1,6 @@
 from doctest import REPORT_NDIFF, ELLIPSIS
 
-from sybil import DocTestParser
-from sybil.parsers.doctest import FIX_BYTE_UNICODE_REPR
+from sybil.parsers.doctest import DocTestParser, FIX_BYTE_UNICODE_REPR
 from tests.helpers import document_from_sample, evaluate_region
 
 
