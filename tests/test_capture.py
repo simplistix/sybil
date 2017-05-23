@@ -21,7 +21,11 @@ def test_basic():
         'Second level of indentation.\n\n'
         '    Third level of indentation.\n\n.. -> foo\n'
     )
-    assert len(regions) == 3
+    assert evaluate_region(regions[-4], namespace) is None
+    assert namespace['another'] == (
+        'example\n'
+    )
+    assert len(regions) == 4
 
 
 def test_directive_indent_beyond_block():

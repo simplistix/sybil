@@ -6,7 +6,7 @@ from sybil import Region
 from sybil.compat import StringIO
 
 CAPTURE_DIRECTIVE = re.compile(
-    r'^(?P<indent>(\t| )*)\.\.\s*->\s*(?P<name>\S+).*$'
+    r'^(?P<indent>(\t| )*)\.\.\s*-+>\s*(?P<name>\S+).*$'
 )
 
 

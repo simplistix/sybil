@@ -38,3 +38,10 @@ If two capture directives are nested, the outer one is effective.
         .. -> foo
 
     .. -> bar
+
+That holds true even if more dashes are included::
+
+    example
+
+.. --> another
+
