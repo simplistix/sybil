@@ -4,7 +4,10 @@ import sys, os, pkginfo, datetime
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 pkg_info = pkginfo.Develop(os.path.join(os.path.dirname(__file__),'..'))
 
-intersphinx_mapping = {'http://docs.python.org': None}
+intersphinx_mapping = {
+    'https://docs.python.org/3/': None,
+    'http://www.sphinx-doc.org/en/stable/': None,
+}
 
 extensions = [
     'sphinx.ext.autodoc',
@@ -19,7 +22,9 @@ copyright = '%s Chris Withers' % datetime.datetime.now().year
 version = release = pkg_info.version
 exclude_patterns = [
     'description.rst',
-    '_build'
+    '_build',
+    'example.rst',
+    'example',
 ]
 pygments_style = 'sphinx'
 
