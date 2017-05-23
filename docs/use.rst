@@ -30,10 +30,10 @@ Sybil works by discovering a series of
 :doc:`parsed <parsers>` into a set of non-overlapping
 :class:`regions <sybil.Region>`. When the tests are run, the
 :ref:`test runner integration <integrations>` turns each :class:`~sybil.Region`
-into an :class:`~sybil.example.Example` and then all of the examples for a
-particular :class:`~sybil.document.Document` are then executed in that
-document's :class:`~sybil.document.Document.namespace` in the order in which
-they appear in the document.
+into an :class:`~sybil.example.Example` before evaluating each
+:class:`~sybil.example.Example` in the document's
+:class:`~sybil.document.Document.namespace`. The examples are evaluated
+in the order in which they appear in the document.
 If an example does not evaluate as expected, a test failure occurs and Sybil
 continues on to evaluate the remaining
 :class:`examples <sybil.example.Example>` in the
