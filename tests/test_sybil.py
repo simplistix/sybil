@@ -120,7 +120,10 @@ class TestDocument(object):
         with pytest.raises(ValueError) as excinfo:
             document.add(region2)
         assert str(excinfo.value) == (
-            '<Region start=0 end=2 None> overlaps <Region start=1 end=3 None>'
+            '<Region start=0 end=2 None>'
+            ' from line 1, column 1 to line 1, column 3 overlaps '
+            '<Region start=1 end=3 None>'
+            ' from line 1, column 2 to line 1, column 4'
         )
 
     def test_add_overlaps_with_next(self, document):
@@ -132,7 +135,10 @@ class TestDocument(object):
         with pytest.raises(ValueError) as excinfo:
             document.add(region2)
         assert str(excinfo.value) == (
-            '<Region start=1 end=3 None> overlaps <Region start=2 end=4 None>'
+            '<Region start=1 end=3 None> '
+            'from line 1, column 2 to line 1, column 4 overlaps '
+            '<Region start=2 end=4 None> '
+            'from line 1, column 3 to line 1, column 5'
         )
 
     def test_example_path(self, document):

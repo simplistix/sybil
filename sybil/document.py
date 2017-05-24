@@ -13,6 +13,21 @@ class Document(object):
         self.regions = []
         self.namespace = {}
 
+    def line_column(self, position):
+        line = self.text.count('\n', 0, position)+1
+        col = position - self.text.rfind('\n', 0, position)
+        return 'line {}, column {}'.format(line, col)
+
+    def raise_overlap(self, *regions):
+        reprs = []
+        for region in regions:
+            reprs.append('{!r} from {} to {}'.format(
+                region,
+                self.line_column(region.start),
+                self.line_column(region.end)
+            ))
+        raise ValueError('{} overlaps {}'.format(*reprs))
+
     def add(self, region):
         if region.start < 0:
             raise ValueError('{!r} is before start of document'.format(region))
@@ -23,11 +38,11 @@ class Document(object):
         if index > 0:
             previous = self.regions[index-1][1]
             if previous.end > region.start:
-                raise ValueError('{!r} overlaps {!r}'.format(previous, region))
+                self.raise_overlap(previous, region)
         if index < len(self.regions):
             next = self.regions[index][1]
             if next.start < region.end:
-                raise ValueError('{!r} overlaps {!r}'.format(region, next))
+                self.raise_overlap(region, next)
         self.regions.insert(index, entry)
 
     def __iter__(self):
