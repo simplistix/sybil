@@ -45,8 +45,8 @@ class DocumentReverseIterator(list):
         while self.current_line > 0:
             self.current_line -= 1
             line = self[self.current_line]
-            yield self.current_line, line
             self.current_line_end_position -= len(line)
+            yield self.current_line, line
 
 
 def parse_captures(document):
