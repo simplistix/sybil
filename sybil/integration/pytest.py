@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 
 from inspect import getsourcefile
+from os.path import abspath
+
 from _pytest._code.code import TerminalRepr, Traceback
 from _pytest import fixtures
 from _pytest.fixtures import FuncFixtureInfo
@@ -10,7 +12,7 @@ import pytest
 from ..example import SybilFailure
 from .. import example
 
-example_module_path = getsourcefile(example)
+example_module_path = abspath(getsourcefile(example))
 
 
 class SybilFailureRepr(TerminalRepr):
