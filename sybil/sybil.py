@@ -10,8 +10,12 @@ class Sybil(object):
     def __init__(self, parsers, pattern, path='.',
                  setup=None, teardown=None, fixtures=()):
         self.parsers = parsers
-        start_dir = dirname(sys._getframe(1).f_globals.get('__file__'))
-        self.path = abspath(join(start_dir, path))
+        calling_filename = sys._getframe(1).f_globals.get('__file__')
+        if calling_filename:
+            start_path = join(dirname(calling_filename), path)
+        else:
+            start_path = path
+        self.path = abspath(start_path)
         self.pattern = pattern
         self.setup = setup
         self.teardown = teardown
