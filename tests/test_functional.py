@@ -35,7 +35,7 @@ def test_pytest(capsys):
 
     out, err = capsys.readouterr()
     # check we're trimming tracebacks:
-    assert 'sybil/region.py' not in out
+    assert 'sybil/example.py' not in out
 
     out = Finder(out)
     out.then_find('fail.rst::line:1,column:1')

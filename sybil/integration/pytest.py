@@ -8,9 +8,9 @@ from _pytest.python import Module
 import pytest
 
 from ..example import SybilFailure
-from .. import region
+from .. import example
 
-region_path = getsourcefile(region)
+example_module_path = getsourcefile(example)
 
 
 class SybilFailureRepr(TerminalRepr):
@@ -66,7 +66,7 @@ class SybilItem(pytest.Item):
     def _prunetraceback(self, excinfo):
         # Messier than it could be because slicing a list subclass in
         # Python 2 returns a list, not an instance of the subclass.
-        tb = excinfo.traceback.cut(path=region_path)
+        tb = excinfo.traceback.cut(path=example_module_path)
         try:
             tb = tb[1]
         except IndexError:
