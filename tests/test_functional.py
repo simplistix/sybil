@@ -35,7 +35,9 @@ def test_pytest(capsys):
 
     out, err = capsys.readouterr()
     # check we're trimming tracebacks:
-    assert 'sybil/example.py' not in out
+    index = out.find('sybil/example.py')
+    if index > -1:  # pragma: no cover
+        raise AssertionError('\n'+out[index-500:index+500])
 
     out = Finder(out)
     out.then_find('fail.rst::line:1,column:1')
