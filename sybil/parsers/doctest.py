@@ -13,9 +13,14 @@ from doctest import (
 from ..compat import PY3
 from ..region import Region
 
-FIX_BYTE_UNICODE_REPR = register_optionflag('FIX_BYTE_UNICODE_REPR')
 BYTE_LITERAL = re.compile(r"b((['\"])[^\2]*\2)", re.MULTILINE)
 UNICODE_LITERAL = re.compile(r"u((['\"])[^\2]*\2)", re.MULTILINE)
+
+#: A :ref:`doctest option flag<option-flags-and-directives>` that
+#: causes byte and unicode literals in doctest expected
+#: output to be rewritten such that they are compatible with the version of
+#: Python with which the tests are executed.
+FIX_BYTE_UNICODE_REPR = register_optionflag('FIX_BYTE_UNICODE_REPR')
 
 
 class DocTest(BaseDocTest):
@@ -45,7 +50,14 @@ def fix_byte_unicode_repr(want):
 
 
 class DocTestParser(BaseDocTestParser):
-
+    """
+    A class to instantiate and include when your documentation makes use of
+    :ref:`capture-doctest` examples.
+     
+    :param optionflags: 
+        :ref:`doctest option flags<option-flags-and-directives>` to use
+        when evaluating the examples found by this parser.
+    """
     def __init__(self, optionflags=0):
         self.runner = DocTestRunner(optionflags=optionflags)
 

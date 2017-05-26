@@ -6,6 +6,8 @@ and turns them into parsed examples with evaluators that can check if they
 are as expected. A number of parsers are included, and it's simple enough to
 write your own. The included parsers are as follows:
 
+.. _capture-doctest:
+
 doctest
 -------
 
@@ -17,13 +19,15 @@ The parser can optionally be instantiated with
 An additional option flag, :attr:`sybil.parsers.doctest.FIX_BYTE_UNICODE_REPR`, is provided.
 When used, this flag causes byte and unicode literals in doctest expected
 output to be rewritten such that they are compatible with the version of
-Python with with the tests are executed. If your example output includes either
+Python with which the tests are executed. If your example output includes either
 ``b'...'`` or ``u'...'`` and your code is expected to run under both Python 2
 and Python 3, then you will likely need this option.
 
 The parser is used by instantiating :class:`sybil.parsers.doctest.DocTestParser`
 with the required options and passing it as an element in the list passed as the
 ``parsers`` parameter to :class:`~sybil.Sybil`.
+
+.. _capture-codeblock:
 
 codeblock
 ---------
@@ -69,6 +73,8 @@ instantiate the parser as follows:
   from sybil.parsers.codeblock import CodeBlockParser
 
   CodeBlockParser(future_imports=['print_function'])
+
+.. _capture-parser:
 
 capture
 -------
@@ -122,7 +128,7 @@ Developing your own parsers
 Sybil parsers are callables that take a
 :class:`sybil.document.Document` and yield a sequence of
 :class:`regions <sybil.Region>`. A :class:`~sybil.Region` contains
-the byte position of the start and end of the example in the document's
+the character position of the start and end of the example in the document's
 :attr:`~sybil.document.Document.text`, along with a parsed version of the
 example and a callable evaluator. That evaluator will be called with an
 :class:`~sybil.example.Example` constructed from the

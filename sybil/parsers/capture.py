@@ -16,7 +16,7 @@ def evaluate_capture(example):
 
 
 def indent_matches(line, indent):
-    """Is the indentation of a line match what we're looking for?"""
+    # Is the indentation of a line match what we're looking for?
 
     if not line.strip():
         # the line consists entirely of whitespace (or nothing at all),
@@ -50,6 +50,10 @@ class DocumentReverseIterator(list):
 
 
 def parse_captures(document):
+    """
+    A parser function to be included when your documentation makes use of
+    :ref:`capture-parser` examples.
+    """
     lines = DocumentReverseIterator(document)
 
     for end_index, line in lines:

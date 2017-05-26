@@ -56,6 +56,8 @@ will be tested. They use :ref:`doctests <doctest-simple-testfile>`,
 .. literalinclude:: example/docs/example.rst
   :language: rest
 
+.. _pytest_integration:
+
 pytest
 ~~~~~~
 
@@ -84,6 +86,8 @@ The ``setup`` and ``teardown`` parameters can still be used to pass
 
 The ``path`` parameter, however, is ignored.
 
+.. _unitttest_integration:
+
 unittest
 ~~~~~~~~
 
@@ -107,6 +111,8 @@ which are both called with the :class:`~sybil.document.Document`
 :class:`~sybil.document.Document.namespace`.
 
 The ``fixtures`` parameter, is ignored.
+
+.. _nose_integration:
 
 nose
 ~~~~

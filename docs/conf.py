@@ -38,3 +38,4 @@ latex_documents = [
    'Chris Withers', 'manual'),
 ]
 
+autodoc_member_order = 'bysource'

@@ -19,6 +19,15 @@ def evaluate_code_block(example):
 
 
 class CodeBlockParser(object):
+    """
+    A class to instantiate and include when your documentation makes use of
+    :ref:`capture-codeblock` examples.
+     
+    :param future_imports: 
+        An optional list of strings that will be turned into
+        ``from __future__ import ...`` statements and prepended to the code
+        in each of the examples found by this parser.
+    """
 
     def __init__(self, future_imports=()):
         self.future_imports = future_imports

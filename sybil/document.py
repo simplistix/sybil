@@ -5,12 +5,20 @@ from .example import Example
 
 
 class Document(object):
+    """
+    This is Sybil's representation of a documentation source file.
+    It will be instantiated by Sybil and provided to each parser in turn.
+    """
 
     def __init__(self, text, path):
+        #: This is the text of the documentation source file.
         self.text = text
+        #: This is the absolute path of the documentation source file.
         self.path = path
         self.end = len(text)
         self.regions = []
+        #: This dictionary is the namespace in which all example parsed from
+        #: this document will be evaluated.
         self.namespace = {}
 
     def line_column(self, position):
@@ -57,6 +65,18 @@ class Document(object):
                           region, self.namespace)
 
     def find_region_sources(self, start_pattern, end_pattern):
+        """
+        This helper method can be called used to extract source text
+        for regions based on the two :ref:`regular expressions <re-objects>`
+        provided.
+        
+        It will yield a tuple of ``(start_match, end_match, source)`` for each 
+        occurrence of ``start_pattern`` in the document's 
+        :attr:`~Document.text` that is followed by an
+        occurrence of ``end_pattern``.
+        The matches will be provided as :ref:`match objects <match-objects>`,
+        while the source is provided as a string.
+        """
         for start_match in re.finditer(start_pattern, self.text):
             source_start = start_match.end()
             end_match = end_pattern.search(self.text, source_start)
