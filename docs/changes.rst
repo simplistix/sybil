@@ -1,7 +1,7 @@
 Changes
 =======
 
-X.Y.Z (XX Mar 2017)
+1.0.0 (26 May 2017)
 -------------------
 
 - Initial release
