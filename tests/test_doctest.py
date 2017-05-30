@@ -50,11 +50,12 @@ def test_fail_with_options():
 def test_literals():
     document = document_from_sample('doctest_literals.txt')
     regions = list(DocTestParser(FIX_BYTE_UNICODE_REPR)(document))
-    assert len(regions) == 4
+    assert len(regions) == 5
     assert evaluate_region(regions[0], {}) == ''
     assert evaluate_region(regions[1], {}) == ''
     assert evaluate_region(regions[2], {}) == ''
     assert evaluate_region(regions[3], {}) == ''
+    assert evaluate_region(regions[4], {}) == ''
 
 
 def test_min_indent():

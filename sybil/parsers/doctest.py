@@ -81,6 +81,8 @@ class DocTestParser(BaseDocTestParser):
 
             if self.runner.optionflags & FIX_BYTE_UNICODE_REPR:
                 want = fix_byte_unicode_repr(want)
+                if exc_msg:
+                    exc_msg = fix_byte_unicode_repr(exc_msg)
 
             # Create an Example, and add it to the list.
             if not self._IS_BLANK_OR_COMMENT(source):

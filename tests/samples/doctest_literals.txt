@@ -9,3 +9,8 @@
 
 >>> repr(u"'")
 'u"\'"'
+
+>>> raise Exception(repr(u'uh oh'))
+Traceback (most recent call last):
+...
+Exception: u'uh oh'
