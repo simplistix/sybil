@@ -7,7 +7,7 @@ from tests.helpers import document_from_sample, evaluate_region
 def test_basic():
     document = document_from_sample('codeblock.txt')
     regions = list(CodeBlockParser()(document))
-    assert len(regions) == 4
+    assert len(regions) == 5
     namespace = document.namespace
     namespace['y'] = namespace['z'] = 0
     assert evaluate_region(regions[0], namespace) is None
@@ -22,6 +22,8 @@ def test_basic():
     assert evaluate_region(regions[3], namespace) is None
     assert namespace['bin'] == b'x'
     assert namespace['uni'] == u'x'
+    assert evaluate_region(regions[4], namespace) is None
+    assert 'NoVars' in namespace
     assert '__builtins__' not in namespace
 
 

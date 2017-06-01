@@ -24,3 +24,10 @@ This paranoidly checks that we can use binary and unicode literals:
 
   bin = b'x'
   uni = u'x'
+
+- Here's a code block that should still be found!:
+
+  .. code-block:: python
+
+    class NoVars(object):
+         __slots__ = ['x']

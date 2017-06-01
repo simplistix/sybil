@@ -4,12 +4,11 @@ import textwrap
 from sybil import Region
 
 CODEBLOCK_START = re.compile(
-    r'^\.\.\s*(invisible-)?code(-block)?::?\s*python\b'
+    r'^[ \t]*\.\.\s*(invisible-)?code(-block)?::?\s*python\b'
     r'(?:\s*\:[\w-]+\:.*\n)*'
     r'(?:\s*\n)*',
     re.MULTILINE)
 CODEBLOCK_END = re.compile(r'(\n\Z|\n(?=\S))')
-CODEBLOCK_INITIAL_WHITESPACE = re.compile('\s*')
 
 
 def evaluate_code_block(example):
