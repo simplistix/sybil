@@ -1,6 +1,12 @@
 Changes
 =======
 
+1.0.3 (2 June 2017)
+-------------------
+
+- Fix bug in :func:`~sybil.parsers.codeblock.CodeBlockParser` where it
+  would incorrectly parse indented code blocks.
+
 1.0.2 (1 June 2017)
 -------------------
 
