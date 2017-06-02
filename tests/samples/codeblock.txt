@@ -31,3 +31,12 @@ This paranoidly checks that we can use binary and unicode literals:
 
     class NoVars(object):
          __slots__ = ['x']
+
+  This one has some text after it that also forms part of the bullet.
+
+- Here's another code block that should still be found!:
+
+  .. code-block:: python
+
+    class YesVars(object):
+         __slots__ = ['x']
