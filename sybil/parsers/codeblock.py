@@ -33,8 +33,8 @@ class CodeBlockParser(object):
     def __call__(self, document):
         for start_match in re.finditer(CODEBLOCK_START, document.text):
             source_start = start_match.end()
-            indent = start_match.group('indent')
-            end_pattern = re.compile(r'(\n\Z|\n'+indent+'(?=\S))')
+            indent = str(len(start_match.group('indent')))
+            end_pattern = re.compile(r'(\n\Z|\n[ \t]{0,'+indent+'}(?=\S))')
             end_match = end_pattern.search(document.text, source_start)
             source_end = end_match.start()
             source = textwrap.dedent(document.text[source_start:source_end])

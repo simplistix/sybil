@@ -34,6 +34,14 @@ This paranoidly checks that we can use binary and unicode literals:
 
   This one has some text after it that also forms part of the bullet.
 
+- Another bullet:
+
+  .. code-block:: python
+
+    define_this = 1
+
+- A following bullet straight away!
+
 - Here's another code block that should still be found!:
 
   .. code-block:: python
