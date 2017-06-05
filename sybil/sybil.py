@@ -63,7 +63,7 @@ class Sybil(object):
         return document
 
     def all_documents(self):
-        for path in glob(join(self.path, self.pattern)):
+        for path in sorted(glob(join(self.path, self.pattern))):
             yield self.parse(path)
 
     def pytest(self):
