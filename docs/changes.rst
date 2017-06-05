@@ -1,6 +1,13 @@
 Changes
 =======
 
+1.0.4 (5 June 2017)
+-------------------
+
+- Fix another bug in :func:`~sybil.parsers.codeblock.CodeBlockParser` where
+  a :rst:dir:`code-block` followed by a less-indented block would be
+  incorrectly indented, resulting in a :class:`SyntaxError`.
+
 1.0.3 (2 June 2017)
 -------------------
 
