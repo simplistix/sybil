@@ -1,6 +1,12 @@
 Changes
 =======
 
+1.0.5 (6 June 2017)
+-------------------
+
+- Fix ordering issue that would cause some tests to fail when run on systems
+  using tmpfs.
+
 1.0.4 (5 June 2017)
 -------------------
 
