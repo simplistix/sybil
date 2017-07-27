@@ -10,6 +10,7 @@ python:
   - "3.6"
 
 install:
+  - "pip install --upgrade pip setuptools"
   - "pip install -Ue .[test,build]"
 
 # command to run tests, e.g. python setup.py test
