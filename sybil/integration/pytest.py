@@ -6,6 +6,7 @@ from os.path import abspath
 from _pytest._code.code import TerminalRepr, Traceback
 from _pytest import fixtures
 from _pytest.fixtures import FuncFixtureInfo
+from _pytest.main import Session
 from _pytest.python import Module
 import pytest
 
@@ -56,6 +57,8 @@ class SybilItem(pytest.Item):
     def getparent(self, cls):
         if cls is Module:
             return self.parent
+        if cls is Session:
+            return self.session
 
     def setup(self):
         fixtures.fillfixtures(self)
