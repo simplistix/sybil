@@ -1,6 +1,13 @@
 Changes
 =======
 
+1.0.6 (30 November 2017)
+------------------------
+
+- Fix compatibility with pytest 3.3+.
+
+Thanks to Bruno Oliveira for this fix!
+
 1.0.5 (6 June 2017)
 -------------------
 
