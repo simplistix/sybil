@@ -1,0 +1,2 @@
+>>> handler = SummarisingLogger('from@example.com',('to@example.com',),
+...				   username='auser',password='theirpassword')

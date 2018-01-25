@@ -1,7 +1,10 @@
 from doctest import REPORT_NDIFF, ELLIPSIS
 
+import pytest
+
+from sybil.document import Document
 from sybil.parsers.doctest import DocTestParser, FIX_BYTE_UNICODE_REPR
-from tests.helpers import document_from_sample, evaluate_region
+from tests.helpers import document_from_sample, evaluate_region, sample_path
 
 
 def test_pass():
@@ -64,3 +67,12 @@ def test_min_indent():
     assert len(regions) == 1
     namespace = document.namespace
     assert evaluate_region(regions[0], namespace) == ''
+
+def test_tabs():
+    path = sample_path('doctest_tabs.txt')
+    parser = DocTestParser(optionflags=REPORT_NDIFF|ELLIPSIS)
+    with pytest.raises(ValueError) as excinfo:
+        Document.parse(path, parser)
+    assert str(excinfo.value) == (
+        'tabs are not supported, first one found at line 2, column 4'
+    )
