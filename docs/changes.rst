@@ -1,6 +1,13 @@
 Changes
 =======
 
+1.0.7 (25 January 2018)
+-----------------------
+
+- Literal tabs may no longer be included in text that is parsed by the
+  :class:`~sybil.parsers.doctest.DocTestParser`. Previously, tabs were
+  expanded which could unpleasant problems.
+
 1.0.6 (30 November 2017)
 ------------------------
 
@@ -17,7 +24,7 @@ Thanks to Bruno Oliveira for this fix!
 1.0.4 (5 June 2017)
 -------------------
 
-- Fix another bug in :func:`~sybil.parsers.codeblock.CodeBlockParser` where
+- Fix another bug in :class:`~sybil.parsers.codeblock.CodeBlockParser` where
   a :rst:dir:`code-block` followed by a less-indented block would be
   incorrectly indented, resulting in a :class:`SyntaxError`.
 
