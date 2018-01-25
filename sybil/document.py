@@ -21,6 +21,20 @@ class Document(object):
         #: this document will be evaluated.
         self.namespace = {}
 
+    @classmethod
+    def parse(cls, path, *parsers):
+        """
+        Read the text from the supplied path and parse it into a document
+        using the supplied parsers.
+        """
+        with open(path) as source:
+            text = source.read()
+        document = cls(text, path)
+        for parser in parsers:
+            for region in parser(document):
+                document.add(region)
+        return document
+
     def line_column(self, position):
         """
         Return a line and column location in this document based on a byte

@@ -54,13 +54,7 @@ class Sybil(object):
         self.fixtures = fixtures
 
     def parse(self, path):
-        with open(path) as source:
-            text = source.read()
-        document = Document(text, path)
-        for parser in self.parsers:
-            for region in parser(document):
-                document.add(region)
-        return document
+        return Document.parse(path, *self.parsers)
 
     def all_documents(self):
         for path in sorted(glob(join(self.path, self.pattern))):
