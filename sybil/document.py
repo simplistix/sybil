@@ -26,21 +26,28 @@ class Document(object):
         col = position - self.text.rfind('\n', 0, position)
         return 'line {}, column {}'.format(line, col)
 
+    def region_details(self, region):
+        return '{!r} from {} to {}'.format(
+            region,
+            self.line_column(region.start),
+            self.line_column(region.end)
+        )
+
     def raise_overlap(self, *regions):
         reprs = []
         for region in regions:
-            reprs.append('{!r} from {} to {}'.format(
-                region,
-                self.line_column(region.start),
-                self.line_column(region.end)
-            ))
+            reprs.append(self.region_details(region))
         raise ValueError('{} overlaps {}'.format(*reprs))
 
     def add(self, region):
         if region.start < 0:
-            raise ValueError('{!r} is before start of document'.format(region))
+            raise ValueError('{} is before start of document'.format(
+                self.region_details(region)
+            ))
         if region.end > self.end:
-            raise ValueError('{!r} goes beyond end of document'.format(region))
+            raise ValueError('{} goes beyond end of document'.format(
+                self.region_details(region)
+            ))
         entry = (region.start, region)
         index = bisect(self.regions, entry)
         if index > 0:

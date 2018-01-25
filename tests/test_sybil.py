@@ -102,7 +102,9 @@ class TestDocument(object):
         with pytest.raises(ValueError) as excinfo:
             document.add(region)
         assert str(excinfo.value) == (
-            '<Region start=-1 end=0 None> is before start of document'
+            '<Region start=-1 end=0 None> '
+            'from line 1, column 0 to line 1, column 1 '
+            'is before start of document'
         )
 
     def test_add_after_end(self, document):
@@ -110,7 +112,9 @@ class TestDocument(object):
         with pytest.raises(ValueError) as excinfo:
             document.add(region)
         assert str(excinfo.value) == (
-            '<Region start=8 end=9 None> goes beyond end of document'
+            '<Region start=8 end=9 None> '
+            'from line 1, column 9 to line 1, column 10 '
+            'goes beyond end of document'
         )
 
     def test_add_overlaps_with_previous(self, document):
