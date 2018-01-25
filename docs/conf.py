@@ -18,7 +18,7 @@ extensions = [
 source_suffix = '.rst'
 master_doc = 'index'
 project = pkg_info.name
-copyright = '%s Chris Withers' % datetime.datetime.now().year
+copyright = '2017 - %s Chris Withers' % datetime.datetime.now().year
 version = release = pkg_info.version
 exclude_patterns = [
     'description.rst',
