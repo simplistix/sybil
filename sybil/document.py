@@ -22,6 +22,10 @@ class Document(object):
         self.namespace = {}
 
     def line_column(self, position):
+        """
+        Return a line and column location in this document based on a byte
+        position.
+        """
         line = self.text.count('\n', 0, position)+1
         col = position - self.text.rfind('\n', 0, position)
         return 'line {}, column {}'.format(line, col)
