@@ -41,61 +41,61 @@ def test_pytest(capsys):
 
     out = Finder(out)
     out.then_find('fail.rst::line:1,column:1')
-    out.then_find('fail.rst sybil setup function_fixture setup\n'
-                  'class_fixture setup\n'
+    out.then_find('fail.rst sybil setup session_fixture setup\n'
                   'module_fixture setup\n'
-                  'session_fixture setup\n'
+                  'class_fixture setup\n'
+                  'function_fixture setup\n'
                   'x is currently: 0\n'
-                  'FAILED class_fixture teardown\n'
-                  'function_fixture teardown')
+                  'FAILED function_fixture teardown\n'
+                  'class_fixture teardown')
     out.then_find('fail.rst::line:6,column:1')
-    out.then_find('fail.rst function_fixture setup\n'
-                  'class_fixture setup\n'
-                  '0smcf PASSED class_fixture teardown\n'
-                  'function_fixture teardown')
+    out.then_find('fail.rst class_fixture setup\n'
+                  'function_fixture setup\n'
+                  '0smcf PASSED function_fixture teardown\n'
+                  'class_fixture teardown')
     out.then_find('fail.rst::line:8,column:1')
-    out.then_find('fail.rst function_fixture setup\n'
-                  'class_fixture setup\n'
-                  '1smcf FAILED class_fixture teardown\n'
-                  'function_fixture teardown')
+    out.then_find('fail.rst class_fixture setup\n'
+                  'function_fixture setup\n'
+                  '1smcf FAILED function_fixture teardown\n'
+                  'class_fixture teardown')
     out.then_find('fail.rst::line:10,column:1')
-    out.then_find('fail.rst function_fixture setup\n'
-                  'class_fixture setup\n'
-                  '2smcf FAILED class_fixture teardown\n'
-                  'function_fixture teardown')
+    out.then_find('fail.rst class_fixture setup\n'
+                  'function_fixture setup\n'
+                  '2smcf FAILED function_fixture teardown\n'
+                  'class_fixture teardown')
     out.then_find('fail.rst::line:12,column:1')
-    out.then_find('fail.rst function_fixture setup\n'
-                  'class_fixture setup\n'
-                  '3smcf PASSED class_fixture teardown\n'
-                  'function_fixture teardown')
+    out.then_find('fail.rst class_fixture setup\n'
+                  'function_fixture setup\n'
+                  '3smcf PASSED function_fixture teardown\n'
+                  'class_fixture teardown')
     out.then_find('fail.rst::line:14,column:1')
-    out.then_find('fail.rst function_fixture setup\n'
-                  'class_fixture setup\n'
-                  'FAILED class_fixture teardown\n'
-                  'function_fixture teardown\n'
+    out.then_find('fail.rst class_fixture setup\n'
+                  'function_fixture setup\n'
+                  'FAILED function_fixture teardown\n'
+                  'class_fixture teardown\n'
                   'module_fixture teardown\n'
                   'sybil teardown 5')
     out.then_find('pass.rst::line:1,column:1')
-    out.then_find('pass.rst sybil setup function_fixture setup\n'
+    out.then_find('pass.rst sybil setup module_fixture setup\n'
                   'class_fixture setup\n'
-                  'module_fixture setup\n'
-                  '0smcf PASSED class_fixture teardown\n'
-                  'function_fixture teardown')
+                  'function_fixture setup\n'
+                  '0smcf PASSED function_fixture teardown\n'
+                  'class_fixture teardown')
     out.then_find('pass.rst::line:3,column:1')
-    out.then_find('pass.rst function_fixture setup\n'
-                  'class_fixture setup\n'
-                  '1smcf PASSED class_fixture teardown\n'
-                  'function_fixture teardown')
+    out.then_find('pass.rst class_fixture setup\n'
+                  'function_fixture setup\n'
+                  '1smcf PASSED function_fixture teardown\n'
+                  'class_fixture teardown')
     out.then_find('pass.rst::line:5,column:1')
-    out.then_find('pass.rst function_fixture setup\n'
-                  'class_fixture setup\n'
-                  '2smcf PASSED class_fixture teardown\n'
-                  'function_fixture teardown')
+    out.then_find('pass.rst class_fixture setup\n'
+                  'function_fixture setup\n'
+                  '2smcf PASSED function_fixture teardown\n'
+                  'class_fixture teardown')
     out.then_find('pass.rst::line:7,column:1')
-    out.then_find('pass.rst function_fixture setup\n'
-                  'class_fixture setup\n'
-                  '3smcf PASSED class_fixture teardown\n'
-                  'function_fixture teardown\n'
+    out.then_find('pass.rst class_fixture setup\n'
+                  'function_fixture setup\n'
+                  '3smcf PASSED function_fixture teardown\n'
+                  'class_fixture teardown\n'
                   'module_fixture teardown\n'
                   'sybil teardown 4\n'
                   'session_fixture teardown')

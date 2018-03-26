@@ -12,14 +12,14 @@ from sybil.parsers.codeblock import CodeBlockParser
 def function_fixture():
     print('function_fixture setup')
     yield 'f'
-    print('function_fixture teardown')
+    print(' function_fixture teardown')
 
 
 @pytest.fixture(scope="class")
 def class_fixture():
     print('class_fixture setup')
     yield 'c'
-    print(' class_fixture teardown')
+    print('class_fixture teardown')
 
 
 @pytest.fixture(scope="module")
