@@ -1,6 +1,11 @@
 Changes
 =======
 
+1.0.8 (6 Apr 2018)
+------------------
+
+- Changes only to unit tests to support fixes in the latest release of pytest.
+
 1.0.7 (25 January 2018)
 -----------------------
 
