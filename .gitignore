@@ -4,5 +4,5 @@
 /lib
 .coverage*
 _build/
-.cache/
+.*cache/
 pytestdebug.log
