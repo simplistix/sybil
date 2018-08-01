@@ -45,7 +45,7 @@ class SybilItem(pytest.Item):
         closure = fm.getfixtureclosure(names, self)
         try:
             initialnames, names_closure, arg2fixturedefs = closure
-        except ValueError:
+        except ValueError:  # pragma: no cover
             # pytest < 3.7
             names_closure, arg2fixturedefs = closure
             fixtureinfo = FuncFixtureInfo(names, names_closure, arg2fixturedefs)
