@@ -27,7 +27,7 @@ def test_pytest(capsys):
             self.session = session
 
     results = CollectResults()
-    return_code = pytest_main(['-vs', join(functional_test_dir, 'pytest')],
+    return_code = pytest_main(['-vvs', join(functional_test_dir, 'pytest')],
                               plugins=[results])
     assert return_code == 1
     assert results.session.testsfailed == 4
