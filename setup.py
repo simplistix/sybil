@@ -30,9 +30,9 @@ setup(
     include_package_data=True,
     extras_require=dict(
         test=[
-            'coveralls',
             'nose',
             'pytest>=3.5.0',
+            'pytest-cov',
             ],
         build=['sphinx', 'pkginfo', 'setuptools-git', 'twine', 'wheel']
     ),

@@ -80,10 +80,7 @@ class SybilItem(pytest.Item):
         # Messier than it could be because slicing a list subclass in
         # Python 2 returns a list, not an instance of the subclass.
         tb = excinfo.traceback.cut(path=example_module_path)
-        try:
-            tb = tb[1]
-        except IndexError:
-            pass
+        tb = tb[1]
         if getattr(tb, '_rawentry', None) is not None:
             excinfo.traceback = Traceback(tb._rawentry, excinfo)
 

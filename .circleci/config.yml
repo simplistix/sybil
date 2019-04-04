@@ -1,0 +1,41 @@
+version: 2.1
+
+orbs:
+  python: cjw296/python-ci@1.2
+
+common: &common
+  jobs:
+
+    - python/pip-run-tests:
+        name: python27
+        image: circleci/python:2.7
+    - python/pip-run-tests:
+        name: python37
+        image: circleci/python:3.7
+
+    - python/coverage:
+        name: coverage
+        requires:
+          - python27
+          - python37
+
+    - python/release:
+        name: release
+        config: .carthorse.yml
+        requires:
+          - coverage
+        filters:
+          branches:
+            only: master
+
+workflows:
+  push:
+    <<: *common
+  periodic:
+    <<: *common
+    triggers:
+      - schedule:
+          cron: "0 0 * * 2"
+          filters:
+            branches:
+              only: master
