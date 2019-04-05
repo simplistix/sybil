@@ -13,8 +13,14 @@ from doctest import (
 from ..compat import PY3
 from ..region import Region
 
-BYTE_LITERAL = re.compile(r"b((['\"])[^\2]*\2)", re.MULTILINE)
-UNICODE_LITERAL = re.compile(r"u((['\"])[^\2]*\2)", re.MULTILINE)
+
+def make_literal(literal):
+    return re.compile(literal+r"((['\"])[^\2]*\2)", re.MULTILINE)
+
+
+BYTE_LITERAL = make_literal('b')
+UNICODE_LITERAL = make_literal('u')
+
 
 #: A :ref:`doctest option flag<option-flags-and-directives>` that
 #: causes byte and unicode literals in doctest expected

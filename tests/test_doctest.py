@@ -54,11 +54,8 @@ def test_literals():
     document = document_from_sample('doctest_literals.txt')
     regions = list(DocTestParser(FIX_BYTE_UNICODE_REPR)(document))
     assert len(regions) == 5
-    assert evaluate_region(regions[0], {}) == ''
-    assert evaluate_region(regions[1], {}) == ''
-    assert evaluate_region(regions[2], {}) == ''
-    assert evaluate_region(regions[3], {}) == ''
-    assert evaluate_region(regions[4], {}) == ''
+    for region in regions:
+        assert evaluate_region(region, {}) == ''
 
 
 def test_min_indent():
@@ -67,6 +64,7 @@ def test_min_indent():
     assert len(regions) == 1
     namespace = document.namespace
     assert evaluate_region(regions[0], namespace) == ''
+
 
 def test_tabs():
     path = sample_path('doctest_tabs.txt')
