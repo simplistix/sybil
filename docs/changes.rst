@@ -16,7 +16,7 @@ Changes
 
 - Literal tabs may no longer be included in text that is parsed by the
   :class:`~sybil.parsers.doctest.DocTestParser`. Previously, tabs were
-  expanded which could unpleasant problems.
+  expanded which could cause unpleasant problems.
 
 1.0.6 (30 November 2017)
 ------------------------
