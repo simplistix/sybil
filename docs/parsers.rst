@@ -27,6 +27,14 @@ The parser is used by instantiating :class:`sybil.parsers.doctest.DocTestParser`
 with the required options and passing it as an element in the list passed as the
 ``parsers`` parameter to :class:`~sybil.Sybil`.
 
+.. warning::
+
+    :attr:`~sybil.parsers.doctest.FIX_BYTE_UNICODE_REPR` is quite simplistic. It will catch
+    examples but you may hit problems where, for example, ``['b', '']`` in expected
+    output will be rewritten as ``['', '']`` on Python 2 and ``['u', '']`` as ``['', '']``.
+    on Python 3. To work around this, either only run Sybil on Python 3 and do not
+    use this option, or pick different example output.
+
 .. _capture-codeblock:
 
 codeblock
