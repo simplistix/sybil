@@ -174,14 +174,14 @@ def check(letter, parsed, namespace):
 
 
 def parse_for_x(document):
-    for m in re.finditer('(X+) (\d+) check', document.text):
+    for m in re.finditer(r'(X+) (\d+) check', document.text):
         yield Region(m.start(), m.end(),
                      (m.group(1), int(m.group(2))),
                      partial(check, 'X'))
 
 
 def parse_for_y(document):
-    for m in re.finditer('(Y+) (\d+) check', document.text):
+    for m in re.finditer(r'(Y+) (\d+) check', document.text):
         yield Region(m.start(), m.end(),
                      (m.group(1), int(m.group(2))),
                      partial(check, 'Y'))
@@ -234,7 +234,7 @@ def check_into_namespace(example):
 
 
 def parse(document):
-    for m in re.finditer('([XY]+) (\d+) check', document.text):
+    for m in re.finditer(r'([XY]+) (\d+) check', document.text):
         yield Region(m.start(), m.end(), m.start(), check_into_namespace)
 
 
