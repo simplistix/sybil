@@ -1,8 +1,19 @@
 import sys
+from fnmatch import fnmatch
 from glob import glob
+from os import listdir
 from os.path import join, dirname, abspath
 
 from .document import Document
+
+
+class FilenameFilter(object):
+
+    def __init__(self, pattern):
+        self.pattern = pattern
+
+    def __call__(self, filename):
+        return fnmatch(filename, self.pattern)
 
 
 class Sybil(object):
@@ -48,7 +59,7 @@ class Sybil(object):
         else:
             start_path = path
         self.path = abspath(start_path)
-        self.pattern = pattern
+        self.should_test_filename = FilenameFilter(pattern)
         self.setup = setup
         self.teardown = teardown
         self.fixtures = fixtures
@@ -57,8 +68,9 @@ class Sybil(object):
         return Document.parse(path, *self.parsers)
 
     def all_documents(self):
-        for path in sorted(glob(join(self.path, self.pattern))):
-            yield self.parse(path)
+        for filename in sorted(listdir(self.path)):
+            if self.should_test_filename(filename):
+                yield self.parse(join(self.path, filename))
 
     def pytest(self):
         """

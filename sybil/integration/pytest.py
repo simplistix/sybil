@@ -113,7 +113,7 @@ class SybilFile(pytest.File):
 def pytest_integration(sybil):
 
     def pytest_collect_file(parent, path):
-        if path.fnmatch(sybil.pattern):
+        if sybil.should_test_filename(path.basename):
             return SybilFile(path, parent, sybil)
 
     return pytest_collect_file
