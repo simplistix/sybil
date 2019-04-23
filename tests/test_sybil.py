@@ -225,6 +225,24 @@ class TestSybil(object):
                  'Y count was 3, as expected'])
 
 
+class TestFiltering(object):
+
+    def check(self, sybil, expected):
+        assert expected == [split(d.path)[-1] for d in sybil.all_documents()]
+
+    def test_excludes(self, tmp_path):
+        (tmp_path / 'foo.txt').write_text(u'')
+        (tmp_path / 'bar.txt').write_text(u'')
+        sybil = Sybil([], path=str(tmp_path), pattern='*.txt', excludes=['bar.txt'])
+        self.check(sybil, expected=['foo.txt'])
+
+    def test_filenames(self, tmp_path):
+        (tmp_path / 'foo.txt').write_text(u'')
+        (tmp_path / 'bar.txt').write_text(u'')
+        sybil = Sybil([], path=str(tmp_path), filenames=['bar.txt'])
+        self.check(sybil, expected=['bar.txt'])
+
+
 def check_into_namespace(example):
     parsed, namespace = example.region.parsed, example.namespace
     if 'parsed' not in namespace:
