@@ -9,11 +9,16 @@ from .document import Document
 
 class FilenameFilter(object):
 
-    def __init__(self, pattern):
+    def __init__(self, pattern, filenames, excludes):
         self.pattern = pattern
+        self.filenames = filenames
+        self.excludes = excludes
 
     def __call__(self, filename):
-        return fnmatch(filename, self.pattern)
+        return (
+            (fnmatch(filename, self.pattern) or filename in self.filenames)
+            and not any(fnmatch(filename, e) for e in self.excludes)
+        )
 
 
 class Sybil(object):
@@ -27,11 +32,22 @@ class Sybil(object):
     :param path:
       The path in which documentation source files are found, relative
       to the path of the Python source file in which this class is instantiated.
+
+      .. note::
+
+        This is ignored when using the :ref:`pytest integration <pytest_integration>`.
       
     :param pattern:
-      A :mod:`glob` used to match files found in the ``path``. Matching files
-      will be parsed for examples.
+      An optional :func:`pattern <fnmatch.fnmatch>` used to match documentation source
+      files that will be parsed for examples.
       
+    :param filenames:
+      An optional :class:`set` of source file names that will be parsed for examples.
+
+    :param excludes:
+      An optional  sequence of :func:`patterns <fnmatch.fnmatch>` of source file names
+      that will excluded when looking for examples.
+
     :param setup:
       An optional callable that will be called once before any examples from
       a :class:`~sybil.document.Document` are evaluated. If provided, it is
@@ -50,8 +66,9 @@ class Sybil(object):
       inserted into the document's :attr:`~sybil.document.Document.namespace`.
       All scopes of fixture are supported.
     """
-    def __init__(self, parsers, pattern, path='.',
-                 setup=None, teardown=None, fixtures=()):
+    def __init__(self, parsers, pattern='', path='.',
+                 setup=None, teardown=None, fixtures=(),
+                 filenames=(), excludes=()):
         self.parsers = parsers
         calling_filename = sys._getframe(1).f_globals.get('__file__')
         if calling_filename:
@@ -59,7 +76,7 @@ class Sybil(object):
         else:
             start_path = path
         self.path = abspath(start_path)
-        self.should_test_filename = FilenameFilter(pattern)
+        self.should_test_filename = FilenameFilter(pattern, filenames, excludes)
         self.setup = setup
         self.teardown = teardown
         self.fixtures = fixtures
