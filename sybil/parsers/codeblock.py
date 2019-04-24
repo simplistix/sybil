@@ -19,7 +19,7 @@ def evaluate_code_block(example):
 class CodeBlockParser(object):
     """
     A class to instantiate and include when your documentation makes use of
-    :ref:`capture-codeblock` examples.
+    :ref:`codeblock-parser` examples.
      
     :param future_imports: 
         An optional list of strings that will be turned into
