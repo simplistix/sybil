@@ -6,7 +6,7 @@ and turns them into parsed examples with evaluators that can check if they
 are as expected. A number of parsers are included, and it's simple enough to
 write your own. The included parsers are as follows:
 
-.. _capture-doctest:
+.. _doctest-parser:
 
 doctest
 -------
@@ -35,7 +35,7 @@ with the required options and passing it as an element in the list passed as the
     on Python 3. To work around this, either only run Sybil on Python 3 and do not
     use this option, or pick different example output.
 
-.. _capture-codeblock:
+.. _codeblock-parser:
 
 codeblock
 ---------

@@ -58,7 +58,7 @@ def fix_byte_unicode_repr(want):
 class DocTestParser(BaseDocTestParser):
     """
     A class to instantiate and include when your documentation makes use of
-    :ref:`capture-doctest` examples.
+    :ref:`doctest-parser` examples.
      
     :param optionflags: 
         :ref:`doctest option flags<option-flags-and-directives>` to use
