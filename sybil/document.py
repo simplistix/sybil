@@ -10,6 +10,14 @@ class Document(object):
     It will be instantiated by Sybil and provided to each parser in turn.
     """
 
+    #: This can be set by :ref:`evaluators <developing-parsers>` to affect the evaluation
+    #: of future examples. It can be set to a callable that takes an
+    #: :class:`~sybil.example.Example`. This callable can then do whatever it needs to do,
+    #: including not executing the example at all, modifying it, or the
+    #: :class:`~sybil.document.Document` or calling the original evaluator on the example.
+    #: This last case should always take the form of ``example.region.evaluator(example)``.
+    evaluator = None
+
     def __init__(self, text, path):
         #: This is the text of the documentation source file.
         self.text = text
