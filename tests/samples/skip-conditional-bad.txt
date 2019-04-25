@@ -1,0 +1,11 @@
+Bad action:
+
+.. skip: lolwut
+
+Condition on end:
+
+.. skip: end if(1 > 2)
+
+Malformed if:
+
+.. skip: next if(sys.version_info < (3, 0), reason="only true on python 3"

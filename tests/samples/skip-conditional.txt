@@ -1,0 +1,19 @@
+>>> result.append('start')
+
+Default reason:
+
+.. skip: next if(2 > 1)
+
+Should not run:
+
+>>> result.append('bad 1')
+>>> result.append('good 1')
+
+.. skip: start if(2 > 1, reason='foo')
+
+>>> result.append('bad 2')
+>>> result.append('bad 3')
+
+.. skip: end
+
+>>> result.append('good 2')
