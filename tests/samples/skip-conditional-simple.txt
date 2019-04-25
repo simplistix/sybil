@@ -1,0 +1,22 @@
+This will only work on Python 2:
+
+.. skip: next if(sys.version_info >= (3, 0), reason="only true on python 2")
+
+>>> repr(u'foo')
+"u'foo'"
+
+This should run:
+
+>>> run.append(1)
+
+This will only work on Python 3:
+
+.. skip: next if(sys.version_info < (3, 0), reason="only true on python 3")
+
+>>> repr(b'foo')
+"b'foo'"
+
+This should also run:
+
+>>> run.append(2)
+
