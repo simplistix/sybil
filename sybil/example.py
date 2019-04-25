@@ -49,6 +49,7 @@ class Example(object):
         )
 
     def evaluate(self):
-        result = self.region.evaluator(self)
+        evaluator = self.document.evaluator or self.region.evaluator
+        result = evaluator(self)
         if result:
             raise SybilFailure(self, result)

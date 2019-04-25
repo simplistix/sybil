@@ -130,6 +130,8 @@ The parser is used by including :func:`sybil.parsers.capture.parse_captures`
 as an element in the list passed as the
 ``parsers`` parameter to :class:`~sybil.Sybil`.
 
+.. _developing-parsers:
+
 Developing your own parsers
 ---------------------------
 
@@ -143,7 +145,8 @@ example and a callable evaluator. That evaluator will be called with an
 :class:`~sybil.document.Document` and the :class:`~sybil.Region`
 and should either raise an exception or return a textual description in the
 event of the example not being as expected. Evaluators may also
-modify the document's :attr:`~sybil.document.Document.namespace`.
+modify the document's :attr:`~sybil.document.Document.namespace`
+or :attr:`~sybil.document.Document.evaluator`.
 
 As an example, let's look at a parser suitable for evaluating bash commands
 in a subprocess and checking the output is as expected::
