@@ -1,6 +1,22 @@
 Changes
 =======
 
+1.1.0 (25 Apr 2019)
+-------------------
+
+- Move to CircleCI__ and Carthorse__.
+
+  __ https://circleci.com/gh/cjw296/sybil
+  __ https://github.com/cjw296/carthorse
+
+- Add warning about the limitations of
+  :attr:`~sybil.parsers.doctest.FIX_BYTE_UNICODE_REPR`.
+
+- Support explicit filenames to include and patterns to exclude
+  when instantiating a :class:`~sybil.Sybil`.
+
+- Add the :ref:`skip <skip-parser>` parser.
+
 1.0.9 (1 Aug 2018)
 ------------------
 
@@ -54,7 +70,7 @@ Thanks to Bruno Oliveira for this fix!
 -------------------
 
 - Fix bug where unicode and byte literals weren't corrected in doctest
-  tracebacks, event when :attr:`sybil.parsers.doctest.FIX_BYTE_UNICODE_REPR`
+  tracebacks, even when :attr:`sybil.parsers.doctest.FIX_BYTE_UNICODE_REPR`
   was specified.
 
 1.0.0 (26 May 2017)
