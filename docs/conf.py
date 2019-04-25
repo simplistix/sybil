@@ -22,8 +22,7 @@ version = release = pkg_resources.get_distribution(project).version
 exclude_patterns = [
     'description.rst',
     '_build',
-    'example.rst',
-    'example',
+    'example*',
 ]
 pygments_style = 'sphinx'
 

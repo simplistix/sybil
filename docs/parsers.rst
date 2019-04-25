@@ -130,6 +130,45 @@ The parser is used by including :func:`sybil.parsers.capture.parse_captures`
 as an element in the list passed as the
 ``parsers`` parameter to :class:`~sybil.Sybil`.
 
+.. _skip-parser:
+
+skip
+----
+
+This parser takes advantage of Sphinx `comment`__ syntax to introduce
+special comments that allow other examples in the document to be skipped.
+This can be useful if they include pseudo code or examples that can only be
+evaluated on a particular version of Python.
+
+__ http://www.sphinx-doc.org/en/stable/rest.html#comments
+
+For example:
+
+.. literalinclude:: example-skip.rst
+  :language: rest
+  :lines: 1-6
+
+If you need to skip a collection of examples, this can be done as follows:
+
+.. literalinclude:: example-skip.rst
+  :language: rest
+  :lines: 8-15
+
+You can also add conditions to either ``next`` or ``start`` as shown below:
+
+.. literalinclude:: example-skip.rst
+  :language: rest
+  :lines: 17-
+
+As you can see, any names used in the expression passed to ``if`` must be
+present in the document's :attr:`~sybil.document.Document.namespace`.
+:ref:`invisible code blocks <codeblock-parser>`, :class:`setup <sybil.Sybil>`
+methods or :ref:`fixtures <pytest_integration>` are good ways to provide these.
+
+The parser is used by including :func:`sybil.parsers.skip.skip`
+as an element in the list passed as the
+``parsers`` parameter to :class:`~sybil.Sybil`.
+
 .. _developing-parsers:
 
 Developing your own parsers

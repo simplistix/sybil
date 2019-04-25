@@ -18,3 +18,6 @@ API Reference
 
 .. automodule:: sybil.parsers.capture
   :members:
+
+.. automodule:: sybil.parsers.skip
+  :members:
