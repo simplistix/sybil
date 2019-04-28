@@ -19,9 +19,9 @@ def test_basic():
     assert document.namespace['run'] == [2, 5]
 
 
-def test_conditional_simple():
+def test_conditional_edge_cases():
     document = Document.parse(
-        sample_path('skip-conditional-simple.txt'),
+        sample_path('skip-conditional-edges.txt'),
         CodeBlockParser(), DocTestParser(), skip
     )
     document.namespace['sys'] = sys
