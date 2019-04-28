@@ -1,21 +1,18 @@
-|Travis|_ |Coveralls|_ |Docs|_
+Sybil
+=====
 
-.. |Travis| image:: https://api.travis-ci.org/cjw296/sybil.svg?branch=master
-.. _Travis: https://travis-ci.org/cjw296/sybil
+|CircleCI|_ |Docs|_
 
-.. |Coveralls| image:: https://coveralls.io/repos/cjw296/sybil/badge.svg?branch=master
-.. _Coveralls: https://coveralls.io/r/cjw296/sybil?branch=master
+.. |CircleCI| image:: https://circleci.com/gh/cjw296/sybil/tree/master.svg?style=shield
+.. _CircleCI: https://circleci.com/gh/cjw296/sybil/tree/master
 
 .. |Docs| image:: https://readthedocs.org/projects/sybil/badge/?version=latest
 .. _Docs: http://sybil.readthedocs.org/en/latest/
 
-Sybil
-=====
 
-Automated testing for the examples in your documentation.
-
-The latest documentation can be found at:
-http://sybil.readthedocs.org/en/latest/
-
-Development takes place here:
-https://github.com/cjw296/sybil/
+This library provides a way to test examples in your documentation by parsing
+them from the documentation source and evaluating the parsed examples as part of
+your normal test run. Integration is provided for the three main Python test
+runners. Sybil is designed so that it's easy to provide your own parsers for
+your own types of example in addition to the included parsers for
+:mod:`doctest` and :rst:dir:`code-block` examples.

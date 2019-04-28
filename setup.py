@@ -14,7 +14,7 @@ setup(
     author_email='chris@withers.org',
     license='MIT',
     description="Automated testing for the examples in your documentation.",
-    long_description=open('docs/description.rst').read(),
+    long_description=open('README.rst').read(),
     url='https://github.com/cjw296/sybil',
     classifiers=[
         # 'Development Status :: 5 - Production/Stable',
