@@ -10,8 +10,13 @@ CODEBLOCK_START = re.compile(
     re.MULTILINE)
 
 
+def compile_codeblock(source, path):
+    return compile(source, path, 'exec', dont_inherit=True)
+
+
 def evaluate_code_block(example):
-    exec(example.parsed, example.namespace)
+    code = compile_codeblock(example.parsed, example.document.path)
+    exec(code, example.namespace)
     # exec adds __builtins__, we don't want it:
     del example.namespace['__builtins__']
 
@@ -48,10 +53,9 @@ class CodeBlockParser(object):
                 )
             line_prefix = '\n' * line_count
             source = line_prefix + source
-            code = compile(source, document.path, 'exec', dont_inherit=True)
             yield Region(
                 start_match.start(),
                 source_end,
-                code,
+                source,
                 evaluate_code_block
             )

@@ -1,6 +1,6 @@
 import pytest
 from sybil.compat import StringIO
-from sybil.parsers.codeblock import CodeBlockParser
+from sybil.parsers.codeblock import CodeBlockParser, compile_codeblock
 from tests.helpers import document_from_sample, evaluate_region
 
 
@@ -42,11 +42,13 @@ def test_future_imports():
         'pathalogical worst case for line numbers\n'
     )
     # the future import line drops the firstlineno by 1
-    assert regions[0].parsed.co_firstlineno == 2
+    code = compile_codeblock(regions[0].parsed, document.path)
+    assert code.co_firstlineno == 2
     assert evaluate_region(regions[1], namespace) is None
     assert buffer.getvalue() == (
         'pathalogical worst case for line numbers\n'
         'still should work and have good line numbers\n'
     )
     # the future import line drops the firstlineno by 1
-    assert regions[1].parsed.co_firstlineno == 8
+    code = compile_codeblock(regions[1].parsed, document.path)
+    assert code.co_firstlineno == 8

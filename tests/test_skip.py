@@ -21,7 +21,8 @@ def test_basic():
 
 def test_conditional_simple():
     document = Document.parse(
-        sample_path('skip-conditional-simple.txt'), DocTestParser(), skip
+        sample_path('skip-conditional-simple.txt'),
+        CodeBlockParser(), DocTestParser(), skip
     )
     document.namespace['sys'] = sys
     document.namespace['run'] = []
@@ -36,7 +37,7 @@ def test_conditional_simple():
     if PY3:
         assert skipped == ['only true on python 2']
     else:
-        assert skipped == ['only true on python 3']
+        assert skipped == ['only true on python 3', 'only true on python 3']
 
 
 def test_conditional_full():

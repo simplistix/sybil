@@ -9,12 +9,19 @@ This should run:
 
 >>> run.append(1)
 
-This will only work on Python 3:
+This will only parse on Python 3:
 
-.. skip: next if(sys.version_info < (3, 0), reason="only true on python 3")
+.. skip: start if(sys.version_info < (3, 0), reason="only true on python 3")
 
->>> repr(b'foo')
-"b'foo'"
+.. code-block:: python
+
+    def myfunc(*, keyword_only):
+         return keyword_only
+
+>>> myfunc(keyword_only='hello')
+'hello'
+
+.. skip: end
 
 This should also run:
 
