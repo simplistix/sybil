@@ -1,5 +1,9 @@
 .. include:: ../README.rst
 
+Sybil is designed so that it's easy to provide your own parsers for
+your own types of example in addition to the included parsers for
+:mod:`doctest` and :rst:dir:`code-block` examples.
+
 .. toctree::
    :maxdepth: 3
 
