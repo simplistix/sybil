@@ -37,7 +37,7 @@ def test_conditional_simple():
     if PY3:
         assert skipped == ['only true on python 2']
     else:
-        assert skipped == ['only true on python 3', 'only true on python 3']
+        assert skipped == ['only true on python 3'] * 3
 
 
 def test_conditional_full():

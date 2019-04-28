@@ -21,6 +21,8 @@ This will only parse on Python 3:
 >>> myfunc(keyword_only='hello')
 'hello'
 
+>>> def myfunc2(*, keyword_only): pass
+
 .. skip: end
 
 This should also run:
