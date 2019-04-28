@@ -1,6 +1,13 @@
 Changes
 =======
 
+1.2.0 (28 Apr 2019)
+-------------------
+
+- Only compile code in :ref:`codeblocks <codeblock-parser>` at evaluation time,
+  giving :ref:`skip <skip-parser>` a chance to skip code blocks that won't
+  compile on a particular version of Python.
+
 1.1.0 (25 Apr 2019)
 -------------------
 
