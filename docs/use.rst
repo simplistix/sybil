@@ -10,7 +10,7 @@ into account the different representation of :class:`bytes` and
 :rst:dir:`code-block` examples with a ``from __future__ import print_function``:
 
 .. literalinclude:: conftest.py
-   :lines: 1-2, 4-10, 12-
+   :lines: 1-2, 4-11, 13-
 
 __ http://www.sphinx-doc.org/
 __ https://docs.pytest.org
