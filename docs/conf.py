@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os, pkg_resources, datetime
+import os, pkg_resources, datetime, time
 
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
@@ -17,7 +17,8 @@ extensions = [
 source_suffix = '.rst'
 master_doc = 'index'
 project = 'sybil'
-copyright = '2017 - %s Chris Withers' % datetime.datetime.now().year
+build_date = datetime.datetime.utcfromtimestamp(int(os.environ.get('SOURCE_DATE_EPOCH', time.time())))
+copyright = '2017 - %s Chris Withers' % build_date.year
 version = release = pkg_resources.get_distribution(project).version
 exclude_patterns = [
     'description.rst',
