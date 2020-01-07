@@ -39,7 +39,7 @@ class CodeBlockParser(object):
         for start_match in re.finditer(CODEBLOCK_START, document.text):
             source_start = start_match.end()
             indent = str(len(start_match.group('indent')))
-            end_pattern = re.compile(r'(\n\Z|\n[ \t]{0,'+indent+'}(?=\S))')
+            end_pattern = re.compile(r'(\n\Z|\n[ \t]{0,'+indent+'}(?=\\S))')
             end_match = end_pattern.search(document.text, source_start)
             source_end = end_match.start()
             source = textwrap.dedent(document.text[source_start:source_end])
