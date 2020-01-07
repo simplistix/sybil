@@ -34,8 +34,6 @@ setup(
             'nose',
             'pytest>=3.5.0',
             'pytest-cov',
-            # this should go once the problems in sybil it highlights are fixed:
-            'coverage<5',
             ],
         build=['sphinx', 'pkginfo', 'setuptools-git', 'twine', 'wheel']
     ),
