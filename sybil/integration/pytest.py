@@ -8,6 +8,7 @@ from _pytest import fixtures
 from _pytest.fixtures import FuncFixtureInfo
 from _pytest.main import Session
 from _pytest.python import Module
+import py.path
 import pytest
 
 from ..example import SybilFailure
@@ -60,7 +61,7 @@ class SybilItem(pytest.Item):
         info = '%s line=%i column=%i' % (
             self.fspath.basename, self.example.line, self.example.column
         )
-        return self.example.document.path, self.example.line, info
+        return py.path.local(self.example.document.path), self.example.line, info
 
     def getparent(self, cls):
         if cls is Module:
