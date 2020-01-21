@@ -1,5 +1,5 @@
 # See docs/license.rst for license details.
-# Copyright (c) 2017-2018 Chris Withers
+# Copyright (c) 2017-2020 Chris Withers
 
 import os
 
@@ -9,7 +9,7 @@ base_dir = os.path.dirname(__file__)
 
 setup(
     name='sybil',
-    version='1.2.0',
+    version='1.2.1',
     author='Chris Withers',
     author_email='chris@withers.org',
     license='MIT',
