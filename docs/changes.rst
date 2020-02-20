@@ -1,6 +1,14 @@
 Changes
 =======
 
+1.2.2 (20 Feb 2020)
+-------------------
+
+- Improvements to :attr:`~sybil.parsers.doctest.FIX_BYTE_UNICODE_REPR`
+  for multiple strings on a single line.
+
+- Better handling of files with Windows line endings on Linux under Python 2.
+
 1.2.1 (21 Jan 2020)
 -------------------
 
