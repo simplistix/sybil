@@ -15,7 +15,7 @@ from ..region import Region
 
 
 def make_literal(literal):
-    return re.compile(literal+r"((['\"])[^\2]*\2)", re.MULTILINE)
+    return re.compile(literal+r"((['\"])[^\2]*?\2)", re.MULTILINE)
 
 
 BYTE_LITERAL = make_literal('b')
