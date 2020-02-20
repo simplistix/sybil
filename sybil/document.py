@@ -1,5 +1,6 @@
 import re
 from bisect import bisect
+from io import open
 
 from .example import Example
 

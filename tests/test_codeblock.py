@@ -1,5 +1,6 @@
 import pytest
 from sybil.compat import StringIO
+from sybil.document import Document
 from sybil.parsers.codeblock import CodeBlockParser, compile_codeblock
 from tests.helpers import document_from_sample, evaluate_region
 
@@ -52,3 +53,18 @@ def test_future_imports():
     # the future import line drops the firstlineno by 1
     code = compile_codeblock(regions[1].parsed, document.path)
     assert code.co_firstlineno == 8
+
+
+def test_windows_line_endings(tmp_path):
+    p = tmp_path / "example.txt"
+    p.write_bytes(
+        b'This is my example:\r\n\r\n'
+        b'.. code-block:: python\r\n\r\n'
+        b'    from math import cos\r\n'
+        b'    x = 123\r\n\r\n'
+        b'That was my example.\r\n'
+    )
+    document = Document.parse(str(p), CodeBlockParser())
+    example, = document
+    example.evaluate()
+    assert document.namespace['x'] == 123

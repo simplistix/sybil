@@ -124,7 +124,7 @@ would mean that ``expected_listing`` could be used in other examples in the
 document:
 
 >>> expected_listing.split()
-['root.txt', 'subdir/', 'subdir/file.txt', 'subdir/logs/']
+[u'root.txt', u'subdir/', u'subdir/file.txt', u'subdir/logs/']
 
 The parser is used by including :func:`sybil.parsers.capture.parse_captures`
 as an element in the list passed as the
