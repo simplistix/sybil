@@ -65,10 +65,15 @@ class Sybil(object):
       :ref:`pytest integration <pytest_integration>`. The fixtures will be 
       inserted into the document's :attr:`~sybil.document.Document.namespace`.
       All scopes of fixture are supported.
+
+    :param encoding:
+      An optional string specifying the encoding to be used when decoding documentation
+      source files.
     """
     def __init__(self, parsers, pattern='', path='.',
                  setup=None, teardown=None, fixtures=(),
-                 filenames=(), excludes=()):
+                 filenames=(), excludes=(),
+                 encoding='utf-8'):
         self.parsers = parsers
         calling_filename = sys._getframe(1).f_globals.get('__file__')
         if calling_filename:
@@ -80,9 +85,10 @@ class Sybil(object):
         self.setup = setup
         self.teardown = teardown
         self.fixtures = fixtures
+        self.encoding = encoding
 
     def parse(self, path):
-        return Document.parse(path, *self.parsers)
+        return Document.parse(path, *self.parsers, encoding=self.encoding)
 
     def all_documents(self):
         for filename in sorted(listdir(self.path)):

@@ -224,6 +224,16 @@ class TestSybil(object):
                  'X count was 3 instead of 4',
                  'Y count was 3, as expected'])
 
+    def test_explicit_encoding(self, tmp_path):
+        (tmp_path / 'encoded.txt').write_text(
+            u'X 1 check\n\xa3',
+            encoding='charmap'
+        )
+        sybil = Sybil([parse_for_x], path=str(tmp_path), pattern='*.txt',
+                      encoding='charmap')
+        assert (self._evaluate_examples(self._all_examples(sybil), 42) ==
+                ['X count was 1, as expected'])
+
 
 class TestFiltering(object):
 
