@@ -3,15 +3,6 @@ Development
 
 .. highlight:: bash
 
-This package is developed using continuous integration which can be
-found here:
-
-https://travis-ci.org/cjw296/sybil
-
-The latest development version of the documentation can be found here:
-
-http://sybil.readthedocs.org/en/latest/
-
 If you wish to contribute to this project, then you should fork the
 repository found here:
 
@@ -35,7 +26,8 @@ Running the tests
 
 Once you've set up a virtualenv, the tests can be run as follows::
 
-  $ bin/pytest
+  $ source bin/activate
+  $ pytest
 
 Building the documentation
 --------------------------
@@ -65,10 +57,5 @@ Making a release
 ----------------
 
 To make a release, just update the version in ``setup.py``,
-update the change log, tag it
 and push to https://github.com/cjw296/sybil
-and Travis CI should take care of the rest.
-
-Once Travis CI is done, make sure to go to
-https://readthedocs.org/projects/sybil/versions/
-and make sure the new release is marked as an Active Version.
+and Carthorse should take care of the rest.
