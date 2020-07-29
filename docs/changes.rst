@@ -4,7 +4,7 @@ Changes
 1.3.0 (28 Mar 2020)
 -------------------
 
-- Treat all documentation source files as being ``utf-8`` encoded. This can be overriden
+- Treat all documentation source files as being ``utf-8`` encoded. This can be overridden
   by passing an encoding when instantiating a :class:`~sybil.Sybil`.
 
 1.2.2 (20 Feb 2020)
