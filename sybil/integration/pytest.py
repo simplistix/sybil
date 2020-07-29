@@ -100,7 +100,12 @@ class SybilFile(pytest.File):
     def collect(self):
         self.document = self.sybil.parse(self.fspath.strpath)
         for example in self.document:
-            yield SybilItem.from_parent(self, sybil=self.sybil, example=example)
+            try:
+                from_parent = SybilItem.from_parent
+            except AttributeError:
+                yield SybilItem(self, self.sybil, example)
+            else:
+                yield from_parent(self, sybil=self.sybil, example=example)
 
     def setup(self):
         if self.sybil.setup:
@@ -115,6 +120,11 @@ def pytest_integration(sybil):
 
     def pytest_collect_file(parent, path):
         if sybil.should_test_filename(path.basename):
-            return SybilFile.from_parent(parent, fspath=path, sybil=sybil)
+            try:
+                from_parent = SybilFile.from_parent
+            except AttributeError:
+                return SybilFile(path, parent, sybil)
+            else:
+                return from_parent(parent, fspath=path, sybil=sybil)
 
     return pytest_collect_file
