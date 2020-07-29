@@ -93,14 +93,14 @@ class SybilItem(pytest.Item):
 
 class SybilFile(pytest.File):
 
-    def __init__(self, path, parent, sybil):
-        super(SybilFile, self).__init__(path, parent)
+    def __init__(self, fspath, parent, sybil):
+        super(SybilFile, self).__init__(fspath, parent)
         self.sybil = sybil
 
     def collect(self):
         self.document = self.sybil.parse(self.fspath.strpath)
         for example in self.document:
-            yield SybilItem(self, self.sybil, example)
+            yield SybilItem.from_parent(self, sybil=self.sybil, example=example)
 
     def setup(self):
         if self.sybil.setup:
@@ -115,6 +115,6 @@ def pytest_integration(sybil):
 
     def pytest_collect_file(parent, path):
         if sybil.should_test_filename(path.basename):
-            return SybilFile(path, parent, sybil)
+            return SybilFile.from_parent(parent, fspath=path, sybil=sybil)
 
     return pytest_collect_file
