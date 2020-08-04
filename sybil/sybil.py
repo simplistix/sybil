@@ -95,12 +95,16 @@ class Sybil(object):
             if self.should_test_filename(filename):
                 yield self.parse(join(self.path, filename))
 
-    def pytest(self):
+    def pytest(self, match_full_pattern=False):
         """
         The helper method for when you use :ref:`pytest_integration`.
+        :param match_full_pattern:
+          Flag that changes the handling of patterns. By default Sybil uses only the basename part
+          of a pattern (e.g. `**/foo/*.rst` would only use `*.rst` as a pattern). Set this to True
+          to use the entire pattern.
         """
         from .integration.pytest import pytest_integration
-        return pytest_integration(self)
+        return pytest_integration(self, match_full_pattern)
 
     def unittest(self):
         """
