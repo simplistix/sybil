@@ -1,22 +1,22 @@
 import os
 import sys
 from fnmatch import fnmatch
-from os.path import join, dirname, abspath
+from os.path import join, dirname, abspath, split
 
 from .document import Document
 
 
 class PathFilter(object):
 
-    def __init__(self, pattern, filenames, excludes):
-        self.pattern = pattern
+    def __init__(self, patterns, filenames, excludes):
+        self.patterns = patterns
         self.filenames = filenames
         self.excludes = excludes
 
     def __call__(self, path):
         path = str(path)
         return (
-            (fnmatch(path, self.pattern) or (split(path)[-1] in self.filenames))
+            (any(fnmatch(path, e) for e in self.patterns) or (split(path)[-1] in self.filenames))
             and not any(fnmatch(path, e) for e in self.excludes)
         )
 
@@ -48,6 +48,10 @@ class Sybil(object):
       An optional :func:`pattern <fnmatch.fnmatch>` used to match documentation source
       files that will be parsed for examples.
       
+    :param patterns:
+      An optional sequence of :func:`patterns <fnmatch.fnmatch>` used to match documentation source
+      files that will be parsed for examples.
+
     :param filenames:
       An optional :class:`set` of source file names that, if found anywhere within the
       root ``path`` or its sub-directories, that will be parsed for examples.
@@ -81,7 +85,7 @@ class Sybil(object):
     def __init__(self, parsers, pattern='', path='.',
                  setup=None, teardown=None, fixtures=(),
                  filenames=(), excludes=(),
-                 encoding='utf-8'):
+                 encoding='utf-8', patterns=()):
         self.parsers = parsers
         calling_filename = sys._getframe(1).f_globals.get('__file__')
         if calling_filename:
@@ -89,7 +93,10 @@ class Sybil(object):
         else:
             start_path = path
         self.path = abspath(start_path)
-        self.should_test_path = PathFilter(pattern, filenames, excludes)
+        patterns = list(patterns)
+        if pattern:
+            patterns.append(pattern)
+        self.should_test_path = PathFilter(patterns, filenames, excludes)
         self.setup = setup
         self.teardown = teardown
         self.fixtures = fixtures
