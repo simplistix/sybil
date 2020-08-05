@@ -116,14 +116,14 @@ class SybilFile(pytest.File):
             self.sybil.teardown(self.document.namespace)
 
 
-def pytest_integration(sybil):
+def pytest_integration(sybil, class_=SybilFile):
 
     def pytest_collect_file(parent, path):
         if sybil.should_test_filename(path.basename):
             try:
-                from_parent = SybilFile.from_parent
+                from_parent = class_.from_parent
             except AttributeError:
-                return SybilFile(path, parent, sybil)
+                return class_(path, parent, sybil)
             else:
                 return from_parent(parent, fspath=path, sybil=sybil)
 

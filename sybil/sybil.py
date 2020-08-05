@@ -95,12 +95,14 @@ class Sybil(object):
             if self.should_test_filename(filename):
                 yield self.parse(join(self.path, filename))
 
-    def pytest(self):
+    def pytest(self, class_=None):
         """
         The helper method for when you use :ref:`pytest_integration`.
         """
-        from .integration.pytest import pytest_integration
-        return pytest_integration(self)
+        from .integration.pytest import pytest_integration, SybilFile
+        if class_ is None:
+            class_ = SybilFile
+        return pytest_integration(self, class_)
 
     def unittest(self):
         """
