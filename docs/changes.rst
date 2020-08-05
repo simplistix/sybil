@@ -1,6 +1,13 @@
 Changes
 =======
 
+1.4.0 (5 Aug 2020)
+------------------
+
+- Support nested directories of source files rather than just one directory.
+
+- Support multiple patterns of files to include.
+
 1.3.1 (29 Jul 2020)
 -------------------
 
