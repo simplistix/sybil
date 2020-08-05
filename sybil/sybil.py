@@ -1,24 +1,31 @@
+import os
 import sys
 from fnmatch import fnmatch
-from glob import glob
-from os import listdir
 from os.path import join, dirname, abspath
 
 from .document import Document
 
 
-class FilenameFilter(object):
+class PathFilter(object):
 
     def __init__(self, pattern, filenames, excludes):
         self.pattern = pattern
         self.filenames = filenames
         self.excludes = excludes
 
-    def __call__(self, filename):
+    def __call__(self, path):
+        path = str(path)
         return (
-            (fnmatch(filename, self.pattern) or filename in self.filenames)
-            and not any(fnmatch(filename, e) for e in self.excludes)
+            (fnmatch(path, self.pattern) or (split(path)[-1] in self.filenames))
+            and not any(fnmatch(path, e) for e in self.excludes)
         )
+
+
+def listdir(root):
+    root_to_ignore = len(root) + 1
+    for directory, _, filenames in os.walk(root):
+        for filename in filenames:
+            yield os.path.join(directory, filename)[root_to_ignore:]
 
 
 class Sybil(object):
@@ -42,7 +49,8 @@ class Sybil(object):
       files that will be parsed for examples.
       
     :param filenames:
-      An optional :class:`set` of source file names that will be parsed for examples.
+      An optional :class:`set` of source file names that, if found anywhere within the
+      root ``path`` or its sub-directories, that will be parsed for examples.
 
     :param excludes:
       An optional  sequence of :func:`patterns <fnmatch.fnmatch>` of source file names
@@ -81,7 +89,7 @@ class Sybil(object):
         else:
             start_path = path
         self.path = abspath(start_path)
-        self.should_test_filename = FilenameFilter(pattern, filenames, excludes)
+        self.should_test_path = PathFilter(pattern, filenames, excludes)
         self.setup = setup
         self.teardown = teardown
         self.fixtures = fixtures
@@ -91,9 +99,9 @@ class Sybil(object):
         return Document.parse(path, *self.parsers, encoding=self.encoding)
 
     def all_documents(self):
-        for filename in sorted(listdir(self.path)):
-            if self.should_test_filename(filename):
-                yield self.parse(join(self.path, filename))
+        for path in sorted(listdir(self.path)):
+            if self.should_test_path(path):
+                yield self.parse(join(self.path, path))
 
     def pytest(self, class_=None):
         """

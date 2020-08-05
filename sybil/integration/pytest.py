@@ -119,7 +119,7 @@ class SybilFile(pytest.File):
 def pytest_integration(sybil, class_=SybilFile):
 
     def pytest_collect_file(parent, path):
-        if sybil.should_test_filename(path.basename):
+        if sybil.should_test_path(path):
             try:
                 from_parent = class_.from_parent
             except AttributeError:

@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+import os
 import re
 from functools import partial
 from os.path import split
@@ -237,20 +238,38 @@ class TestSybil(object):
 
 class TestFiltering(object):
 
-    def check(self, sybil, expected):
-        assert expected == [split(d.path)[-1] for d in sybil.all_documents()]
+    def check(self, tmp_path, sybil, expected):
+        assert expected == [d.path[len(str(tmp_path))+1:].split(os.sep)
+                            for d in sybil.all_documents()]
 
     def test_excludes(self, tmp_path):
         (tmp_path / 'foo.txt').write_text(u'')
         (tmp_path / 'bar.txt').write_text(u'')
         sybil = Sybil([], path=str(tmp_path), pattern='*.txt', excludes=['bar.txt'])
-        self.check(sybil, expected=['foo.txt'])
+        self.check(tmp_path, sybil, expected=[['foo.txt']])
 
     def test_filenames(self, tmp_path):
         (tmp_path / 'foo.txt').write_text(u'')
         (tmp_path / 'bar.txt').write_text(u'')
+        (tmp_path / 'baz').mkdir()
+        (tmp_path / 'baz' / 'bar.txt').write_text(u'')
         sybil = Sybil([], path=str(tmp_path), filenames=['bar.txt'])
-        self.check(sybil, expected=['bar.txt'])
+        self.check(tmp_path, sybil, expected=[['bar.txt'], ['baz', 'bar.txt']])
+
+    def test_glob_patterns(self, tmp_path):
+        (tmp_path / 'middle').mkdir()
+        interesting = (tmp_path / 'middle' / 'interesting')
+        interesting.mkdir()
+        boring = (tmp_path / 'middle' / 'boring')
+        boring.mkdir()
+        (interesting / 'foo.txt').write_text(u'')
+        (boring / 'bad1.txt').write_text(u'')
+        (tmp_path / 'bad2.txt').write_text(u'')
+        sybil = Sybil([],
+                      path=str(tmp_path),
+                      pattern='**middle/*.txt',
+                      excludes=['**/boring/*.txt'])
+        self.check(tmp_path, sybil, expected=[['middle', 'interesting', 'foo.txt']])
 
 
 def check_into_namespace(example):
