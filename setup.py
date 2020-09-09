@@ -35,7 +35,7 @@ setup(
             'pytest>=3.5.0',
             'pytest-cov',
             ],
-        build=['sphinx', 'pkginfo', 'setuptools-git', 'twine', 'wheel']
+        build=['sphinx', 'setuptools-git', 'twine', 'wheel']
     ),
     entry_points = {
         'nose.plugins.0.10': [
