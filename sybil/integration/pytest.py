@@ -70,7 +70,7 @@ class SybilItem(pytest.Item):
             return self.session
 
     def setup(self):
-        fixtures.fillfixtures(self)
+        self._request._fillfixtures()
         for name, fixture in self.funcargs.items():
             self.example.namespace[name] = fixture
 
