@@ -19,7 +19,7 @@ Why Sybil?
 
 Sybil is heavily inspired by `Manuel`__, which was named after a
 `Fawlty Towers`__ character, and so it seemed only right to pick another
-Fawtly Towers character name for this library.
+Fawlty Towers character name for this library.
 
 __ http://pythonhosted.org/manuel/index.html
 
