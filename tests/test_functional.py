@@ -3,7 +3,6 @@ from os.path import dirname, join
 from unittest.main import main as unittest_main
 from unittest.runner import TextTestRunner
 
-from nose.core import run_exit as NoseMain, TextTestRunner as NoseRunner
 from pytest import main as pytest_main
 
 functional_test_dir = join(dirname(__file__), 'functional')
@@ -146,25 +145,3 @@ def test_unittest(capsys):
     assert main.result.testsRun == 8
     assert len(main.result.failures) == 1
     assert len(main.result.errors) == 1
-
-
-def test_nose(capsys):
-    class ResultStoringMain(NoseMain):
-        def runTests(self):
-            self.testRunner = NoseRunner(stream=sys.stdout,
-                                         verbosity=self.config.verbosity,
-                                         config=self.config)
-            self.result = self.testRunner.run(self.test)
-
-    main = ResultStoringMain(
-        module=None,
-        argv=['x', '-vs', join(functional_test_dir, 'nose')]
-    )
-    assert main.result.testsRun == 9
-    assert len(main.result.failures) == 1
-    assert len(main.result.errors) == 1
-
-    out, err = capsys.readouterr()
-    assert err == ''
-    out = Finder(out)
-    common_checks(out)

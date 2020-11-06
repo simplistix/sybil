@@ -111,33 +111,3 @@ which are both called with the :class:`~sybil.document.Document`
 :class:`~sybil.document.Document.namespace`.
 
 The ``fixtures`` parameter, is ignored.
-
-.. _nose_integration:
-
-nose
-~~~~
-
-Sybil acts as a test loader plugin for nose that provides a
-``--test-suite-func`` ooption which defaults to ``load_tests``, so making
-nose respect the `load_tests protocol`__.
-
-__ https://docs.python.org/3/library/unittest.html#load-tests-protocol
-
-Provided Sybil is activated as a nose plugin, the following code, when placed in
-a test module where nose can find it, will result in your documentation examples
-being checked:
-
-.. literalinclude:: example/example_nose/test_example_docs.py
-
-The ``path`` parameter gives the path, relative to the file containing this
-code, that contains the documentation source files.
-
-The file glob passed as ``pattern`` should match any documentation source
-files that contain examples which you would like to be checked.
-
-Any setup or teardown necessary for your tests can be carried out in
-callables passed to the ``setup`` and ``teardown`` parameters,
-which are both called with the :class:`~sybil.document.Document`
-:class:`~sybil.document.Document.namespace`.
-
-The ``fixtures`` parameter is ignored.

@@ -31,15 +31,9 @@ setup(
     include_package_data=True,
     extras_require=dict(
         test=[
-            'nose',
             'pytest>=3.5.0',
             'pytest-cov',
             ],
         build=['sphinx', 'setuptools-git', 'twine', 'wheel']
     ),
-    entry_points = {
-        'nose.plugins.0.10': [
-            'sybil = sybil.integration.nose:Plugin'
-            ]
-        },
 )

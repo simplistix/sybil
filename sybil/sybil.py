@@ -121,10 +121,8 @@ class Sybil(object):
 
     def unittest(self):
         """
-        The helper method for when you use either 
-        :ref:`unitttest_integration` or :ref:`nose_integration`.
+        The helper method for when you use :ref:`unitttest_integration`.
         """
         from .integration.unittest import unittest_integration
         return unittest_integration(self)
 
-    nose = unittest
