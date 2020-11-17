@@ -1,6 +1,13 @@
 Changes
 =======
 
+2.0.0 (17 Nov 2020)
+-------------------
+
+- Drop support for nose.
+
+- Handle encoded data returned by doctest execution on Python 2.
+
 1.4.0 (5 Aug 2020)
 ------------------
 
