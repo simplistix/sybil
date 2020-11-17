@@ -33,7 +33,7 @@ def test_directive_indent_beyond_block():
     with pytest.raises(ValueError) as excinfo:
         list(parse_captures(document))
     assert str(excinfo.value) == (
-            "couldn't find the start of the block to match'        .. -> foo' "
+            "couldn't find the start of the block to match '        .. -> foo' "
             "on line 5 of "+sample_path('capture_bad_indent1.txt')
         )
 
@@ -43,6 +43,6 @@ def test_directive_indent_equal_to_block():
     with pytest.raises(ValueError) as excinfo:
         list(parse_captures(document))
     assert str(excinfo.value) == (
-            "couldn't find the start of the block to match'    .. -> foo' "
+            "couldn't find the start of the block to match '    .. -> foo' "
             "on line 5 of "+sample_path('capture_bad_indent2.txt')
         )

@@ -75,7 +75,7 @@ def parse_captures(document):
 
             if end_index - start_index < 2:
                 raise ValueError((
-                    "couldn't find the start of the block to match"
+                    "couldn't find the start of the block to match "
                     "%r on line %i of %s"
                 ) % (directive.group(), end_index+1, document.path))
 
