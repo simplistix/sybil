@@ -1,3 +1,4 @@
+from io import open
 from os.path import dirname, join
 
 from sybil.document import Document
@@ -10,7 +11,7 @@ def sample_path(name):
 
 def document_from_sample(name):
     path = sample_path(name)
-    with open(path) as source:
+    with open(path, encoding='ascii') as source:
         return Document(source.read(), path)
 
 
