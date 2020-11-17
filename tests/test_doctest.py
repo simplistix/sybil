@@ -1,3 +1,4 @@
+# coding=utf-8
 from doctest import REPORT_NDIFF, ELLIPSIS
 
 import pytest
@@ -74,3 +75,10 @@ def test_tabs():
     assert str(excinfo.value) == (
         'tabs are not supported, first one found at line 2, column 4'
     )
+
+
+def test_unicode():
+    document = Document(u'>>> print("├─")\n├─', path='dummy.rst')
+    example, = DocTestParser()(document)
+    namespace = document.namespace
+    assert evaluate_region(example, namespace) == ''
