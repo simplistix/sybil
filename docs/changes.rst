@@ -1,6 +1,13 @@
 Changes
 =======
 
+2.0.1 (29 Nov 2020)
+-------------------
+
+- Make :class:`~sybil.parsers.doctest.DocTestParser` more permissive with respect
+  to tabs in documents. Tabs that aren't in the doctest block not longer cause
+  parsing of the document to fail.
+
 2.0.0 (17 Nov 2020)
 -------------------
 
