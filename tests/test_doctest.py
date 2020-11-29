@@ -69,12 +69,17 @@ def test_min_indent():
 
 def test_tabs():
     path = sample_path('doctest_tabs.txt')
-    parser = DocTestParser(optionflags=REPORT_NDIFF|ELLIPSIS)
-    with pytest.raises(ValueError) as excinfo:
+    parser = DocTestParser()
+    with pytest.raises(ValueError):
         Document.parse(path, parser)
-    assert str(excinfo.value) == (
-        'tabs are not supported, first one found at line 2, column 4'
-    )
+
+
+def test_irrelevant_tabs():
+    document = document_from_sample('doctest_irrelevant_tabs.txt')
+    regions = list(DocTestParser()(document))
+    assert len(regions) == 1
+    namespace = document.namespace
+    assert evaluate_region(regions[0], namespace) == ''
 
 
 def test_unicode():

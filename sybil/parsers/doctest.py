@@ -103,11 +103,6 @@ class DocTestParser(BaseDocTestParser):
         # a cut down version of doctest.DocTestParser.parse:
 
         text = document.text
-        first_tab = text.find('\t')
-        if first_tab != -1:
-            raise ValueError('tabs are not supported, first one found at '+(
-                document.line_column(first_tab)
-            ))
         # If all lines begin with the same indentation, then strip it.
         min_indent = self._min_indent(text)
         if min_indent > 0:
