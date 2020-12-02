@@ -15,6 +15,11 @@ into account the different representation of :class:`bytes` and
 __ http://www.sphinx-doc.org/
 __ https://docs.pytest.org
 
+You'll also want to disable pytest's own doctest plugin by putting this in your pytest config:
+
+.. literalinclude:: example/pytest.ini
+   :lines: 2
+
 An example of a documentation source file that could be checked using the above
 configuration is shown below:
 
@@ -85,6 +90,14 @@ The ``setup`` and ``teardown`` parameters can still be used to pass
 :class:`~sybil.document.Document` setup and teardown callables.
 
 The ``path`` parameter, however, is ignored.
+
+
+.. note::
+
+    pytest provides its own doctest plugin, which can cause problems. It
+    should be disabled by including the following in your pytest configuration file:
+
+    .. literalinclude:: example/pytest.ini
 
 .. _unitttest_integration:
 
