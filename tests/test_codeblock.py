@@ -1,14 +1,35 @@
 import pytest
 from io import StringIO
 from sybil.document import Document
+from sybil.example import Example
 from sybil.parsers.codeblock import CodeBlockParser, compile_codeblock
 from tests.helpers import document_from_sample, evaluate_region
 
 
-def test_basic():
+@pytest.fixture
+def loltest_cleanup():
+    yield
+    if 'loltest' in CodeBlockParser._LANGUAGES:
+        del CodeBlockParser._LANGUAGES['loltest']
+
+
+@pytest.mark.parametrize('languages', ['python', 'python,lolcode'])
+def test_basic(languages, loltest_cleanup):
+    with_lolcode = 'lolcode' in languages
+    lolcode_found = []
+
+    def handle_lolcode(example):
+        assert isinstance(example, Example)
+        assert 'HAI' in example.parsed
+        lolcode_found.append(example.parsed)
+
+    if with_lolcode:
+        CodeBlockParser.add_evaluator('lolcode', handle_lolcode)
+
     document = document_from_sample('codeblock.txt')
     regions = list(CodeBlockParser()(document))
-    assert len(regions) == 7
+    assert len(regions) == 7 + (1 if with_lolcode else 0)
+
     namespace = document.namespace
     namespace['y'] = namespace['z'] = 0
     assert evaluate_region(regions[0], namespace) is None
@@ -27,7 +48,12 @@ def test_basic():
     assert 'NoVars' in namespace
     assert evaluate_region(regions[5], namespace) is None
     assert namespace['define_this'] == 1
-    assert evaluate_region(regions[6], namespace) is None
+
+    if with_lolcode:
+        assert evaluate_region(regions[6], namespace) is None
+        assert lolcode_found
+
+    assert evaluate_region(regions[-1], namespace) is None
     assert 'YesVars' in namespace
     assert '__builtins__' not in namespace
 
@@ -35,7 +61,7 @@ def test_basic():
 def test_future_imports():
     document = document_from_sample('codeblock_future_imports.txt')
     regions = list(CodeBlockParser(['print_function'])(document))
-    assert len(regions) == 2
+    assert len(regions) == 3
     buffer = StringIO()
     namespace = {'buffer': buffer}
     assert evaluate_region(regions[0], namespace) is None
@@ -53,6 +79,8 @@ def test_future_imports():
     # the future import line drops the firstlineno by 1
     code = compile_codeblock(regions[1].parsed, document.path)
     assert code.co_firstlineno == 8
+
+    assert evaluate_region(regions[2], namespace) is None
 
 
 def test_windows_line_endings(tmp_path):

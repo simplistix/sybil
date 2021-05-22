@@ -42,6 +42,15 @@ This paranoidly checks that we can use binary and unicode literals:
 
 - A following bullet straight away!
 
+- A code block in a non-python language:
+
+  .. code-block:: lolcode
+
+    HAI
+    CAN HAS STDIO?
+    VISIBLE "HAI WORLD!"
+    KTHXBYE
+
 - Here's another code block that should still be found!:
 
   .. code-block:: python

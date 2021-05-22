@@ -7,3 +7,10 @@ More likely is one down here:
 .. code-block:: python
 
   print('still should work and have good line numbers', file=buffer)
+
+.. code-block:: lolcode
+
+   HAI
+   CAN HAS STDIO?
+   VISIBLE "HAI WORLD!"
+   KTHXBYE
