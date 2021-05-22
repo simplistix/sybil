@@ -9,8 +9,8 @@ from tests.helpers import document_from_sample, evaluate_region
 @pytest.fixture
 def loltest_cleanup():
     yield
-    if 'loltest' in CodeBlockParser._LANGUAGES:
-        del CodeBlockParser._LANGUAGES['loltest']
+    if 'lolcode' in CodeBlockParser._LANGUAGES:
+        del CodeBlockParser._LANGUAGES['lolcode']
 
 
 @pytest.mark.parametrize('languages', ['python', 'python,lolcode'])
@@ -61,7 +61,7 @@ def test_basic(languages, loltest_cleanup):
 def test_future_imports():
     document = document_from_sample('codeblock_future_imports.txt')
     regions = list(CodeBlockParser(['print_function'])(document))
-    assert len(regions) == 3
+    assert len(regions) == 2
     buffer = StringIO()
     namespace = {'buffer': buffer}
     assert evaluate_region(regions[0], namespace) is None
@@ -79,8 +79,6 @@ def test_future_imports():
     # the future import line drops the firstlineno by 1
     code = compile_codeblock(regions[1].parsed, document.path)
     assert code.co_firstlineno == 8
-
-    assert evaluate_region(regions[2], namespace) is None
 
 
 def test_windows_line_endings(tmp_path):
