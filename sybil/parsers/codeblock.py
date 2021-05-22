@@ -3,11 +3,11 @@ import textwrap
 
 from sybil import Region
 
-CODEBLOCK_START = re.compile(
-    r'^(?P<indent>[ \t]*)\.\.\s*(invisible-)?code(-block)?::?\s*python\b'
+RE_CODEBLOCK_START = (
+    r'^(?P<indent>[ \t]*)\.\.\s*(invisible-)?code(-block)?::?\s*{{BLOCKLANGUAGE}}\b'
     r'(?:\s*\:[\w-]+\:.*\n)*'
-    r'(?:\s*\n)*',
-    re.MULTILINE)
+    r'(?:\s*\n)*'
+)
 
 
 def compile_codeblock(source, path):
@@ -30,13 +30,34 @@ class CodeBlockParser(object):
         An optional list of strings that will be turned into
         ``from __future__ import ...`` statements and prepended to the code
         in each of the examples found by this parser.
+
+    Subclasses can override the language handled by this parser as follows.
+
+    - Overwrite the `LANGUAGE` attribute with the name of the language.
+
+    - Implement the `evaluation_function()` method to return an evaluation
+      function for that language.  The function will receive a
+      :class:`~sybil.example.Example` object as only argument, containing the
+      code that was parsed from the code block section.
     """
+
+    LANGUAGE = 'python'
 
     def __init__(self, future_imports=()):
         self.future_imports = future_imports
+        self.block_start = re.compile(
+            RE_CODEBLOCK_START.replace('{{BLOCKLANGUAGE}}', self.LANGUAGE),
+            re.MULTILINE,
+        )
+
+    @staticmethod
+    def evaluation_function():
+        return evaluate_code_block
 
     def __call__(self, document):
-        for start_match in re.finditer(CODEBLOCK_START, document.text):
+        evaluator_function = self.evaluation_function()
+
+        for start_match in re.finditer(self.block_start, document.text):
             source_start = start_match.end()
             indent = str(len(start_match.group('indent')))
             end_pattern = re.compile(r'(\n\Z|\n[ \t]{0,'+indent+'}(?=\\S))')
@@ -57,5 +78,5 @@ class CodeBlockParser(object):
                 start_match.start(),
                 source_end,
                 source,
-                evaluate_code_block
+                evaluator_function,
             )
