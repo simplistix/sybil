@@ -1,5 +1,5 @@
 import pytest
-from sybil.compat import StringIO
+from io import StringIO
 from sybil.document import Document
 from sybil.parsers.codeblock import CodeBlockParser, compile_codeblock
 from tests.helpers import document_from_sample, evaluate_region

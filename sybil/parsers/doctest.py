@@ -11,7 +11,6 @@ from doctest import (
     register_optionflag
 )
 
-from ..compat import PY3
 from ..region import Region
 
 
@@ -76,10 +75,7 @@ class DocTestRunner(BaseDocTestRunner):
 
 
 def fix_byte_unicode_repr(want):
-    if PY3:
-        pattern = UNICODE_LITERAL
-    else:
-        pattern = BYTE_LITERAL
+    pattern = UNICODE_LITERAL
     return pattern.sub(r"\1", want)
 
 

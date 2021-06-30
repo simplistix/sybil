@@ -1,23 +1,22 @@
 version: 2.1
 
 orbs:
-  python: cjw296/python-ci@1.2
+  python: cjw296/python-ci@2
 
 common: &common
   jobs:
 
     - python/pip-run-tests:
-        name: python27
-        image: circleci/python:2.7
-    - python/pip-run-tests:
-        name: python37
-        image: circleci/python:3.7
+        matrix:
+          parameters:
+            image:
+              - circleci/python:3.6
+              - circleci/python:3.9
 
     - python/coverage:
         name: coverage
         requires:
-          - python27
-          - python37
+          - python/pip-run-tests
 
     - python/release:
         name: release

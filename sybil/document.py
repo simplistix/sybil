@@ -31,13 +31,11 @@ class Document(object):
         self.namespace = {}
 
     @classmethod
-    def parse(cls, path, *parsers, **kw):
+    def parse(cls, path, *parsers, encoding='utf-8'):
         """
         Read the text from the supplied path and parse it into a document
         using the supplied parsers.
         """
-        # python 2 compat:
-        encoding = kw.pop('encoding', 'utf-8')
         with open(path, encoding=encoding) as source:
             text = source.read()
         document = cls(text, path)

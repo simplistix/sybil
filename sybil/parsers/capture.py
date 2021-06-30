@@ -1,9 +1,9 @@
 import re
 import string
+from io import StringIO
 from textwrap import dedent
 
 from sybil import Region
-from sybil.compat import StringIO
 
 CAPTURE_DIRECTIVE = re.compile(
     r'^(?P<indent>(\t| )*)\.\.\s*-+>\s*(?P<name>\S+).*$'

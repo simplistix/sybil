@@ -3,7 +3,6 @@ from unittest import SkipTest
 
 import pytest
 
-from sybil.compat import PY3
 from sybil.document import Document
 from sybil.parsers.codeblock import CodeBlockParser
 from sybil.parsers.doctest import DocTestParser
@@ -34,10 +33,7 @@ def test_conditional_edge_cases():
             skipped.append(str(e))
     assert document.namespace['run'] == [1, 2]
     # we should always have one and only one skip from this document.
-    if PY3:
-        assert skipped == ['only true on python 2']
-    else:
-        assert skipped == ['only true on python 3'] * 3
+    assert skipped == ['only true on python 2']
 
 
 def test_conditional_full():
