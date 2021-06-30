@@ -44,18 +44,11 @@ class SybilItem(pytest.Item):
         # pytest fixtures dance:
         fm = self.session._fixturemanager
         closure = fm.getfixtureclosure(names, self)
-        try:
-            initialnames, names_closure, arg2fixturedefs = closure
-        except ValueError:  # pragma: no cover
-            # pytest < 3.7
-            names_closure, arg2fixturedefs = closure
-            fixtureinfo = FuncFixtureInfo(names, names_closure, arg2fixturedefs)
-        else:
-            # pyest >= 3.7
-            fixtureinfo = FuncFixtureInfo(names, initialnames, names_closure, arg2fixturedefs)
+        initialnames, names_closure, arg2fixturedefs = closure
+        fixtureinfo = FuncFixtureInfo(names, initialnames, names_closure, arg2fixturedefs)
         self._fixtureinfo = fixtureinfo
         self.funcargs = {}
-        self._request = fixtures.FixtureRequest(self)
+        self._request = fixtures.FixtureRequest(self, _ispytest=True)
 
     def reportinfo(self):
         info = '%s line=%i column=%i' % (
