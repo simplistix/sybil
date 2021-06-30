@@ -37,35 +37,12 @@ class DocTest(BaseDocTest):
         self.globs = globs
 
 
-class OutputChecker(BaseOutputChecker):
-
-    def __init__(self, encoding):
-        self.encoding = encoding
-
-    def _decode(self, got):
-        decode = getattr(got, 'decode', None)
-        if decode is None:
-            return got
-        return decode(self.encoding)
-
-    def check_output(self, want, got, optionflags):
-        return BaseOutputChecker.check_output(
-            self, want, self._decode(got), optionflags
-        )
-
-    def output_difference(self, example, got, optionflags):
-        return BaseOutputChecker.output_difference(
-            self, example, self._decode(got), optionflags
-        )
-
-
 class DocTestRunner(BaseDocTestRunner):
 
-    def __init__(self, optionflags, encoding):
+    def __init__(self, optionflags):
         optionflags |= _unittest_reportflags
         BaseDocTestRunner.__init__(
             self,
-            checker=OutputChecker(encoding),
             verbose=False,
             optionflags=optionflags,
         )
@@ -88,12 +65,9 @@ class DocTestParser(BaseDocTestParser):
         :ref:`doctest option flags<option-flags-and-directives>` to use
         when evaluating the examples found by this parser.
 
-    :param encoding:
-        If on Python 2, this encoding will be used to decode the string
-        resulting from execution of the examples.
     """
-    def __init__(self, optionflags=0, encoding='utf-8'):
-        self.runner = DocTestRunner(optionflags, encoding)
+    def __init__(self, optionflags=0):
+        self.runner = DocTestRunner(optionflags)
 
     def __call__(self, document):
         # a cut down version of doctest.DocTestParser.parse:

@@ -93,12 +93,7 @@ class SybilFile(pytest.File):
     def collect(self):
         self.document = self.sybil.parse(self.fspath.strpath)
         for example in self.document:
-            try:
-                from_parent = SybilItem.from_parent
-            except AttributeError:
-                yield SybilItem(self, self.sybil, example)
-            else:
-                yield from_parent(self, sybil=self.sybil, example=example)
+            yield SybilItem.from_parent(self, sybil=self.sybil, example=example)
 
     def setup(self):
         if self.sybil.setup:
