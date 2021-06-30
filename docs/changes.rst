@@ -1,6 +1,16 @@
 Changes
 =======
 
+3.0.0 (30 Jun 2021)
+-------------------
+
+- Require pytest 6.2.0.
+
+- Drop Python 2 support as pytest 6.2.0 does not support it.
+
+- Remove the ``encoding`` parameter to :class:`~sybil.parsers.doctest.DocTestParser`
+  as it is no longer used.
+
 2.0.1 (29 Nov 2020)
 -------------------
 
