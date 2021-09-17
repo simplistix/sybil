@@ -1,7 +1,7 @@
 Changes
 =======
 
-3.0.0 (30 Jun 2021)
+3.0.0 (Unreleased)
 -------------------
 
 - Require pytest 6.2.0.
