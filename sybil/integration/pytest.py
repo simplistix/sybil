@@ -108,11 +108,6 @@ def pytest_integration(sybil, class_=SybilFile):
 
     def pytest_collect_file(parent, path):
         if sybil.should_test_path(path):
-            try:
-                from_parent = class_.from_parent
-            except AttributeError:
-                return class_(path, parent, sybil)
-            else:
-                return from_parent(parent, fspath=path, sybil=sybil)
+            return class_.from_parent(parent, fspath=path, sybil=sybil)
 
     return pytest_collect_file

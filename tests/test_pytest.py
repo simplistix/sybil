@@ -4,8 +4,13 @@ from sybil import Sybil
 
 
 class MockFile(object):
+
     def __init__(self, path, parent, sybil):
         self.path = path
+
+    @classmethod
+    def from_parent(cls, parent, fspath, sybil):
+        return cls(fspath, parent, sybil)
 
 
 class TestCollectFile(object):
