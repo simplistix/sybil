@@ -3,8 +3,8 @@ Sybil
 
 |CircleCI|_ |Docs|_
 
-.. |CircleCI| image:: https://circleci.com/gh/cjw296/sybil/tree/master.svg?style=shield
-.. _CircleCI: https://circleci.com/gh/cjw296/sybil/tree/master
+.. |CircleCI| image:: https://circleci.com/gh/simplistix/sybil/tree/master.svg?style=shield
+.. _CircleCI: https://circleci.com/gh/simplistix/sybil/tree/master
 
 .. |Docs| image:: https://readthedocs.org/projects/sybil/badge/?version=latest
 .. _Docs: http://sybil.readthedocs.org/en/latest/

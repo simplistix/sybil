@@ -6,7 +6,7 @@ Development
 If you wish to contribute to this project, then you should fork the
 repository found here:
 
-https://github.com/cjw296/sybil/
+https://github.com/simplistix/sybil/
 
 Once that has been done and you have a checkout, you can follow these
 instructions to perform various development tasks:

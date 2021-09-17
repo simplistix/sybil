@@ -68,7 +68,7 @@ Changes
 
 - Move to CircleCI__ and Carthorse__.
 
-  __ https://circleci.com/gh/cjw296/sybil
+  __ https://circleci.com/gh/simplistix/sybil
   __ https://github.com/cjw296/carthorse
 
 - Add warning about the limitations of
