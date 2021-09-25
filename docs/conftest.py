@@ -8,7 +8,7 @@ from sybil.parsers.skip import skip
 pytest_collect_file = Sybil(
     parsers=[
         DocTestParser(optionflags=ELLIPSIS|FIX_BYTE_UNICODE_REPR),
-        CodeBlockParser(future_imports=['print_function']),
+        CodeBlockParser(),
         parse_captures,
         skip,
     ],

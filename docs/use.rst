@@ -6,8 +6,7 @@ As a quick-start, here's how you would set up a ``conftest.py`` in your
 :ref:`doctest <doctest-simple-testfile>` and
 :rst:dir:`code-block` examples in your documentation source files, taking
 into account the different representation of :class:`bytes` and
-:class:`unicode <str>` between Python 2 and 3, and also prefixing all
-:rst:dir:`code-block` examples with a ``from __future__ import print_function``:
+:class:`unicode <str>`:
 
 .. literalinclude:: conftest.py
    :lines: 1-2, 4-11, 13-
