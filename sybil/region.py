@@ -1,4 +1,4 @@
-class Region(object):
+class Region:
     """
     Parsers should yield instances of this class for each example they
     discover in a documentation source file.

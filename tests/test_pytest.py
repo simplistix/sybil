@@ -3,7 +3,7 @@ from py.path import local
 from sybil import Sybil
 
 
-class MockFile(object):
+class MockFile:
 
     def __init__(self, path, parent, sybil):
         self.path = path
@@ -13,7 +13,7 @@ class MockFile(object):
         return cls(fspath, parent, sybil)
 
 
-class TestCollectFile(object):
+class TestCollectFile:
 
     def test_filenames(self, tmp_path):
         pytest_collect_file = Sybil(parsers=[], filenames=['test.rst']).pytest(MockFile)

@@ -5,7 +5,7 @@ from io import open
 from .example import Example
 
 
-class Document(object):
+class Document:
     """
     This is Sybil's representation of a documentation source file.
     It will be instantiated by Sybil and provided to each parser in turn.

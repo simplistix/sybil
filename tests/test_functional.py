@@ -8,7 +8,7 @@ from pytest import main as pytest_main
 functional_test_dir = join(dirname(__file__), 'functional')
 
 
-class Finder(object):
+class Finder:
 
     def __init__(self, text):
         self.text = text

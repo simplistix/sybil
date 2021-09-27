@@ -19,14 +19,14 @@ def document():
     return Document('ABCDEFGH', '/the/path')
 
 
-class TestRegion(object):
+class TestRegion:
 
     def test_repr(self):
         region = Region(0, 1, 'parsed', 'evaluator')
         assert repr(region) == "<Region start=0 end=1 'evaluator'>"
 
 
-class TestExample(object):
+class TestExample:
 
     def test_repr(self, document):
         region = Region(0, 1, 'parsed', 'evaluator')
@@ -68,7 +68,7 @@ class TestExample(object):
         assert str(excinfo.value) == 'foo!'
 
 
-class TestDocument(object):
+class TestDocument:
 
     def test_add(self, document):
         region = Region(0, 1, None, None)
@@ -193,7 +193,7 @@ def parse_first_line(document):
     yield Region(0, len(line), line, None)
 
 
-class TestSybil(object):
+class TestSybil:
 
     def _evaluate_examples(self, examples, namespace):
         return [e.region.evaluator(e.region.parsed, namespace)
@@ -236,7 +236,7 @@ class TestSybil(object):
                 ['X count was 1, as expected'])
 
 
-class TestFiltering(object):
+class TestFiltering:
 
     def check(self, tmp_path, sybil, expected):
         assert expected == [d.path[len(str(tmp_path))+1:].split(os.sep)

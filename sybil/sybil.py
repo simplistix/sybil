@@ -6,7 +6,7 @@ from os.path import join, dirname, abspath, split
 from .document import Document
 
 
-class PathFilter(object):
+class PathFilter:
 
     def __init__(self, patterns, filenames, excludes):
         self.patterns = patterns
@@ -28,7 +28,7 @@ def listdir(root):
             yield os.path.join(directory, filename)[root_to_ignore:]
 
 
-class Sybil(object):
+class Sybil:
     """
     An object to provide test runner integration for discovering examples
     in documentation and ensuring they are correct.

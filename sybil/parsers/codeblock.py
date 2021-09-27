@@ -21,7 +21,7 @@ def evaluate_code_block(example):
     del example.namespace['__builtins__']
 
 
-class CodeBlockParser(object):
+class CodeBlockParser:
     """
     A class to instantiate and include when your documentation makes use of
     :ref:`codeblock-parser` examples.

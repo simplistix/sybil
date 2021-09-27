@@ -29,7 +29,7 @@ This paranoidly checks that we can use binary and unicode literals:
 
   .. code-block:: python
 
-    class NoVars(object):
+    class NoVars:
          __slots__ = ['x']
 
   This one has some text after it that also forms part of the bullet.
@@ -46,5 +46,5 @@ This paranoidly checks that we can use binary and unicode literals:
 
   .. code-block:: python
 
-    class YesVars(object):
+    class YesVars:
          __slots__ = ['x']

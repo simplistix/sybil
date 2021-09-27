@@ -9,7 +9,7 @@ class SybilFailure(AssertionError):
         self.result = result
 
 
-class Example(object):
+class Example:
     """
     This represents a particular example from a documentation source file.
     It is assembled from the :class:`~sybil.document.Document` and 

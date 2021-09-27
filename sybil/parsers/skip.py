@@ -16,7 +16,7 @@ class If:
             return reason or self.default_reason
 
 
-class Skip(object):
+class Skip:
 
     def __init__(self, original_evaluator):
         self.original_evaluator = original_evaluator
