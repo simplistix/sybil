@@ -1,7 +1,8 @@
+from typing import Iterable
 from unittest import SkipTest
 import re
 
-from sybil import Region
+from sybil import Region, Example, Document
 
 SKIP = re.compile(r'^[ \t]*\.\.\s*skip:\s*(\w+)(?:\s+if(.+)$)?', re.MULTILINE)
 
@@ -60,14 +61,14 @@ class Skip:
             raise self.reason
 
 
-def evaluate_skip(example):
+def evaluate_skip(example: Example) -> None:
     evaluator = example.document.evaluator
     if not isinstance(evaluator, Skip):
         example.document.evaluator = evaluator = Skip(evaluator)
     evaluator(example)
 
 
-def skip(document):
+def skip(document: Document) -> Iterable[Region]:
     """
     A parser function to be included when your documentation makes use of
     :ref:`skipping <skip-parser>` examples in a document.

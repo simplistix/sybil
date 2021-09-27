@@ -1,6 +1,15 @@
+from typing import TYPE_CHECKING
+
+from .region import Region
+from .typing import Parsed
+
+if TYPE_CHECKING:
+    from .document import Document
+
+
 class SybilFailure(AssertionError):
 
-    def __init__(self, example, result):
+    def __init__(self, example: 'Example', result: str):
         super(SybilFailure, self).__init__((
             'Example at {}, line {}, column {} did not evaluate as expected:\n'
             '{}'
@@ -17,38 +26,40 @@ class Example:
     evaluator.
     """
 
-    def __init__(self, document, line, column, region, namespace):
+    def __init__(
+        self, document: 'Document', line: int, column: int, region: Region, namespace: dict
+    ):
         #: The :class:`~sybil.document.Document` from which this example came.
-        self.document = document
+        self.document: 'Document' = document
         #: The absolute path of the :class:`~sybil.document.Document`.
-        self.path = document.path
+        self.path: str = document.path
         #: The line number at which this example occurs in the
         #: :class:`~sybil.document.Document`.
-        self.line = line
+        self.line: int = line
         #: The column number at which this example occurs in the
         #: :class:`~sybil.document.Document`.
-        self.column = column
+        self.column: int = column
         #: The :class:`~sybil.Region` from which this example came.
-        self.region = region
+        self.region: Region = region
         #: The character position at which this example starts in the
         #: :class:`~sybil.document.Document`.
-        self.start = region.start
+        self.start: int = region.start
         #: The character position at which this example ends in the
         #: :class:`~sybil.document.Document`.
-        self.end = region.end
+        self.end: int = region.end
         #: The version of this example provided by the parser that yielded
         #: the :class:`~sybil.Region` containing it.
-        self.parsed = region.parsed
+        self.parsed: Parsed = region.parsed
         #: The :attr:`~sybil.document.Document.namespace` of the document from
         #: which this example came.
-        self.namespace = namespace
+        self.namespace: dict = namespace
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '<Example path={} line={} column={} using {!r}>'.format(
             self.document.path, self.line, self.column, self.region.evaluator
         )
 
-    def evaluate(self):
+    def evaluate(self) -> None:
         evaluator = self.document.evaluator or self.region.evaluator
         result = evaluator(self)
         if result:

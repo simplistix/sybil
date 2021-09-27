@@ -1,16 +1,17 @@
 import re
 import string
+from typing import Iterable
 from io import StringIO
 from textwrap import dedent
 
-from sybil import Region
+from sybil import Region, Document, Example
 
 CAPTURE_DIRECTIVE = re.compile(
     r'^(?P<indent>(\t| )*)\.\.\s*-+>\s*(?P<name>\S+).*$'
 )
 
 
-def evaluate_capture(example):
+def evaluate_capture(example: Example) -> None:
     name, text = example.parsed
     example.namespace[name] = text
 
@@ -49,7 +50,7 @@ class DocumentReverseIterator(list):
             yield self.current_line, line
 
 
-def parse_captures(document):
+def parse_captures(document: Document) -> Iterable[Region]:
     """
     A parser function to be included when your documentation makes use of
     :ref:`capture-parser` examples.

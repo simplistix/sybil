@@ -10,7 +10,9 @@ from doctest import (
     _unittest_reportflags,
     register_optionflag
 )
+from typing import Iterable
 
+from .. import Document, Example
 from ..region import Region
 
 
@@ -69,7 +71,7 @@ class DocTestParser(BaseDocTestParser):
     def __init__(self, optionflags=0):
         self.runner = DocTestRunner(optionflags)
 
-    def __call__(self, document):
+    def __call__(self, document: Document) -> Iterable[Region]:
         # a cut down version of doctest.DocTestParser.parse:
 
         text = document.text
@@ -109,7 +111,7 @@ class DocTestParser(BaseDocTestParser):
             # Update charno.
             charno = m.end()
 
-    def evaluate(self, sybil_example):
+    def evaluate(self, sybil_example: Example) -> str:
         example = sybil_example.parsed
         namespace = sybil_example.namespace
         output = []

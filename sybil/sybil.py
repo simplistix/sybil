@@ -2,18 +2,20 @@ import os
 import sys
 from fnmatch import fnmatch
 from os.path import join, dirname, abspath, split
+from typing import Sequence, Callable, Collection, List, Iterable
 
 from .document import Document
+from .typing import Parser
 
 
 class PathFilter:
 
-    def __init__(self, patterns, filenames, excludes):
+    def __init__(self, patterns: List[str], filenames: Collection[str], excludes: Sequence[str]):
         self.patterns = patterns
         self.filenames = filenames
         self.excludes = excludes
 
-    def __call__(self, path):
+    def __call__(self, path: str) -> bool:
         path = str(path)
         return (
             (any(fnmatch(path, e) for e in self.patterns) or (split(path)[-1] in self.filenames))
@@ -21,7 +23,7 @@ class PathFilter:
         )
 
 
-def listdir(root):
+def listdir(root: str) -> Iterable[str]:
     root_to_ignore = len(root) + 1
     for directory, _, filenames in os.walk(root):
         for filename in filenames:
@@ -82,30 +84,39 @@ class Sybil:
       An optional string specifying the encoding to be used when decoding documentation
       source files.
     """
-    def __init__(self, parsers, pattern='', path='.',
-                 setup=None, teardown=None, fixtures=(),
-                 filenames=(), excludes=(),
-                 encoding='utf-8', patterns=()):
-        self.parsers = parsers
+    def __init__(
+        self,
+        parsers: Sequence[Parser],
+        pattern: str = '',
+        path: str = '.',
+        setup: Callable[[dict], None] = None,
+        teardown: Callable[[dict], None] = None,
+        fixtures: Sequence[str] = (),
+        filenames: Collection[str] = (),
+        excludes: Sequence[str] = (),
+        encoding: str = 'utf-8',
+        patterns: Sequence[str] = ()
+    ):
+        self.parsers: Sequence[Parser] = parsers
         calling_filename = sys._getframe(1).f_globals.get('__file__')
         if calling_filename:
             start_path = join(dirname(calling_filename), path)
         else:
             start_path = path
-        self.path = abspath(start_path)
+        self.path: str = abspath(start_path)
         patterns = list(patterns)
         if pattern:
             patterns.append(pattern)
-        self.should_test_path = PathFilter(patterns, filenames, excludes)
-        self.setup = setup
-        self.teardown = teardown
-        self.fixtures = fixtures
-        self.encoding = encoding
+        self.should_test_path: PathFilter = PathFilter(patterns, filenames, excludes)
+        self.setup: Callable[[dict], None] = setup
+        self.teardown: Callable[[dict], None] = teardown
+        self.fixtures: Sequence[str] = fixtures
+        self.encoding: str = encoding
 
-    def parse(self, path):
+    def parse(self, path: str) -> Document:
         return Document.parse(path, *self.parsers, encoding=self.encoding)
 
-    def all_documents(self):
+    def all_documents(self) -> Iterable[Document]:
         for path in sorted(listdir(self.path)):
             if self.should_test_path(path):
                 yield self.parse(join(self.path, path))

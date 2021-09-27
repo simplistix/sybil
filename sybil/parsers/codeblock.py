@@ -1,7 +1,8 @@
 import re
 import textwrap
+from typing import Iterable
 
-from sybil import Region
+from sybil import Region, Document, Example
 
 CODEBLOCK_START = re.compile(
     r'^(?P<indent>[ \t]*)\.\.\s*(invisible-)?code(-block)?::?\s*python\b'
@@ -14,7 +15,7 @@ def compile_codeblock(source, path):
     return compile(source, path, 'exec', dont_inherit=True)
 
 
-def evaluate_code_block(example):
+def evaluate_code_block(example: Example) -> None:
     code = compile_codeblock(example.parsed, example.document.path)
     exec(code, example.namespace)
     # exec adds __builtins__, we don't want it:
@@ -35,7 +36,7 @@ class CodeBlockParser:
     def __init__(self, future_imports=()):
         self.future_imports = future_imports
 
-    def __call__(self, document):
+    def __call__(self, document: Document) -> Iterable[Region]:
         for start_match in re.finditer(CODEBLOCK_START, document.text):
             source_start = start_match.end()
             indent = str(len(start_match.group('indent')))

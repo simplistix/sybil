@@ -1,8 +1,11 @@
 import re
 from bisect import bisect
 from io import open
+from typing import List, Iterable, Pattern, Tuple, Match
 
 from .example import Example
+from .region import Region
+from .typing import Parser
 
 
 class Document:
@@ -19,19 +22,19 @@ class Document:
     #: This last case should always take the form of ``example.region.evaluator(example)``.
     evaluator = None
 
-    def __init__(self, text, path):
+    def __init__(self, text: str, path: str):
         #: This is the text of the documentation source file.
-        self.text = text
+        self.text: str = text
         #: This is the absolute path of the documentation source file.
-        self.path = path
-        self.end = len(text)
-        self.regions = []
+        self.path: str = path
+        self.end: int = len(text)
+        self.regions: List[Region] = []
         #: This dictionary is the namespace in which all example parsed from
         #: this document will be evaluated.
-        self.namespace = {}
+        self.namespace: dict = {}
 
     @classmethod
-    def parse(cls, path, *parsers, encoding='utf-8'):
+    def parse(cls, path, *parsers: Parser, encoding: str = 'utf-8') -> 'Document':
         """
         Read the text from the supplied path and parse it into a document
         using the supplied parsers.
@@ -44,7 +47,7 @@ class Document:
                 document.add(region)
         return document
 
-    def line_column(self, position):
+    def line_column(self, position: int) -> str:
         """
         Return a line and column location in this document based on a byte
         position.
@@ -53,20 +56,20 @@ class Document:
         col = position - self.text.rfind('\n', 0, position)
         return 'line {}, column {}'.format(line, col)
 
-    def region_details(self, region):
+    def region_details(self, region: Region) -> str:
         return '{!r} from {} to {}'.format(
             region,
             self.line_column(region.start),
             self.line_column(region.end)
         )
 
-    def raise_overlap(self, *regions):
+    def raise_overlap(self, *regions: Region) -> None:
         reprs = []
         for region in regions:
             reprs.append(self.region_details(region))
         raise ValueError('{} overlaps {}'.format(*reprs))
 
-    def add(self, region):
+    def add(self, region: Region) -> None:
         if region.start < 0:
             raise ValueError('{} is before start of document'.format(
                 self.region_details(region)
@@ -87,7 +90,7 @@ class Document:
                 self.raise_overlap(region, next)
         self.regions.insert(index, entry)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterable[Example]:
         line = 1
         place = 0
         for _, region in self.regions:
@@ -98,7 +101,9 @@ class Document:
                           line, region.start-line_start,
                           region, self.namespace)
 
-    def find_region_sources(self, start_pattern, end_pattern):
+    def find_region_sources(
+        self, start_pattern: Pattern[str], end_pattern: Pattern[str]
+    ) -> Tuple[Match, Match, str]:
         """
         This helper method can be called used to extract source text
         for regions based on the two :ref:`regular expressions <re-objects>`

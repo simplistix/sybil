@@ -1,3 +1,6 @@
+from sybil.typing import Parsed, Evaluator
+
+
 class Region:
     """
     Parsers should yield instances of this class for each example they
@@ -19,12 +22,12 @@ class Region:
         as it should be.
     """
 
-    def __init__(self, start, end, parsed, evaluator):
+    def __init__(self, start: int, end: int, parsed: Parsed, evaluator: Evaluator):
         self.start, self.end, self.parsed, self.evaluator = (
             start, end, parsed, evaluator
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '<Region start={} end={} {!r}>'.format(
             self.start, self.end, self.evaluator
         )
