@@ -15,7 +15,7 @@ class Finder:
         self.index = 0
 
     def then_find(self, substring):
-        assert substring in self.text[self.index:]
+        assert substring in self.text[self.index:], self.text[self.index:]
         self.index = self.text.index(substring, self.index)
 
 
@@ -99,14 +99,14 @@ def test_pytest(capsys):
                   'sybil teardown 4\n'
                   'session_fixture teardown')
     out.then_find('_ fail.rst line=1 column=1 _')
-    out.then_find(  ">   raise Exception('the start!')")
+    out.then_find("raise Exception('the start!')")
     out.then_find('_ fail.rst line=8 column=1 _')
     out.then_find('Y count was 3 instead of 2')
     out.then_find('fail.rst:8: SybilFailure')
     out.then_find('_ fail.rst line=10 column=1 _')
     out.then_find('ValueError: X count was 3 instead of 4')
     out.then_find('_ fail.rst line=14 column=1 _')
-    out.then_find(">       raise Exception('boom!')")
+    out.then_find("raise Exception('boom!')")
     out.then_find('fail.rst:18: Exception')
 
 
