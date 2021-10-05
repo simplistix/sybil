@@ -2,7 +2,7 @@ import pytest
 from io import StringIO
 from sybil.document import Document
 from sybil.parsers.codeblock import CodeBlockParser, compile_codeblock
-from tests.helpers import document_from_sample, evaluate_region
+from .helpers import document_from_sample, evaluate_region, check_excinfo
 
 
 def test_basic():
@@ -16,7 +16,7 @@ def test_basic():
     assert namespace['z'] == 0
     with pytest.raises(Exception) as excinfo:
         evaluate_region(regions[1], namespace)
-    assert str(excinfo.value) == 'boom!'
+    check_excinfo(excinfo, 'boom!', lineno=11)
     assert evaluate_region(regions[2], namespace) is None
     assert namespace['y'] == 1
     assert namespace['z'] == 1
@@ -32,27 +32,17 @@ def test_basic():
     assert '__builtins__' not in namespace
 
 
-def test_future_imports():
+def test_line_numbers_correct_with_future_imports():
     document = document_from_sample('codeblock_future_imports.txt')
     regions = list(CodeBlockParser(['print_function'])(document))
     assert len(regions) == 2
-    buffer = StringIO()
-    namespace = {'buffer': buffer}
-    assert evaluate_region(regions[0], namespace) is None
-    assert buffer.getvalue() == (
-        'pathalogical worst case for line numbers\n'
-    )
-    # the future import line drops the firstlineno by 1
-    code = compile_codeblock(regions[0].parsed, document.path)
-    assert code.co_firstlineno == 2
-    assert evaluate_region(regions[1], namespace) is None
-    assert buffer.getvalue() == (
-        'pathalogical worst case for line numbers\n'
-        'still should work and have good line numbers\n'
-    )
-    # the future import line drops the firstlineno by 1
-    code = compile_codeblock(regions[1].parsed, document.path)
-    assert code.co_firstlineno == 8
+    namespace = {}
+    with pytest.raises(Exception) as excinfo:
+        evaluate_region(regions[0], namespace)
+    check_excinfo(excinfo, 'Boom 1', lineno=3)
+    with pytest.raises(Exception) as excinfo:
+        evaluate_region(regions[1], namespace)
+    check_excinfo(excinfo, 'Boom 2', lineno=9)
 
 
 def test_windows_line_endings(tmp_path):

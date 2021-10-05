@@ -1,5 +1,8 @@
 from io import open
 from os.path import dirname, join
+from traceback import TracebackException
+
+from _pytest._code import ExceptionInfo
 
 from sybil.document import Document
 from sybil.example import Example
@@ -23,3 +26,10 @@ def evaluate_region(region, namespace):
         region=region,
         namespace=namespace
     ))
+
+
+def check_excinfo(excinfo: ExceptionInfo, text: str, *, lineno: int, filename: str = '/the/path'):
+    assert str(excinfo.value) == text, f'{str(excinfo.value)!r} == {text!r}'
+    details = TracebackException.from_exception(excinfo.value, lookup_lines=False).stack[-1]
+    assert details.filename == filename, f'{details.filename!r} == {filename!r}'
+    assert details.lineno == lineno, f'{details.lineno} == {lineno}'
