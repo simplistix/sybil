@@ -1,3 +1,4 @@
+import __future__
 import re
 import textwrap
 from typing import Iterable
@@ -9,17 +10,6 @@ CODEBLOCK_START = re.compile(
     r'(?:\s*\:[\w-]+\:.*\n)*'
     r'(?:\s*\n)*',
     re.MULTILINE)
-
-
-def compile_codeblock(source, path):
-    return compile(source, path, 'exec', dont_inherit=True)
-
-
-def evaluate_code_block(example: Example) -> None:
-    code = compile_codeblock(example.parsed, example.document.path)
-    exec(code, example.namespace)
-    # exec adds __builtins__, we don't want it:
-    del example.namespace['__builtins__']
 
 
 class CodeBlockParser:
@@ -34,7 +24,17 @@ class CodeBlockParser:
     """
 
     def __init__(self, future_imports=()):
-        self.future_imports = future_imports
+        self.flags = 0
+        for future_import in future_imports:
+            self.flags |= getattr(__future__, future_import).compiler_flag
+
+    def evaluate(self, example: Example) -> None:
+        code = compile(
+            example.parsed, example.document.path, 'exec', flags=self.flags, dont_inherit=True
+        )
+        exec(code, example.namespace)
+        # exec adds __builtins__, we don't want it:
+        del example.namespace['__builtins__']
 
     def __call__(self, document: Document) -> Iterable[Region]:
         for start_match in re.finditer(CODEBLOCK_START, document.text):
@@ -44,19 +44,12 @@ class CodeBlockParser:
             end_match = end_pattern.search(document.text, source_start)
             source_end = end_match.start()
             source = textwrap.dedent(document.text[source_start:source_end])
-            # There must be a nicer way to get code.co_firstlineno
-            # to be correct...
+            # There must be a nicer way to get line numbers to be correct...
             line_count = document.text.count('\n', 0, source_start)
-            if self.future_imports:
-                line_count -= 1
-                source = 'from __future__ import {}\n{}'.format(
-                    ', '.join(self.future_imports), source
-                )
-            line_prefix = '\n' * line_count
-            source = line_prefix + source
+            source = '\n' * line_count + source
             yield Region(
                 start_match.start(),
                 source_end,
                 source,
-                evaluate_code_block
+                self.evaluate
             )

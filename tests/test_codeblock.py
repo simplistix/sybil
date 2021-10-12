@@ -1,7 +1,10 @@
+import __future__
+import sys
+
 import pytest
-from io import StringIO
+
 from sybil.document import Document
-from sybil.parsers.codeblock import CodeBlockParser, compile_codeblock
+from sybil.parsers.codeblock import CodeBlockParser
 from .helpers import document_from_sample, evaluate_region, check_excinfo
 
 
@@ -32,17 +35,42 @@ def test_basic():
     assert '__builtins__' not in namespace
 
 
-def test_line_numbers_correct_with_future_imports():
+def future_import_checks(*future_imports):
     document = document_from_sample('codeblock_future_imports.txt')
-    regions = list(CodeBlockParser(['print_function'])(document))
-    assert len(regions) == 2
+    regions = list(CodeBlockParser(future_imports)(document))
+    assert len(regions) == 3
     namespace = {}
     with pytest.raises(Exception) as excinfo:
         evaluate_region(regions[0], namespace)
+    # check the line number of the first block, which is the hardest case:
     check_excinfo(excinfo, 'Boom 1', lineno=3)
     with pytest.raises(Exception) as excinfo:
         evaluate_region(regions[1], namespace)
+    # check the line number of the second block:
     check_excinfo(excinfo, 'Boom 2', lineno=9)
+    evaluate_region(regions[2], namespace)
+    # check the line number of the third block:
+    assert namespace['foo'].__code__.co_firstlineno == 15
+    return namespace['foo']
+
+
+def test_no_future_imports():
+    future_import_checks()
+
+
+def test_single_future_import():
+    future_import_checks('barry_as_FLUFL')
+
+
+def test_multiple_future_imports():
+    future_import_checks('barry_as_FLUFL', 'print_function')
+
+
+@pytest.mark.skipif(sys.version_info < (3, 7), reason="requires python3.7 or higher")
+def test_functional_future_imports():
+    foo = future_import_checks('annotations')
+    # This will keep working but not be an effective test once PEP 563 finally lands:
+    assert foo.__code__.co_flags & __future__.annotations.compiler_flag
 
 
 def test_windows_line_endings(tmp_path):
