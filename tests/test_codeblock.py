@@ -5,50 +5,45 @@ import pytest
 
 from sybil.document import Document
 from sybil.parsers.codeblock import CodeBlockParser
-from .helpers import document_from_sample, evaluate_region, check_excinfo
+from .helpers import check_excinfo, parse
 
 
 def test_basic():
-    document = document_from_sample('codeblock.txt')
-    regions = list(CodeBlockParser()(document))
-    assert len(regions) == 7
-    namespace = document.namespace
+    examples, namespace = parse('codeblock.txt', CodeBlockParser(), expected=7)
     namespace['y'] = namespace['z'] = 0
-    assert evaluate_region(regions[0], namespace) is None
+    assert examples[0].evaluate() is None
     assert namespace['y'] == 1
     assert namespace['z'] == 0
     with pytest.raises(Exception) as excinfo:
-        evaluate_region(regions[1], namespace)
-    check_excinfo(excinfo, 'boom!', lineno=11)
-    assert evaluate_region(regions[2], namespace) is None
+        examples[1].evaluate()
+    check_excinfo(examples[1], excinfo, 'boom!', lineno=11)
+    assert examples[2].evaluate() is None
     assert namespace['y'] == 1
     assert namespace['z'] == 1
-    assert evaluate_region(regions[3], namespace) is None
+    assert examples[3].evaluate() is None
     assert namespace['bin'] == b'x'
     assert namespace['uni'] == u'x'
-    assert evaluate_region(regions[4], namespace) is None
+    assert examples[4].evaluate() is None
     assert 'NoVars' in namespace
-    assert evaluate_region(regions[5], namespace) is None
+    assert examples[5].evaluate() is None
     assert namespace['define_this'] == 1
-    assert evaluate_region(regions[6], namespace) is None
+    assert examples[6].evaluate() is None
     assert 'YesVars' in namespace
     assert '__builtins__' not in namespace
 
 
 def future_import_checks(*future_imports):
-    document = document_from_sample('codeblock_future_imports.txt')
-    regions = list(CodeBlockParser(future_imports)(document))
-    assert len(regions) == 3
-    namespace = {}
+    parser = CodeBlockParser(future_imports)
+    examples, namespace = parse('codeblock_future_imports.txt', parser, expected=3)
     with pytest.raises(Exception) as excinfo:
-        evaluate_region(regions[0], namespace)
+        examples[0].evaluate()
     # check the line number of the first block, which is the hardest case:
-    check_excinfo(excinfo, 'Boom 1', lineno=3)
+    check_excinfo(examples[0], excinfo, 'Boom 1', lineno=3)
     with pytest.raises(Exception) as excinfo:
-        evaluate_region(regions[1], namespace)
+        examples[1].evaluate()
     # check the line number of the second block:
-    check_excinfo(excinfo, 'Boom 2', lineno=9)
-    evaluate_region(regions[2], namespace)
+    check_excinfo(examples[1], excinfo, 'Boom 2', lineno=9)
+    examples[2].evaluate()
     # check the line number of the third block:
     assert namespace['foo'].__code__.co_firstlineno == 15
     return namespace['foo']
