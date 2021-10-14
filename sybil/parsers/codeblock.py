@@ -28,10 +28,18 @@ class CodeBlockParser:
         for future_import in future_imports:
             self.flags |= getattr(__future__, future_import).compiler_flag
 
+    def pad(self, source: str, line: int) -> str:
+        """
+        Pad the supplied source such that line numbers will be based on the one provided
+        when the source is evaluated.
+        """
+        # There must be a nicer way to get line numbers to be correct...
+        return (line+1)*'\n' + source
+
     def evaluate(self, example: Example) -> None:
-        code = compile(
-            example.parsed, example.document.path, 'exec', flags=self.flags, dont_inherit=True
-        )
+        # There must be a nicer way to get line numbers to be correct...
+        source = self.pad(example.parsed, example.line)
+        code = compile(source, example.document.path, 'exec', flags=self.flags, dont_inherit=True)
         exec(code, example.namespace)
         # exec adds __builtins__, we don't want it:
         del example.namespace['__builtins__']
@@ -44,9 +52,6 @@ class CodeBlockParser:
             end_match = end_pattern.search(document.text, source_start)
             source_end = end_match.start()
             source = textwrap.dedent(document.text[source_start:source_end])
-            # There must be a nicer way to get line numbers to be correct...
-            line_count = document.text.count('\n', 0, source_start)
-            source = '\n' * line_count + source
             yield Region(
                 start_match.start(),
                 source_end,
