@@ -4,47 +4,48 @@ from doctest import REPORT_NDIFF, ELLIPSIS
 import pytest
 
 from sybil.document import Document
+from sybil.example import SybilFailure
 from sybil.parsers.doctest import DocTestParser, FIX_BYTE_UNICODE_REPR
-from tests.helpers import document_from_sample, evaluate_region, sample_path
+from tests.helpers import sample_path, parse
 
 
 def test_pass():
-    document = document_from_sample('doctest.txt')
-    regions = list(DocTestParser()(document))
-    assert len(regions) == 5
-    namespace = document.namespace
-    assert evaluate_region(regions[0], namespace) == ''
+    examples, namespace = parse('doctest.txt', DocTestParser(), expected=5)
+    examples[0].evaluate()
     assert namespace['y'] == 1
-    assert evaluate_region(regions[1], namespace) == ''
+    examples[1].evaluate()
     assert namespace['y'] == 1
-    assert evaluate_region(regions[2], namespace) == ''
+    examples[2].evaluate()
     assert namespace['x'] == [1, 2, 3]
-    assert evaluate_region(regions[3], namespace) == ''
+    examples[3].evaluate()
     assert namespace['y'] == 2
-    assert evaluate_region(regions[4], namespace) == ''
+    examples[4].evaluate()
     assert namespace['y'] == 2
 
 
 def test_fail():
-    document = document_from_sample('doctest_fail.txt')
-    regions = list(DocTestParser()(document))
-    assert len(regions) == 2
-    assert evaluate_region(regions[0], {}) == (
+    examples, namespace = parse('doctest_fail.txt', DocTestParser(), expected=2)
+    with pytest.raises(SybilFailure) as excinfo:
+        examples[0].evaluate()
+    assert excinfo.value.result == (
         "Expected:\n"
         "    Not my output\n"
         "Got:\n"
         "    where's my output?\n"
     )
-    actual = evaluate_region(regions[1], {})
+    with pytest.raises(SybilFailure) as excinfo:
+        examples[1].evaluate()
+    actual = excinfo.value.result
     assert actual.startswith('Exception raised:')
     assert actual.endswith('Exception: boom!\n')
 
 
 def test_fail_with_options():
-    document = document_from_sample('doctest_fail.txt')
-    regions = list(DocTestParser(optionflags=REPORT_NDIFF|ELLIPSIS)(document))
-    assert len(regions) == 2
-    assert evaluate_region(regions[0], {}) == (
+    parser = DocTestParser(optionflags=REPORT_NDIFF|ELLIPSIS)
+    examples, namespace = parse('doctest_fail.txt', parser, expected=2)
+    with pytest.raises(SybilFailure) as excinfo:
+        examples[0].evaluate()
+    assert excinfo.value.result == (
         "Differences (ndiff with -expected +actual):\n"
         "    - Not my output\n"
         "    + where's my output?\n"
@@ -52,19 +53,15 @@ def test_fail_with_options():
 
 
 def test_literals():
-    document = document_from_sample('doctest_literals.txt')
-    regions = list(DocTestParser(FIX_BYTE_UNICODE_REPR)(document))
-    assert len(regions) == 5
-    for region in regions:
-        assert evaluate_region(region, {}) == ''
+    parser = DocTestParser(FIX_BYTE_UNICODE_REPR)
+    examples, _ = parse('doctest_literals.txt', parser, expected=5)
+    for example in examples:
+        example.evaluate()
 
 
 def test_min_indent():
-    document = document_from_sample('doctest_min_indent.txt')
-    regions = list(DocTestParser()(document))
-    assert len(regions) == 1
-    namespace = document.namespace
-    assert evaluate_region(regions[0], namespace) == ''
+    examples, _ = parse('doctest_min_indent.txt', DocTestParser(), expected=1)
+    examples[0].evaluate()
 
 
 def test_tabs():
@@ -75,15 +72,10 @@ def test_tabs():
 
 
 def test_irrelevant_tabs():
-    document = document_from_sample('doctest_irrelevant_tabs.txt')
-    regions = list(DocTestParser()(document))
-    assert len(regions) == 1
-    namespace = document.namespace
-    assert evaluate_region(regions[0], namespace) == ''
+    examples, _ = parse('doctest_irrelevant_tabs.txt', DocTestParser(), expected=1)
+    examples[0].evaluate()
 
 
 def test_unicode():
-    document = Document(u'>>> print("├─")\n├─', path='dummy.rst')
-    example, = DocTestParser()(document)
-    namespace = document.namespace
-    assert evaluate_region(example, namespace) == ''
+    examples, _ = parse('doctest_unicode.txt', DocTestParser(), expected=1)
+    examples[0].evaluate()

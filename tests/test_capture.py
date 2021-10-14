@@ -1,48 +1,47 @@
 import pytest
+
+from sybil import Document
 from sybil.parsers.capture import parse_captures
-from tests.helpers import document_from_sample, sample_path, evaluate_region
+from tests.helpers import sample_path, parse
 
 
 def test_basic():
-    document = document_from_sample('capture.txt')
-    regions = list(parse_captures(document))
-    namespace = document.namespace
-    assert evaluate_region(regions[-1], namespace) is None
+    examples, namespace = parse('capture.txt', parse_captures, expected=4)
+    examples[0].evaluate()
     assert namespace['expected_listing'] == (
         'root.txt\n'
         'subdir/\n'
         'subdir/file.txt\n'
         'subdir/logs/\n'
     )
-    assert evaluate_region(regions[-2], namespace) is None
+    examples[1].evaluate()
     assert namespace['foo'] == 'Third level of indentation.\n'
-    assert evaluate_region(regions[-3], namespace) is None
+    examples[2].evaluate()
     assert namespace['bar'] == (
         'Second level of indentation.\n\n'
         '    Third level of indentation.\n\n.. -> foo\n'
     )
-    assert evaluate_region(regions[-4], namespace) is None
+    examples[3].evaluate()
     assert namespace['another'] == (
         'example\n'
     )
-    assert len(regions) == 4
 
 
 def test_directive_indent_beyond_block():
-    document = document_from_sample('capture_bad_indent1.txt')
+    path = sample_path('capture_bad_indent1.txt')
     with pytest.raises(ValueError) as excinfo:
-        list(parse_captures(document))
+        Document.parse(path, parse_captures)
     assert str(excinfo.value) == (
             "couldn't find the start of the block to match '        .. -> foo' "
-            "on line 5 of "+sample_path('capture_bad_indent1.txt')
+            f"on line 5 of {path}"
         )
 
 
 def test_directive_indent_equal_to_block():
-    document = document_from_sample('capture_bad_indent2.txt')
+    path = sample_path('capture_bad_indent2.txt')
     with pytest.raises(ValueError) as excinfo:
-        list(parse_captures(document))
+        Document.parse(path, parse_captures)
     assert str(excinfo.value) == (
             "couldn't find the start of the block to match '    .. -> foo' "
-            "on line 5 of "+sample_path('capture_bad_indent2.txt')
+            f"on line 5 of {path}"
         )
