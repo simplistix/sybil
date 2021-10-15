@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from sybil import Document
@@ -45,3 +47,9 @@ def test_directive_indent_equal_to_block():
             "couldn't find the start of the block to match '    .. -> foo' "
             f"on line 5 of {path}"
         )
+
+
+def test_capture_codeblock():
+    examples, namespace = parse('capture_codeblock.txt', parse_captures, expected=1)
+    examples[0].evaluate()
+    assert json.loads(namespace['json']) == {"a key": "value", "b key": 42}

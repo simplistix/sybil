@@ -91,6 +91,11 @@ instantiate the parser as follows:
 Other Languages
 ~~~~~~~~~~~~~~~
 
+.. note::
+
+    If your :rst:dir:`code-block` examples define content rather executable code, you may
+    find the :ref:`capture <capture-parser>` parser is more useful.
+
 :class:`sybil.parsers.codeblock.CodeBlockParser` can be used to check examples in any language
 you require, either by instantiating with a specified language and evaluator, or by subclassing
 to create your own parser.
@@ -167,6 +172,10 @@ using the name specified.
 __ http://www.sphinx-doc.org/en/stable/rest.html#comments
 __ http://www.sphinx-doc.org/en/stable/rest.html?highlight=block#source-code
 
+It is used by including :func:`sybil.parsers.capture.parse_captures`
+as an element in the list passed as the
+``parsers`` parameter to :class:`~sybil.Sybil`.
+
 For example::
 
   A simple example::
@@ -182,13 +191,9 @@ For example::
 
 .. invisible-code-block: python
 
-  from sybil.document import Document
   from sybil.parsers.capture import parse_captures
-  document = Document(capture_example, '/the/path')
-  (region,) = parse_captures(document)
-  document.add(region)
-  (example,) = document
-  region.evaluator(example)
+  sybil =  Sybil([parse_captures], pattern='*.rst')
+  document = check_text(capture_example, sybil)
   expected_listing = document.namespace['expected_listing']
 
 The above documentation source, when parsed by this parser and then evaluated,
@@ -198,9 +203,38 @@ document:
 >>> expected_listing.split()
 [u'root.txt', u'subdir/', u'subdir/file.txt', u'subdir/logs/']
 
-The parser is used by including :func:`sybil.parsers.capture.parse_captures`
-as an element in the list passed as the
-``parsers`` parameter to :class:`~sybil.Sybil`.
+It can also be used with :rst:dir:`code-block` examples that define content rather
+executable code, for example:
+
+::
+
+  .. code-block:: json
+
+      {
+          "a key": "value",
+          "b key": 42
+      }
+
+  .. -> json_source
+
+.. --> capture_example
+
+.. invisible-code-block: python
+
+  document = check_text(capture_example, sybil)
+  json_source = document.namespace['json_source']
+
+The JSON source can now be used as follows:
+
+>>> import json
+>>> json.loads(json_source)
+{'a key': 'value', 'b key': 42}
+
+
+.. note::
+
+  It's important that the capture directive, ``.. -> json_source`` in this case, has identical
+  indentation to the code block above it for this to work.
 
 .. _skip-parser:
 
