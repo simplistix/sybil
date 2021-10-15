@@ -36,6 +36,6 @@ setup(
             'pytest>=6.2.0',
             'pytest-cov',
             ],
-        build=['sphinx', 'setuptools-git', 'twine', 'wheel']
+        build=['furo', 'sphinx', 'setuptools-git', 'twine', 'wheel']
     ),
 )

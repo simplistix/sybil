@@ -10,6 +10,10 @@ your own types of example in addition to the included parsers for
    use.rst
    parsers.rst
    api.rst
+
+.. toctree::
+   :maxdepth: 1
+
    development.rst
    changes.rst
    license.rst
