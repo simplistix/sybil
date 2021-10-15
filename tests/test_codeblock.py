@@ -3,13 +3,14 @@ import sys
 
 import pytest
 
+from sybil import Example
 from sybil.document import Document
-from sybil.parsers.codeblock import CodeBlockParser
+from sybil.parsers.codeblock import PythonCodeBlockParser, CodeBlockParser
 from .helpers import check_excinfo, parse
 
 
 def test_basic():
-    examples, namespace = parse('codeblock.txt', CodeBlockParser(), expected=7)
+    examples, namespace = parse('codeblock.txt', PythonCodeBlockParser(), expected=7)
     namespace['y'] = namespace['z'] = 0
     assert examples[0].evaluate() is None
     assert namespace['y'] == 1
@@ -32,8 +33,53 @@ def test_basic():
     assert '__builtins__' not in namespace
 
 
+def test_other_language_composition_pass():
+
+    def oh_hai(example):
+        assert isinstance(example, Example)
+        assert 'HAI' in example.parsed
+
+    parser = CodeBlockParser(language='lolcode', evaluator=oh_hai)
+    examples, namespace = parse('codeblock.txt', parser, expected=1)
+    assert examples[0].evaluate() is None
+
+
+def test_other_language_composition_fail():
+    def oh_noez(example):
+        if 'KTHXBYE' in example.parsed:
+            raise ValueError('oh noez')
+
+    parser = CodeBlockParser(language='lolcode', evaluator=oh_noez)
+    examples, namespace = parse('codeblock.txt', parser, expected=1)
+    with pytest.raises(ValueError):
+        examples[0].evaluate()
+
+
+def test_other_language_no_evaluator():
+    parser = CodeBlockParser('foo')
+    with pytest.raises(NotImplementedError):
+        parser.evaluate(...)
+
+
+class LolCodeCodeBlockParser(CodeBlockParser):
+
+    language = 'lolcode'
+
+    def evaluate(self, example: Example):
+        if example.parsed != 'HAI\n':
+            raise ValueError(repr(example.parsed))
+
+
+def test_other_language_inheritance():
+    examples, namespace = parse('codeblock_lolcode.txt', LolCodeCodeBlockParser(), expected=2)
+    examples[0].evaluate()
+    with pytest.raises(ValueError) as excinfo:
+        examples[1].evaluate()
+    assert str(excinfo.value) == "'KTHXBYE'"
+
+
 def future_import_checks(*future_imports):
-    parser = CodeBlockParser(future_imports)
+    parser = PythonCodeBlockParser(future_imports)
     examples, namespace = parse('codeblock_future_imports.txt', parser, expected=3)
     with pytest.raises(Exception) as excinfo:
         examples[0].evaluate()
@@ -77,7 +123,7 @@ def test_windows_line_endings(tmp_path):
         b'    x = 123\r\n\r\n'
         b'That was my example.\r\n'
     )
-    document = Document.parse(str(p), CodeBlockParser())
+    document = Document.parse(str(p), PythonCodeBlockParser())
     example, = document
     example.evaluate()
     assert document.namespace['x'] == 123

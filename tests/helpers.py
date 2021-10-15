@@ -1,9 +1,11 @@
 from os.path import dirname, join
+from tempfile import NamedTemporaryFile
 from traceback import TracebackException
 from typing import Tuple, List
 
 from _pytest._code import ExceptionInfo
 
+from sybil import Sybil
 from sybil.document import Document
 from sybil.example import Example
 from sybil.typing import Parser
@@ -26,3 +28,12 @@ def check_excinfo(example: Example, excinfo: ExceptionInfo, text: str, *, lineno
     document = example.document
     assert details.filename == document.path, f'{details.filename!r} != {document.path!r}'
     assert details.lineno == lineno, f'{details.lineno} != {lineno}'
+
+
+def check_text(text: str, sybil: Sybil):
+    with NamedTemporaryFile() as temp:
+        temp.write(text.encode('ascii'))
+        temp.flush()
+        document = sybil.parse(temp.name)
+    (example,) = document
+    example.evaluate()

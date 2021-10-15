@@ -3,14 +3,14 @@ from unittest import SkipTest
 
 import pytest
 
-from sybil.parsers.codeblock import CodeBlockParser
+from sybil.parsers.codeblock import PythonCodeBlockParser
 from sybil.parsers.doctest import DocTestParser
 from sybil.parsers.skip import skip
 from .helpers import parse
 
 
 def test_basic():
-    examples, namespace = parse('skip.txt', CodeBlockParser(), skip, expected=9)
+    examples, namespace = parse('skip.txt', PythonCodeBlockParser(), skip, expected=9)
     for example in examples:
         example.evaluate()
     assert namespace['run'] == [2, 5]
@@ -18,7 +18,7 @@ def test_basic():
 
 def test_conditional_edge_cases():
     examples, namespace = parse(
-        'skip-conditional-edges.txt', DocTestParser(), CodeBlockParser(), skip, expected=9
+        'skip-conditional-edges.txt', DocTestParser(), PythonCodeBlockParser(), skip, expected=9
     )
     namespace['sys'] = sys
     namespace['run'] = []

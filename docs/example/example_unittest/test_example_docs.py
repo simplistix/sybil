@@ -2,7 +2,7 @@ from os import chdir, getcwd
 from shutil import rmtree
 from tempfile import mkdtemp
 from sybil import Sybil
-from sybil.parsers.codeblock import CodeBlockParser
+from sybil.parsers.codeblock import PythonCodeBlockParser
 from sybil.parsers.doctest import DocTestParser
 
 def sybil_setup(namespace):
@@ -18,7 +18,7 @@ def sybil_teardown(namespace):
 load_tests = Sybil(
     parsers=[
         DocTestParser(),
-        CodeBlockParser(future_imports=['print_function']),
+        PythonCodeBlockParser(future_imports=['print_function']),
     ],
     path='../docs', pattern='*.rst',
     setup=sybil_setup, teardown=sybil_teardown

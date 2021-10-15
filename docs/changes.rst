@@ -13,6 +13,12 @@ Changes
 - Remove the ``encoding`` parameter to :class:`~sybil.parsers.doctest.DocTestParser`
   as it is no longer used.
 
+- :class:`~sybil.parsers.codeblock.CodeBlockParser` has been renamed to
+  :class:`~sybil.parsers.codeblock.PythonCodeBlockParser`, see the
+  :ref:`codeblock-parser` documentation for details.
+
+Thanks to Stefan Behnel for his work on :ref:`codeblock-parser` parsing!
+
 2.0.1 (29 Nov 2020)
 -------------------
 
@@ -121,13 +127,13 @@ Thanks to Bruno Oliveira for this fix!
 1.0.3 (2 June 2017)
 -------------------
 
-- Fix bug in :func:`~sybil.parsers.codeblock.CodeBlockParser` where it
+- Fix bug in :class:`~sybil.parsers.codeblock.CodeBlockParser` where it
   would incorrectly parse indented code blocks.
 
 1.0.2 (1 June 2017)
 -------------------
 
-- Fix bug in :func:`~sybil.parsers.codeblock.CodeBlockParser` where it
+- Fix bug in :class:`~sybil.parsers.codeblock.CodeBlockParser` where it
   would not find indented code blocks.
 
 1.0.1 (30 May 2017)
