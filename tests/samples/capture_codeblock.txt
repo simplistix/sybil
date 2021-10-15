@@ -1,0 +1,10 @@
+Here's some JSON:
+
+.. code-block:: json
+
+  {
+      "a key": "value",
+      "b key": 42
+  }
+
+.. --> json

@@ -37,3 +37,4 @@ def check_text(text: str, sybil: Sybil):
         document = sybil.parse(temp.name)
     (example,) = document
     example.evaluate()
+    return document
