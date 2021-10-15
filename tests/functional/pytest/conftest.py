@@ -5,7 +5,7 @@ import re
 import pytest
 
 from sybil import Region, Sybil
-from sybil.parsers.codeblock import CodeBlockParser
+from sybil.parsers.codeblock import PythonCodeBlockParser
 
 
 @pytest.fixture(scope="function")
@@ -76,7 +76,7 @@ pytest_collect_file = Sybil(
     parsers=[
         partial(parse_for, 'X'),
         partial(parse_for, 'Y'),
-        CodeBlockParser(['print_function'])
+        PythonCodeBlockParser(['print_function'])
     ],
     pattern='*.rst',
     setup=sybil_setup, teardown=sybil_teardown,

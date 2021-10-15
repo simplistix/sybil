@@ -40,19 +40,12 @@ with the required options and passing it as an element in the list passed as the
 codeblock
 ---------
 
-This parser extracts examples from Sphinx :rst:dir:`code-block` directives
-and evaluates them in the document's :attr:`~sybil.document.Document.namespace`.
+The parsers in :mod:`sybil.parsers.codeblock` extract examples from Sphinx :rst:dir:`code-block`
+directives and evaluate them in the document's :attr:`~sybil.Document.namespace`.
 
-For example, this code block would be evaluated successfully and will define the
-:func:`prefix_and_print` function in the document's namespace:
-
-.. literalinclude:: example.rst
-  :language: rest
-  :lines: 11-18
-
-Including all the boilerplate necessary for an example to successfully evaluate
-can hinder an example's usefulness as part of documentation. As a result, this
-parser also evaluates "invisible" code blocks such as this one:
+Including all the boilerplate necessary for examples to successfully evaluate and be checked
+can hinder writing documentation. To help with this, these parsers also evaluate "invisible" code
+blocks such as this one:
 
 .. literalinclude:: example.rst
   :language: rest
@@ -65,10 +58,21 @@ put in that namespace.
 
 __ http://www.sphinx-doc.org/en/stable/rest.html#comments
 
-The parser is used by instantiating
-:class:`sybil.parsers.codeblock.CodeBlockParser` and passing it as an element in
+Python
+~~~~~~
+
+Python code blocks can be checked by instantiating
+:class:`sybil.parsers.codeblock.PythonCodeBlockParser` and passing it as an element in
 the list passed as the ``parsers`` parameter to :class:`~sybil.Sybil`.
-:class:`~sybil.parsers.codeblock.CodeBlockParser` takes an optional
+
+For example, this Python code block would be evaluated successfully and will define the
+:func:`prefix_and_print` function in the document's namespace:
+
+.. literalinclude:: example.rst
+  :language: rest
+  :lines: 11-18
+
+:class:`~sybil.parsers.codeblock.PythonCodeBlockParser` takes an optional
 ``future_imports`` parameter that can be used to prefix all example python
 code found by this parser with one or or more ``from __future__ import ...``
 statements. For example, to prefix all code block examples with
@@ -78,9 +82,77 @@ instantiate the parser as follows:
 
 .. code-block:: python
 
-  from sybil.parsers.codeblock import CodeBlockParser
+  from sybil.parsers.codeblock import PythonCodeBlockParser
 
-  CodeBlockParser(future_imports=['print_function'])
+  PythonCodeBlockParser(future_imports=['print_function'])
+
+.. _codeblock-other:
+
+Other Languages
+~~~~~~~~~~~~~~~
+
+:class:`sybil.parsers.codeblock.CodeBlockParser` can be used to check examples in any language
+you require, either by instantiating with a specified language and evaluator, or by subclassing
+to create your own parser.
+
+As an example, let's look at evaluating bash commands in a subprocess and checking the output is
+as expected::
+
+  .. code-block:: bash
+
+     $ echo hi there
+     hi there
+
+.. -> bash_document_text
+
+We can do this using :class:`~sybil.parsers.codeblock.CodeBlockParser` as follows:
+
+.. code-block:: python
+
+    from subprocess import check_output
+    from textwrap import dedent
+
+    from sybil import Sybil
+    from sybil.parsers.codeblock import CodeBlockParser
+
+    def evaluate_bash(example):
+        command, expected = dedent(example.parsed).strip().split('\n')
+        actual = check_output(command[2:].split()).strip().decode('ascii')
+        assert actual == expected, repr(actual) + ' != ' + repr(expected)
+
+    parser = CodeBlockParser(language='bash', evaluator=evaluate_bash)
+    sybil = Sybil(parsers=[parser], pattern='*.rst')
+
+.. invisible-code-block: python
+
+  from tests.helpers import check_text
+  check_text(bash_document_text, sybil)
+
+Alternatively, we can create our own parser class and use it as follows:
+
+.. code-block:: python
+
+    from subprocess import check_output
+    from textwrap import dedent
+
+    from sybil import Sybil
+    from sybil.parsers.codeblock import CodeBlockParser
+
+    class BashCodeBlockParser(CodeBlockParser):
+
+        language = 'bash'
+
+        def evaluate(self, example):
+            command, expected = dedent(example.parsed).strip().split('\n')
+            actual = check_output(command[2:].split()).strip().decode('ascii')
+            assert actual == expected, repr(actual) + ' != ' + repr(expected)
+
+    sybil = Sybil([BashCodeBlockParser()], pattern='*.rst')
+
+.. invisible-code-block: python
+
+  from tests.helpers import check_text
+  check_text(bash_document_text, sybil)
 
 .. _capture-parser:
 
@@ -197,6 +269,11 @@ in a subprocess and checking the output is as expected::
 
 .. -> bash_document_text
 
+.. note::
+
+  This specific case can more easily be dealt with using the :rst:dir:`code-block`
+  support for :ref:`other languages<codeblock-other>`.
+
 Writing parsers quite often involves using regular expressions to extract
 the text for examples from the document. There's no hard requirement
 for this, but if you find you need to, then
@@ -261,10 +338,4 @@ then be used to integrate with your test runner:
 
 .. invisible-code-block: python
 
-  from tempfile import NamedTemporaryFile
-  with NamedTemporaryFile() as temp:
-      temp.write(bash_document_text.encode('ascii'))
-      temp.flush()
-      document = sybil.parse(temp.name)
-  (example,) = document
-  example.evaluate()
+  check_text(bash_document_text, sybil)
