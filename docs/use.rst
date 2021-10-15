@@ -3,13 +3,13 @@ Usage
 
 As a quick-start, here's how you would set up a ``conftest.py`` in your
 `Sphinx`__ source directory such that running `pytest`__ would check
-:ref:`doctest <doctest-simple-testfile>` and
+:ref:`doctest <doctest-simple-testfile>` and Python
 :rst:dir:`code-block` examples in your documentation source files, taking
 into account the different representation of :class:`bytes` and
 :class:`unicode <str>`:
 
 .. literalinclude:: conftest.py
-   :lines: 1-2, 4-11, 13-
+   :lines: 1-5, 7-11, 14-
 
 __ http://www.sphinx-doc.org/
 __ https://docs.pytest.org
@@ -29,19 +29,17 @@ Method of operation
 -------------------
 
 Sybil works by discovering a series of
-:class:`documents <sybil.document.Document>` as part of the
+:class:`documents <sybil.Document>` as part of the
 :ref:`test runner integration <integrations>`. These documents are then
 :doc:`parsed <parsers>` into a set of non-overlapping
-:class:`regions <sybil.Region>`. When the tests are run, the
-:ref:`test runner integration <integrations>` turns each :class:`~sybil.Region`
-into an :class:`~sybil.example.Example` before evaluating each
-:class:`~sybil.example.Example` in the document's
-:class:`~sybil.document.Document.namespace`. The examples are evaluated
+:class:`regions <sybil.Region>`. When the tests are run, each :class:`~sybil.Region`
+is turned into an :class:`~sybil.Example` that is evaluated in the document's
+:class:`~sybil.Document.namespace`. The examples are evaluated
 in the order in which they appear in the document.
 If an example does not evaluate as expected, a test failure occurs and Sybil
 continues on to evaluate the remaining
-:class:`examples <sybil.example.Example>` in the
-:class:`~sybil.document.Document`.
+:class:`examples <sybil.Example>` in the
+:class:`~sybil.Document`.
 
 .. _integrations:
 
@@ -81,12 +79,12 @@ files that contain examples which you would like to be checked.
 As you can see, if your examples require any fixtures, these can be requested
 by passing their names to the ``fixtures`` argument of the
 :class:`~sybil.Sybil` class.
-These will be available in the :class:`~sybil.document.Document`
-:class:`~sybil.document.Document.namespace` in a way that should feel natural
+These will be available in the :class:`~sybil.Document`
+:class:`~sybil.Document.namespace` in a way that should feel natural
 to ``pytest`` users.
 
 The ``setup`` and ``teardown`` parameters can still be used to pass
-:class:`~sybil.document.Document` setup and teardown callables.
+:class:`~sybil.Document` setup and teardown callables.
 
 The ``path`` parameter, however, is ignored.
 
@@ -119,7 +117,7 @@ files that contain examples which you would like to be checked.
 
 Any setup or teardown necessary for your tests can be carried out in
 callables passed to the ``setup`` and ``teardown`` parameters,
-which are both called with the :class:`~sybil.document.Document`
-:class:`~sybil.document.Document.namespace`.
+which are both called with the :class:`~sybil.Document`
+:class:`~sybil.Document.namespace`.
 
 The ``fixtures`` parameter, is ignored.

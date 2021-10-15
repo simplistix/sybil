@@ -1,8 +1,9 @@
 .. include:: ../README.rst
+  :end-before: The `documentation
 
-Sybil is designed so that it's easy to provide your own parsers for
-your own types of example in addition to the included parsers for
-:mod:`doctest` and :rst:dir:`code-block` examples.
+Sybil comes with an array of included :doc:`parsers <parsers>`, including ones for
+:mod:`doctest` and :rst:dir:`code-block` examples, and
+is designed so that it's easy to provide your own additional parsers.
 
 .. toctree::
    :maxdepth: 3
