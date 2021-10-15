@@ -1,12 +1,9 @@
-from __future__ import absolute_import
-
 import re
 from doctest import (
     DocTest as BaseDocTest,
     DocTestParser as BaseDocTestParser,
     DocTestRunner as BaseDocTestRunner,
     Example as DocTestExample,
-    OutputChecker as BaseOutputChecker,
     _unittest_reportflags,
     register_optionflag
 )

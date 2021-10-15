@@ -2,22 +2,28 @@ API Reference
 =============
 
 .. automodule:: sybil
-  :members: Sybil, Region
+  :members: Sybil, Region, Document, Example
 
-.. automodule:: sybil.document
-  :members:
+capture parser
+--------------
 
-.. automodule:: sybil.example
-  :members:
+.. automodule:: sybil.parsers.capture
+  :members: parse_captures
 
-.. automodule:: sybil.parsers.doctest
-  :members:
+:rst:dir:`code-block` parsers
+-----------------------------
 
 .. automodule:: sybil.parsers.codeblock
   :members:
 
-.. automodule:: sybil.parsers.capture
-  :members:
+:ref:`doctest <doctest-simple-testfile>` parser
+-----------------------------------------------
+
+.. automodule:: sybil.parsers.doctest
+  :members: DocTestParser,FIX_BYTE_UNICODE_REPR
+
+skip parser
+--------------
 
 .. automodule:: sybil.parsers.skip
   :members:

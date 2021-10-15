@@ -1,7 +1,7 @@
 Parsers
 =======
 
-Sybil parsers are what extracts examples from documentation source files
+Sybil parsers are what extracts examples from source files
 and turns them into parsed examples with evaluators that can check if they
 are as expected. A number of parsers are included, and it's simple enough to
 write your own. The included parsers are as follows:
@@ -12,7 +12,7 @@ doctest
 -------
 
 This parser extracts classic :ref:`doctest <doctest-simple-testfile>` examples
-and evaluates them in the document's :attr:`~sybil.document.Document.namespace`.
+and evaluates them in the document's :attr:`~sybil.Document.namespace`.
 The parser can optionally be instantiated with
 :ref:`doctest option flags<option-flags-and-directives>`.
 
@@ -89,7 +89,7 @@ capture
 
 This parser takes advantage of Sphinx `comment`__ syntax to introduce
 a special comment that takes the preceding ReST `block`__ and inserts its
-raw content into the document's :attr:`~sybil.document.Document.namespace`
+raw content into the document's :attr:`~sybil.Document.namespace`
 using the name specified.
 
 __ http://www.sphinx-doc.org/en/stable/rest.html#comments
@@ -161,7 +161,7 @@ You can also add conditions to either ``next`` or ``start`` as shown below:
   :lines: 17-
 
 As you can see, any names used in the expression passed to ``if`` must be
-present in the document's :attr:`~sybil.document.Document.namespace`.
+present in the document's :attr:`~sybil.Document.namespace`.
 :ref:`invisible code blocks <codeblock-parser>`, :class:`setup <sybil.Sybil>`
 methods or :ref:`fixtures <pytest_integration>` are good ways to provide these.
 
@@ -175,17 +175,17 @@ Developing your own parsers
 ---------------------------
 
 Sybil parsers are callables that take a
-:class:`sybil.document.Document` and yield a sequence of
+:class:`sybil.Document` and yield a sequence of
 :class:`regions <sybil.Region>`. A :class:`~sybil.Region` contains
 the character position of the start and end of the example in the document's
-:attr:`~sybil.document.Document.text`, along with a parsed version of the
+:attr:`~sybil.Document.text`, along with a parsed version of the
 example and a callable evaluator. That evaluator will be called with an
-:class:`~sybil.example.Example` constructed from the
-:class:`~sybil.document.Document` and the :class:`~sybil.Region`
+:class:`~sybil.Example` constructed from the
+:class:`~sybil.Document` and the :class:`~sybil.Region`
 and should either raise an exception or return a textual description in the
 event of the example not being as expected. Evaluators may also
-modify the document's :attr:`~sybil.document.Document.namespace`
-or :attr:`~sybil.document.Document.evaluator`.
+modify the document's :attr:`~sybil.Document.namespace`
+or :attr:`~sybil.Document.evaluator`.
 
 As an example, let's look at a parser suitable for evaluating bash commands
 in a subprocess and checking the output is as expected::
@@ -200,11 +200,11 @@ in a subprocess and checking the output is as expected::
 Writing parsers quite often involves using regular expressions to extract
 the text for examples from the document. There's no hard requirement
 for this, but if you find you need to, then
-:meth:`~sybil.document.Document.find_region_sources` may be of help.
+:meth:`~sybil.Document.find_region_sources` may be of help.
 Parsers are free to access any documented attribute of the
-:class:`~sybil.document.Document` although will most likely
-only need to work with :attr:`~sybil.document.Document.text`.
-The :attr:`~sybil.document.Document.namespace` attribute should **not** be
+:class:`~sybil.Document` although will most likely
+only need to work with :attr:`~sybil.Document.text`.
+The :attr:`~sybil.Document.namespace` attribute should **not** be
 modified.
 
 For the above example, the parser could be implemented as follows, with the
@@ -230,14 +230,14 @@ output:
                          parsed, evaluate_bash_block)
 
 Evaluators are generally much simpler than parsers and are called with an
-:class:`~sybil.example.Example`. Instances of this class are used to wrap up
+:class:`~sybil.Example`. Instances of this class are used to wrap up
 all the attributes you're likely to need when writing an evaluator and all
 documented attributes are fine to use. In particular,
-:attr:`~sybil.example.Example.parsed` is the parsed value provided by the parser
+:attr:`~sybil.Example.parsed` is the parsed value provided by the parser
 when instantiating the :class:`~sybil.Region` and
-:attr:`~sybil.example.Example.namespace` is a reference to the document's
+:attr:`~sybil.Example.namespace` is a reference to the document's
 namespace. Evaluators **are** free to modify the
-:attr:`~sybil.document.Document.namespace` if they need to.
+:attr:`~sybil.Document.namespace` if they need to.
 
 For the above example, the evaluator could be implemented as follows:
 
