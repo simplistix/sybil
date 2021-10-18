@@ -1,44 +1,15 @@
-import sys
-from os.path import dirname, join
-from unittest.main import main as unittest_main
-from unittest.runner import TextTestRunner
+from pytest import CaptureFixture
 
-from pytest import main as pytest_main
-
-functional_test_dir = join(dirname(__file__), 'functional')
+from .helpers import run_pytest, run_unittest
 
 
-class Finder:
+def test_pytest(capsys: CaptureFixture[str]):
+    results = run_pytest(capsys, 'pytest')
+    out = results.out
 
-    def __init__(self, text):
-        self.text = text
-        self.index = 0
-
-    def then_find(self, substring):
-        assert substring in self.text[self.index:], self.text[self.index:]
-        self.index = self.text.index(substring, self.index)
-
-
-def test_pytest(capsys):
-
-    class CollectResults:
-        def pytest_sessionfinish(self, session):
-            self.session = session
-
-    results = CollectResults()
-    return_code = pytest_main(['-vvs', join(functional_test_dir, 'pytest')],
-                              plugins=[results])
-    assert return_code == 1
-    assert results.session.testsfailed == 4
-    assert results.session.testscollected == 10
-
-    out, err = capsys.readouterr()
     # check we're trimming tracebacks:
-    index = out.find('sybil/example.py')
-    if index > -1:  # pragma: no cover
-        raise AssertionError('\n'+out[index-500:index+500])
+    out.assert_not_present('sybil/example.py')
 
-    out = Finder(out)
     out.then_find('fail.rst::line:1,column:1')
     out.then_find('fail.rst::line:1,column:1 sybil setup session_fixture setup\n'
                   'module_fixture setup\n'
@@ -109,8 +80,14 @@ def test_pytest(capsys):
     out.then_find("raise Exception('boom!')")
     out.then_find('fail.rst:18: Exception')
 
+    assert results.return_code == 1
+    assert results.failures == 4
+    assert results.total == 10
 
-def common_checks(out):
+
+def test_unittest(capsys: CaptureFixture[str]):
+    results = run_unittest(capsys, 'unittest')
+    out = results.out
     out.then_find('sybil setup')
     out.then_find('fail.rst,line:6,column:1 ... 0\nok')
     out.then_find('fail.rst,line:8,column:1 ... 1\nFAIL')
@@ -128,20 +105,8 @@ def common_checks(out):
     out.then_find('FAIL:')
     out.then_find('fail.rst,line:8,column:1')
     out.then_find('Y count was 3 instead of 2')
-
-
-def test_unittest(capsys):
-    runner = TextTestRunner(verbosity=2, stream=sys.stdout)
-    path = join(functional_test_dir, 'functional_unittest')
-    main = unittest_main(
-        exit=False, module=None, testRunner=runner,
-        argv=['x', 'discover', '-v', '-t', path, '-s', path]
-    )
-    out, err = capsys.readouterr()
-    assert err == ''
-    out = Finder(out)
-    common_checks(out)
     out.then_find('Ran 8 tests')
-    assert main.result.testsRun == 8
-    assert len(main.result.failures) == 1
-    assert len(main.result.errors) == 1
+
+    assert results.total == 8
+    assert results.failures == 1
+    assert results.errors == 1
