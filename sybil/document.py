@@ -28,13 +28,13 @@ class Document:
         #: This is the absolute path of the documentation source file.
         self.path: str = path
         self.end: int = len(text)
-        self.regions: List[Region] = []
+        self.regions: List[Tuple[int, Region]] = []
         #: This dictionary is the namespace in which all example parsed from
         #: this document will be evaluated.
         self.namespace: dict = {}
 
     @classmethod
-    def parse(cls, path, *parsers: Parser, encoding: str = 'utf-8') -> 'Document':
+    def parse(cls, path: str, *parsers: Parser, encoding: str = 'utf-8') -> 'Document':
         """
         Read the text from the supplied path and parse it into a document
         using the supplied parsers.

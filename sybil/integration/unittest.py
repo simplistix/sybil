@@ -1,6 +1,8 @@
-from __future__ import absolute_import
-
+from typing import TYPE_CHECKING
 from unittest import TestCase as BaseTestCase, TestSuite
+
+if TYPE_CHECKING:
+    from ..sybil import Sybil
 
 
 class TestCase(BaseTestCase):
@@ -32,7 +34,7 @@ class TestCase(BaseTestCase):
             cls.sybil.teardown(cls.namespace)
 
 
-def unittest_integration(sybil):
+def unittest_integration(sybil: 'Sybil'):
 
     def load_tests(loader=None, tests=None, pattern=None):
         suite = TestSuite()
