@@ -70,14 +70,13 @@ class Sybil:
     :param teardown:
       An optional callable that will be called after all the examples from
       a :class:`~sybil.document.Document` have been evaluated. If provided, 
-      it is called with the document's 
-      :attr:`~sybil.document.Document.namespace`.
+      it is called with the document's :attr:`~sybil.document.Document.namespace`.
       
     :param fixtures:
       An optional sequence of strings specifying the names of fixtures to 
-      be requested when using the 
-      :ref:`pytest integration <pytest_integration>`. The fixtures will be 
-      inserted into the document's :attr:`~sybil.document.Document.namespace`.
+      be requested when using the  :ref:`pytest integration <pytest_integration>`.
+      The fixtures will be inserted into the document's :attr:`~sybil.document.Document.namespace`
+      before any examples for that document are evaluated.
       All scopes of fixture are supported.
 
     :param encoding:
