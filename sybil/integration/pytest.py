@@ -2,17 +2,23 @@ from __future__ import absolute_import
 
 from inspect import getsourcefile
 from os.path import abspath
+from typing import Union, TYPE_CHECKING
 
-from _pytest._code.code import TerminalRepr, Traceback
+from _pytest._code.code import TerminalRepr, Traceback, ExceptionInfo
 from _pytest import fixtures
 from _pytest.fixtures import FuncFixtureInfo
 from _pytest.main import Session
+from _pytest.nodes import Collector
 from _pytest.python import Module
 import py.path
 import pytest
 
 from ..example import SybilFailure
 from .. import example
+
+if TYPE_CHECKING:
+    from ..sybil import Sybil
+
 
 example_module_path = abspath(getsourcefile(example))
 
@@ -78,17 +84,21 @@ class SybilItem(pytest.Item):
         if getattr(tb, '_rawentry', None) is not None:
             excinfo.traceback = Traceback(tb._rawentry, excinfo)
 
-    def repr_failure(self, excinfo):
+    def repr_failure(
+        self,
+        excinfo: ExceptionInfo[BaseException],
+        style = None,
+    ) -> Union[str, TerminalRepr]:
         if isinstance(excinfo.value, SybilFailure):
             return SybilFailureRepr(self, str(excinfo.value))
-        return super(SybilItem, self).repr_failure(excinfo)
+        return super().repr_failure(excinfo, style)
 
 
 class SybilFile(pytest.File):
 
-    def __init__(self, fspath, parent, sybil):
+    def __init__(self, fspath, parent, sybil: 'Sybil'):
         super(SybilFile, self).__init__(fspath, parent)
-        self.sybil = sybil
+        self.sybil: 'Sybil' = sybil
 
     def collect(self):
         self.document = self.sybil.parse(self.fspath.strpath)
@@ -104,10 +114,10 @@ class SybilFile(pytest.File):
             self.sybil.teardown(self.document.namespace)
 
 
-def pytest_integration(sybil, class_=SybilFile):
+def pytest_integration(sybil: 'Sybil', class_=SybilFile):
 
-    def pytest_collect_file(parent, path):
-        if sybil.should_test_path(path):
+    def pytest_collect_file(path: py.path.local, parent: Collector):
+        if sybil.should_test_path(path.strpath):
             return class_.from_parent(parent, fspath=path, sybil=sybil)
 
     return pytest_collect_file
