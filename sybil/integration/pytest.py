@@ -77,8 +77,6 @@ class SybilItem(pytest.Item):
         self.example.evaluate()
 
     def _prunetraceback(self, excinfo):
-        # Messier than it could be because slicing a list subclass in
-        # Python 2 returns a list, not an instance of the subclass.
         tb = excinfo.traceback.cut(path=example_module_path)
         tb = tb[1]
         if getattr(tb, '_rawentry', None) is not None:
