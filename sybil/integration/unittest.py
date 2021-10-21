@@ -40,7 +40,7 @@ def unittest_integration(sybil: 'Sybil'):
         suite = TestSuite()
         for path in sybil.path.glob('**/*'):
             if path.is_file() and sybil.should_parse(path):
-                document = sybil.parse(str(path))
+                document = sybil.parse(path)
 
                 case = type(document.path, (TestCase, ), dict(
                     sybil=sybil, namespace=document.namespace,
