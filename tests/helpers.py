@@ -41,7 +41,7 @@ def check_text(text: str, sybil: Sybil):
     with NamedTemporaryFile() as temp:
         temp.write(text.encode('ascii'))
         temp.flush()
-        document = sybil.parse(temp.name)
+        document = sybil.parse(Path(temp.name))
     (example,) = document
     example.evaluate()
     return document
@@ -171,7 +171,8 @@ def write_config(tmpdir: local, integration: str, **params: str) -> None:
     (tmpdir / CONFIG_FILENAMES[integration]).write_text(config, 'ascii')
 
 
-def write_doctest(tmpdir: local, *path: str):
+def write_doctest(tmpdir: local, *path: str) -> Path:
     file_path = Path(tmpdir.join(*path).strpath)
     file_path.parent.mkdir(parents=True, exist_ok=True)
     file_path.write_text(f">>> assert '{file_path.name}' == '{file_path.name}'")
+    return file_path

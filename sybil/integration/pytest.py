@@ -100,7 +100,7 @@ class SybilFile(pytest.File):
         self.sybil: 'Sybil' = sybil
 
     def collect(self):
-        self.document = self.sybil.parse(self.fspath.strpath)
+        self.document = self.sybil.parse(Path(self.fspath.strpath))
         for example in self.document:
             yield SybilItem.from_parent(self, sybil=self.sybil, example=example)
 

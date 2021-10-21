@@ -7,12 +7,13 @@ from os.path import split
 from pathlib import Path
 
 import pytest
+from py.path import local
 
 from sybil import Sybil, Region
 from sybil.document import Document
 from sybil.example import Example, SybilFailure
 
-from .helpers import sample_path
+from .helpers import sample_path, write_doctest
 
 
 @pytest.fixture()
@@ -207,13 +208,24 @@ class TestSybil:
                 ['X count was 3 instead of 4',
                  'Y count was 3, as expected'])
 
-    def test_explicit_encoding(self, tmp_path):
-        path =  (tmp_path / 'encoded.txt')
+    def test_explicit_encoding(self, tmp_path: Path):
+        path = (tmp_path / 'encoded.txt')
         path.write_text(u'X 1 check\n\xa3', encoding='charmap')
         sybil = Sybil([parse_for_x], encoding='charmap')
         document = sybil.parse(path)
         assert (evaluate_examples(document) ==
                 ['X count was 1, as expected'])
+
+    def test_augment_document_mapping(self, tmpdir: local):
+
+        class TextDocument(Document):
+            pass
+
+        sybil = Sybil([], document_types={'.txt': TextDocument})
+        document = sybil.parse(write_doctest(tmpdir, 'test.txt'))
+        assert type(document) is TextDocument
+        document = sybil.parse(write_doctest(tmpdir, 'test.rst'))
+        assert type(document) is Document
 
 
 def check_into_namespace(example):
@@ -231,7 +243,7 @@ def parse(document):
 
 def test_namespace(capsys):
     sybil = Sybil([parse], path='./samples')
-    documents = [sybil.parse(str(p)) for p in sybil.path.glob('sample*.txt')]
+    documents = [sybil.parse(p) for p in sybil.path.glob('sample*.txt')]
     actual = []
     for document in documents:
         for example in document:

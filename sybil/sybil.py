@@ -1,9 +1,14 @@
 import sys
 from pathlib import Path
-from typing import Sequence, Callable, Collection
+from typing import Sequence, Callable, Collection, Mapping, Optional, Type
 
 from .document import Document
 from .typing import Parser
+
+
+DEFAULT_DOCUMENT_TYPES = {
+    None: Document,
+}
 
 
 class Sybil:
@@ -63,6 +68,10 @@ class Sybil:
     :param encoding:
       An optional string specifying the encoding to be used when decoding documentation
       source files.
+
+    :param document_types:
+      A mapping of file extension to :class:`Document` subclass such that custom evaluation
+      can be performed per document type.
     """
     def __init__(
         self,
@@ -77,6 +86,7 @@ class Sybil:
         teardown: Callable[[dict], None] = None,
         fixtures: Sequence[str] = (),
         encoding: str = 'utf-8',
+        document_types: Mapping[Optional[str], Type[Document]] = None
     ):
 
         self.parsers: Sequence[Parser] = parsers
@@ -97,6 +107,10 @@ class Sybil:
         self.teardown: Callable[[dict], None] = teardown
         self.fixtures: Sequence[str] = fixtures
         self.encoding: str = encoding
+        self.document_types = DEFAULT_DOCUMENT_TYPES.copy()
+        if document_types:
+            self.document_types.update(document_types)
+        self.default_document_type: Type[Document] = self.document_types[None]
 
     def should_parse(self, path: Path) -> bool:
         try:
@@ -116,8 +130,9 @@ class Sybil:
             return False
         return True
 
-    def parse(self, path: str) -> Document:
-        return Document.parse(path, *self.parsers, encoding=self.encoding)
+    def parse(self, path: Path) -> Document:
+        type_ = self.document_types.get(path.suffix, self.default_document_type)
+        return type_.parse(str(path), *self.parsers, encoding=self.encoding)
 
     def pytest(self):
         """
