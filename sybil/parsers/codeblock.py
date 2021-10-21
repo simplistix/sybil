@@ -84,7 +84,7 @@ class PythonCodeBlockParser(CodeBlockParser):
     def evaluate(self, example: Example) -> None:
         # There must be a nicer way to get line numbers to be correct...
         source = self.pad(example.parsed, example.line)
-        code = compile(source, example.document.path, 'exec', flags=self.flags, dont_inherit=True)
+        code = compile(source, example.path, 'exec', flags=self.flags, dont_inherit=True)
         exec(code, example.namespace)
         # exec adds __builtins__, we don't want it:
         del example.namespace['__builtins__']
