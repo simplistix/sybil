@@ -1,5 +1,6 @@
 import __future__
 import sys
+from pathlib import Path
 
 import pytest
 
@@ -114,7 +115,7 @@ def test_functional_future_imports():
     assert foo.__code__.co_flags & __future__.annotations.compiler_flag
 
 
-def test_windows_line_endings(tmp_path):
+def test_windows_line_endings(tmp_path: Path):
     p = tmp_path / "example.txt"
     p.write_bytes(
         b'This is my example:\r\n\r\n'

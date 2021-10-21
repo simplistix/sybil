@@ -1,7 +1,6 @@
 import sys
-from os.path import join, dirname, abspath
 from pathlib import Path
-from typing import Sequence, Callable, Collection, Iterable
+from typing import Sequence, Callable, Collection
 
 from .document import Document
 from .typing import Parser
@@ -79,13 +78,14 @@ class Sybil:
         fixtures: Sequence[str] = (),
         encoding: str = 'utf-8',
     ):
+
         self.parsers: Sequence[Parser] = parsers
-        calling_filename = sys._getframe(1).f_globals.get('__file__')
+        calling_filename =sys._getframe(1).f_globals.get('__file__')
         if calling_filename:
-            start_path = join(dirname(calling_filename), path)
+            start_path =  Path(calling_filename).parent / path
         else:
-            start_path = path
-        self.path: str = abspath(start_path)
+            start_path = Path(path)
+        self.path: Path = start_path.absolute()
         self.patterns = list(patterns)
         if pattern:
             self.patterns.append(pattern)
@@ -99,9 +99,8 @@ class Sybil:
         self.encoding: str = encoding
 
     def should_parse(self, path: Path) -> bool:
-        root = Path(self.path)
         try:
-            path = path.relative_to(root)
+            path = path.relative_to(self.path)
         except ValueError:
             return False
 
