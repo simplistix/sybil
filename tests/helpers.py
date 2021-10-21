@@ -18,7 +18,7 @@ from sybil.python import import_cleanup
 from sybil.typing import Parser
 
 
-def sample_path(name):
+def sample_path(name) -> str:
     return join(dirname(__file__), 'samples', name)
 
 
