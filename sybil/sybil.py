@@ -1,33 +1,10 @@
-import os
 import sys
-from fnmatch import fnmatch
-from os.path import join, dirname, abspath, split
-from typing import Sequence, Callable, Collection, List, Iterable
+from os.path import join, dirname, abspath
+from pathlib import Path
+from typing import Sequence, Callable, Collection, Iterable
 
 from .document import Document
 from .typing import Parser
-
-
-class PathFilter:
-
-    def __init__(self, patterns: List[str], filenames: Collection[str], excludes: Sequence[str]):
-        self.patterns = patterns
-        self.filenames = filenames
-        self.excludes = excludes
-
-    def __call__(self, path: str) -> bool:
-        path = str(path)
-        return (
-            (any(fnmatch(path, e) for e in self.patterns) or (split(path)[-1] in self.filenames))
-            and not any(fnmatch(path, e) for e in self.excludes)
-        )
-
-
-def listdir(root: str) -> Iterable[str]:
-    root_to_ignore = len(root) + 1
-    for directory, _, filenames in os.walk(root):
-        for filename in filenames:
-            yield os.path.join(directory, filename)[root_to_ignore:]
 
 
 class Sybil:
@@ -39,28 +16,33 @@ class Sybil:
       A sequence of callables. See :doc:`parsers`.
       
     :param path:
-      The path in which documentation source files are found, relative
+      The path in which source files are found, relative
       to the path of the Python source file in which this class is instantiated.
+      Absolute paths can also be passed.
 
       .. note::
 
         This is ignored when using the :ref:`pytest integration <pytest_integration>`.
       
     :param pattern:
-      An optional :func:`pattern <fnmatch.fnmatch>` used to match documentation source
+      An optional :func:`pattern <fnmatch.fnmatch>` used to match source
       files that will be parsed for examples.
       
     :param patterns:
-      An optional sequence of :func:`patterns <fnmatch.fnmatch>` used to match documentation source
-      files that will be parsed for examples.
+      An optional sequence of :func:`patterns <fnmatch.fnmatch>` used to match source
+      paths that will be parsed for examples.
 
-    :param filenames:
-      An optional :class:`set` of source file names that, if found anywhere within the
-      root ``path`` or its sub-directories, that will be parsed for examples.
+    :param exclude:
+      An optional :func:`patterns <fnmatch.fnmatch>` for source file names
+      that will excluded when looking for examples.
 
     :param excludes:
-      An optional  sequence of :func:`patterns <fnmatch.fnmatch>` of source file names
-      that will excluded when looking for examples.
+      An optional  sequence of :func:`patterns <fnmatch.fnmatch>` for source paths
+      that will be excluded when looking for examples.
+
+    :param filenames:
+      An optional collection of file names that, if found anywhere within the
+      root ``path`` or its sub-directories, will be parsed for examples.
 
     :param setup:
       An optional callable that will be called once before any examples from
@@ -86,15 +68,16 @@ class Sybil:
     def __init__(
         self,
         parsers: Sequence[Parser],
-        pattern: str = '',
+        pattern: str = None,
+        patterns: Sequence[str] = (),
+        exclude: str = None,
+        excludes: Sequence[str] = (),
+        filenames: Collection[str] = (),
         path: str = '.',
         setup: Callable[[dict], None] = None,
         teardown: Callable[[dict], None] = None,
         fixtures: Sequence[str] = (),
-        filenames: Collection[str] = (),
-        excludes: Sequence[str] = (),
         encoding: str = 'utf-8',
-        patterns: Sequence[str] = ()
     ):
         self.parsers: Sequence[Parser] = parsers
         calling_filename = sys._getframe(1).f_globals.get('__file__')
@@ -103,31 +86,46 @@ class Sybil:
         else:
             start_path = path
         self.path: str = abspath(start_path)
-        patterns = list(patterns)
+        self.patterns = list(patterns)
         if pattern:
-            patterns.append(pattern)
-        self.should_test_path: PathFilter = PathFilter(patterns, filenames, excludes)
+            self.patterns.append(pattern)
+        self.excludes = list(excludes)
+        if exclude:
+            self.excludes.append(exclude)
+        self.filenames = filenames
         self.setup: Callable[[dict], None] = setup
         self.teardown: Callable[[dict], None] = teardown
         self.fixtures: Sequence[str] = fixtures
         self.encoding: str = encoding
 
+    def should_parse(self, path: Path) -> bool:
+        root = Path(self.path)
+        try:
+            path = path.relative_to(root)
+        except ValueError:
+            return False
+
+        include = False
+        if any(path.match(p) for p in self.patterns):
+            include = True
+        if path.name in self.filenames:
+            include = True
+        if not include:
+            return False
+
+        if any(path.match(e) for e in self.excludes):
+            return False
+        return True
+
     def parse(self, path: str) -> Document:
         return Document.parse(path, *self.parsers, encoding=self.encoding)
 
-    def all_documents(self) -> Iterable[Document]:
-        for path in sorted(listdir(self.path)):
-            if self.should_test_path(path):
-                yield self.parse(join(self.path, path))
-
-    def pytest(self, class_=None):
+    def pytest(self):
         """
         The helper method for when you use :ref:`pytest_integration`.
         """
-        from .integration.pytest import pytest_integration, SybilFile
-        if class_ is None:
-            class_ = SybilFile
-        return pytest_integration(self, class_)
+        from .integration.pytest import pytest_integration
+        return pytest_integration(self)
 
     def unittest(self):
         """
