@@ -1,5 +1,6 @@
 import sys
 from os.path import dirname, join
+from pathlib import Path
 from tempfile import NamedTemporaryFile
 from traceback import TracebackException
 from typing import Tuple, List
@@ -8,10 +9,12 @@ from unittest import TextTestRunner, main as unittest_main
 from _pytest._code import ExceptionInfo
 from _pytest.capture import CaptureFixture
 from _pytest.config import main as pytest_main
+from py.path import local
 
 from sybil import Sybil
 from sybil.document import Document
 from sybil.example import Example
+from sybil.python import import_cleanup
 from sybil.typing import Parser
 
 
@@ -44,7 +47,14 @@ def check_text(text: str, sybil: Sybil):
     return document
 
 
-functional_test_dir = join(dirname(__file__), 'functional')
+FUNCTIONAL_TEST_DIR = join(dirname(__file__), 'functional')
+PYTEST = 'pytest'
+UNITTEST = 'unittest'
+
+TEST_OUTPUT_TEMPLATES = {
+    PYTEST: '{file}::line:{line},column:{column}',
+    UNITTEST: '{file},line:{line},column:{column}'
+}
 
 
 class Finder:
@@ -57,10 +67,18 @@ class Finder:
         assert substring in self.text[self.index:], self.text[self.index:]
         self.index = self.text.index(substring, self.index)
 
+    def assert_present(self, text):
+        assert text in self.text, repr(self.text)
+
     def assert_not_present(self, text):
         index = self.text.find(text)
         if index > -1:
             raise AssertionError('\n'+self.text[index-500:index+500])
+
+    def assert_has_run(self, integration: str, file: str, *, line: int = 1, column: int = 1):
+        self.assert_present(TEST_OUTPUT_TEMPLATES[integration].format(
+            file=file, line=line, column=column
+        ))
 
 
 class Results:
@@ -78,13 +96,14 @@ class Results:
         self.out = Finder(out)
 
 
-def run_pytest(capsys: CaptureFixture[str], root: str) -> Results:
+def run_pytest(capsys: CaptureFixture[str], name: str = None, path: local = None) -> Results:
     class CollectResults:
         def pytest_sessionfinish(self, session):
             self.session = session
 
     results = CollectResults()
-    return_code = pytest_main(['-vvs', join(functional_test_dir, root)],
+    path = join(FUNCTIONAL_TEST_DIR, name) if name else str(path)
+    return_code = pytest_main(['-vvs', path, '-p', 'no:doctest'],
                               plugins=[results])
     return Results(
         capsys,
@@ -94,9 +113,9 @@ def run_pytest(capsys: CaptureFixture[str], root: str) -> Results:
     )
 
 
-def run_unittest(capsys: CaptureFixture[str], root: str) -> Results:
+def run_unittest(capsys: CaptureFixture[str], name: str = None, path: local = None) -> Results:
     runner = TextTestRunner(verbosity=2, stream=sys.stdout)
-    path = join(functional_test_dir, root)
+    path = join(FUNCTIONAL_TEST_DIR, name) if name else str(path)
     main = unittest_main(
         exit=False, module=None, testRunner=runner,
         argv=['x', 'discover', '-v', '-t', path, '-s', path]
@@ -107,3 +126,52 @@ def run_unittest(capsys: CaptureFixture[str], root: str) -> Results:
         errors=len(main.result.errors),
         failures=len(main.result.failures),
     )
+
+
+RUNNERS = {
+    PYTEST: run_pytest,
+    UNITTEST: run_unittest,
+}
+
+
+def run(capsys: CaptureFixture[str], integration: str, path: local) -> Results:
+    with import_cleanup():
+        return RUNNERS[integration](capsys, path=path)
+
+
+CONFIG_TEMPLATE = """
+from sybil import Sybil
+from sybil.parsers.doctest import DocTestParser
+{assigned_name} = Sybil(
+{params}
+).{integration}()
+"""
+
+CONFIG_FILENAMES = {
+    PYTEST: 'conftest.py',
+    UNITTEST: 'test_docs.py'
+}
+
+CONFIG_ASSIGNED_NAME = {
+    PYTEST: 'pytest_collect_file',
+    UNITTEST: 'load_tests'
+}
+
+
+def write_config(tmpdir: local, integration: str, **params: str) -> None:
+    import sys
+    sys.modules.pop('test_docs', None)
+    params_ = {'parsers': '[DocTestParser()]'}
+    params_.update(params)
+    config = CONFIG_TEMPLATE.format(
+        assigned_name = CONFIG_ASSIGNED_NAME[integration],
+        params='\n'.join([f'    {name}={value},' for name, value in params_.items()]),
+        integration=integration,
+    )
+    (tmpdir / CONFIG_FILENAMES[integration]).write_text(config, 'ascii')
+
+
+def write_doctest(tmpdir: local, *path: str):
+    file_path = Path(tmpdir.join(*path).strpath)
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    file_path.write_text(f">>> assert '{file_path.name}' == '{file_path.name}'")

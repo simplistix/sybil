@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import TYPE_CHECKING
 from unittest import TestCase as BaseTestCase, TestSuite
 
@@ -38,14 +39,16 @@ def unittest_integration(sybil: 'Sybil'):
 
     def load_tests(loader=None, tests=None, pattern=None):
         suite = TestSuite()
-        for document in sybil.all_documents():
+        for path in Path(sybil.path).glob('**/*'):
+            if path.is_file() and sybil.should_parse(path):
+                document = sybil.parse(str(path))
 
-            case = type(document.path, (TestCase, ), dict(
-                sybil=sybil, namespace=document.namespace,
-            ))
+                case = type(document.path, (TestCase, ), dict(
+                    sybil=sybil, namespace=document.namespace,
+                ))
 
-            for example in document:
-                suite.addTest(case(example))
+                for example in document:
+                    suite.addTest(case(example))
 
         return suite
 

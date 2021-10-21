@@ -4,6 +4,7 @@ import os
 import re
 from functools import partial
 from os.path import split
+from pathlib import Path
 
 import pytest
 
@@ -162,7 +163,7 @@ class TestDocument:
 
 
 def check(letter, parsed, namespace):
-    assert namespace == 42
+    assert namespace is None
     text, expected = parsed
     assert set(text) == {letter}
     actual = text.count(letter)
@@ -188,88 +189,31 @@ def parse_for_y(document):
                      partial(check, 'Y'))
 
 
-def parse_first_line(document):
-    line = document.text.split('\n', 1)[0]
-    yield Region(0, len(line), line, None)
+def evaluate_examples(examples):
+    return [e.region.evaluator(e.region.parsed, namespace=None)
+            for e in examples]
 
 
 class TestSybil:
 
-    def _evaluate_examples(self, examples, namespace):
-        return [e.region.evaluator(e.region.parsed, namespace)
-                for e in examples]
-
-    def _all_examples(self, sybil):
-        for document in sybil.all_documents():
-            for example in document:
-                yield example
-
     def test_parse(self):
-        sybil = Sybil([parse_for_x, parse_for_y], '*')
-        document = sybil.parse(sample_path('sample1.txt'))
-        assert (self._evaluate_examples(document, 42) ==
+        sybil = Sybil([parse_for_x, parse_for_y])
+        document = sybil.parse(Path(sample_path('sample1.txt')))
+        assert (evaluate_examples(document) ==
                 ['X count was 4, as expected',
                  'Y count was 3, as expected'])
-
-    def test_all_paths(self):
-        sybil = Sybil([parse_first_line], '__init__.py')
-        assert ([e.region.parsed for e in self._all_examples(sybil)] ==
-                ['# believe it or not,'])
-
-    def test_all_paths_with_base_directory(self):
-        sybil = Sybil([parse_for_x, parse_for_y],
-                      path='./samples', pattern='*.txt')
-        assert (self._evaluate_examples(self._all_examples(sybil), 42) ==
-                ['X count was 4, as expected',
-                 'Y count was 3, as expected',
-                 'X count was 3 instead of 4',
+        document = sybil.parse(Path(sample_path('sample2.txt')))
+        assert (evaluate_examples(document) ==
+                ['X count was 3 instead of 4',
                  'Y count was 3, as expected'])
 
     def test_explicit_encoding(self, tmp_path):
-        (tmp_path / 'encoded.txt').write_text(
-            u'X 1 check\n\xa3',
-            encoding='charmap'
-        )
-        sybil = Sybil([parse_for_x], path=str(tmp_path), pattern='*.txt',
-                      encoding='charmap')
-        assert (self._evaluate_examples(self._all_examples(sybil), 42) ==
+        path =  (tmp_path / 'encoded.txt')
+        path.write_text(u'X 1 check\n\xa3', encoding='charmap')
+        sybil = Sybil([parse_for_x], encoding='charmap')
+        document = sybil.parse(path)
+        assert (evaluate_examples(document) ==
                 ['X count was 1, as expected'])
-
-
-class TestFiltering:
-
-    def check(self, tmp_path, sybil, expected):
-        assert expected == [d.path[len(str(tmp_path))+1:].split(os.sep)
-                            for d in sybil.all_documents()]
-
-    def test_excludes(self, tmp_path):
-        (tmp_path / 'foo.txt').write_text(u'')
-        (tmp_path / 'bar.txt').write_text(u'')
-        sybil = Sybil([], path=str(tmp_path), pattern='*.txt', excludes=['bar.txt'])
-        self.check(tmp_path, sybil, expected=[['foo.txt']])
-
-    def test_filenames(self, tmp_path):
-        (tmp_path / 'foo.txt').write_text(u'')
-        (tmp_path / 'bar.txt').write_text(u'')
-        (tmp_path / 'baz').mkdir()
-        (tmp_path / 'baz' / 'bar.txt').write_text(u'')
-        sybil = Sybil([], path=str(tmp_path), filenames=['bar.txt'])
-        self.check(tmp_path, sybil, expected=[['bar.txt'], ['baz', 'bar.txt']])
-
-    def test_glob_patterns(self, tmp_path):
-        (tmp_path / 'middle').mkdir()
-        interesting = (tmp_path / 'middle' / 'interesting')
-        interesting.mkdir()
-        boring = (tmp_path / 'middle' / 'boring')
-        boring.mkdir()
-        (interesting / 'foo.txt').write_text(u'')
-        (boring / 'bad1.txt').write_text(u'')
-        (tmp_path / 'bad2.txt').write_text(u'')
-        sybil = Sybil([],
-                      path=str(tmp_path),
-                      pattern='**middle/*.txt',
-                      excludes=['**/boring/*.txt'])
-        self.check(tmp_path, sybil, expected=[['middle', 'interesting', 'foo.txt']])
 
 
 def check_into_namespace(example):
@@ -286,13 +230,18 @@ def parse(document):
 
 
 def test_namespace(capsys):
-    sybil = Sybil([parse],
-                  path='./samples', pattern='*.txt')
-    for document in sybil.all_documents():
+    sybil = Sybil([parse], path='./samples')
+    documents = [sybil.parse(p) for p in Path(sybil.path).glob('sample*.txt')]
+    actual = []
+    for document in documents:
         for example in document:
-            print(split(example.document.path)[-1], example.line)
+            print(split(example.path)[-1], example.line)
             example.evaluate()
-
+            actual.append((
+                split(example.path)[-1],
+                example.line,
+                document.namespace['parsed'].copy(),
+            ))
     out, _ = capsys.readouterr()
     assert out.split('\n') == [
         'sample1.txt 1',

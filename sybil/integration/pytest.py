@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 from inspect import getsourcefile
 from os.path import abspath
+from pathlib import Path
 from typing import Union, TYPE_CHECKING
 
 from _pytest._code.code import TerminalRepr, Traceback, ExceptionInfo
@@ -112,10 +113,10 @@ class SybilFile(pytest.File):
             self.sybil.teardown(self.document.namespace)
 
 
-def pytest_integration(sybil: 'Sybil', class_=SybilFile):
+def pytest_integration(sybil: 'Sybil'):
 
     def pytest_collect_file(path: py.path.local, parent: Collector):
-        if sybil.should_test_path(path.strpath):
-            return class_.from_parent(parent, fspath=path, sybil=sybil)
+        if sybil.should_parse(Path(path.strpath)):
+            return SybilFile.from_parent(parent, fspath=path, sybil=sybil)
 
     return pytest_collect_file
