@@ -5,7 +5,7 @@ from pytest import CaptureFixture
 from sybil.python import import_cleanup
 from .helpers import (
     run_pytest, run_unittest, PYTEST, run, write_config, UNITTEST, write_doctest,
-    functional_sample
+    functional_sample, clone_functional_sample
 )
 
 
@@ -264,3 +264,15 @@ def test_filter_multiple_patterns(tmpdir: local, capsys: CaptureFixture[str], ru
                  patterns="['*.rst', '*.txt']")
     results = run(capsys, runner, tmpdir)
     assert results.total == 2, results.out.text
+
+
+@pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
+def test_skips(tmpdir: local, capsys: CaptureFixture[str], runner: str):
+    root = clone_functional_sample('skips', tmpdir)
+    write_config(root, runner,
+                 parsers="[PythonCodeBlockParser(), skip, DocTestParser()]",
+                 patterns="['*.rst']")
+    results = run(capsys, runner, root)
+    assert results.total == 10, results.out.text
+    assert results.failures == 0, results.out.text
+    assert results.errors == 0, results.out.text

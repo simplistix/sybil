@@ -1,6 +1,7 @@
 import sys
 from os.path import dirname, join
 from pathlib import Path
+from shutil import copytree
 from tempfile import NamedTemporaryFile
 from traceback import TracebackException
 from typing import Tuple, List
@@ -82,7 +83,7 @@ class Finder:
 
 class Results:
 
-    def  __init__(
+    def __init__(
         self, capsys: CaptureFixture[str], total: int, errors: int = 0, failures: int = 0,
         return_code: int = None,
     ):
@@ -91,7 +92,7 @@ class Results:
         self.failures = failures
         self.return_code = return_code
         out, err = capsys.readouterr()
-        assert err == ''
+        assert err == '', err
         self.out = Finder(out)
 
 
@@ -99,6 +100,11 @@ def functional_sample(name: str) -> local:
     return local(FUNCTIONAL_TEST_DIR) / name
 
 
+def clone_functional_sample(name: str, target: local) -> local:
+    source = functional_sample(name)
+    dest = target / name
+    copytree(source.strpath, dest.strpath)
+    return dest
 
 
 def run_pytest(capsys: CaptureFixture[str], path: local) -> Results:
@@ -143,7 +149,9 @@ def run(capsys: CaptureFixture[str], integration: str, path: local) -> Results:
 
 CONFIG_TEMPLATE = """
 from sybil import Sybil
+from sybil.parsers.codeblock import PythonCodeBlockParser
 from sybil.parsers.doctest import DocTestParser
+from sybil.parsers.skip import skip
 {assigned_name} = Sybil(
 {params}
 ).{integration}()
