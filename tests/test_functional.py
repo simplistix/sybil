@@ -2,10 +2,17 @@ import pytest
 from py.path import local
 from pytest import CaptureFixture
 
+from sybil.python import import_cleanup
 from .helpers import (
     run_pytest, run_unittest, PYTEST, run, write_config, UNITTEST, write_doctest,
     functional_sample
 )
+
+
+@pytest.fixture(autouse=True)
+def cleanup_imports():
+    with import_cleanup():
+        yield
 
 
 def test_pytest(capsys: CaptureFixture[str]):
