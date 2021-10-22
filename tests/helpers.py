@@ -14,7 +14,6 @@ from py.path import local
 from sybil import Sybil
 from sybil.document import Document
 from sybil.example import Example
-from sybil.python import import_cleanup
 from sybil.typing import Parser
 
 
@@ -139,8 +138,7 @@ RUNNERS = {
 
 
 def run(capsys: CaptureFixture[str], integration: str, path: local) -> Results:
-    with import_cleanup():
-        return RUNNERS[integration](capsys, path=path)
+    return RUNNERS[integration](capsys, path)
 
 
 CONFIG_TEMPLATE = """
