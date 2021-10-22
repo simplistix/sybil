@@ -2,11 +2,14 @@ import pytest
 from py.path import local
 from pytest import CaptureFixture
 
-from .helpers import run_pytest, run_unittest, PYTEST, run, write_config, UNITTEST, write_doctest
+from .helpers import (
+    run_pytest, run_unittest, PYTEST, run, write_config, UNITTEST, write_doctest,
+    functional_sample
+)
 
 
 def test_pytest(capsys: CaptureFixture[str]):
-    results = run_pytest(capsys, 'pytest')
+    results = run_pytest(capsys, functional_sample('pytest'))
     out = results.out
 
     # check we're trimming tracebacks:
@@ -88,7 +91,7 @@ def test_pytest(capsys: CaptureFixture[str]):
 
 
 def test_unittest(capsys: CaptureFixture[str]):
-    results = run_unittest(capsys, 'unittest')
+    results = run_unittest(capsys, functional_sample('unittest'))
     out = results.out
     out.then_find('sybil setup')
     out.then_find('fail.rst,line:6,column:1 ... 0\nok')

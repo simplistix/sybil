@@ -96,14 +96,19 @@ class Results:
         self.out = Finder(out)
 
 
-def run_pytest(capsys: CaptureFixture[str], name: str = None, path: local = None) -> Results:
+def functional_sample(name: str) -> local:
+    return local(FUNCTIONAL_TEST_DIR) / name
+
+
+
+
+def run_pytest(capsys: CaptureFixture[str], path: local) -> Results:
     class CollectResults:
         def pytest_sessionfinish(self, session):
             self.session = session
 
     results = CollectResults()
-    path = join(FUNCTIONAL_TEST_DIR, name) if name else str(path)
-    return_code = pytest_main(['-vvs', path, '-p', 'no:doctest'],
+    return_code = pytest_main(['-vvs', path.strpath, '-p', 'no:doctest'],
                               plugins=[results])
     return Results(
         capsys,
@@ -113,12 +118,11 @@ def run_pytest(capsys: CaptureFixture[str], name: str = None, path: local = None
     )
 
 
-def run_unittest(capsys: CaptureFixture[str], name: str = None, path: local = None) -> Results:
+def run_unittest(capsys: CaptureFixture[str], path: local) -> Results:
     runner = TextTestRunner(verbosity=2, stream=sys.stdout)
-    path = join(FUNCTIONAL_TEST_DIR, name) if name else str(path)
     main = unittest_main(
         exit=False, module=None, testRunner=runner,
-        argv=['x', 'discover', '-v', '-t', path, '-s', path]
+        argv=['x', 'discover', '-v', '-t', path.strpath, '-s', path.strpath]
     )
     return Results(
         capsys,
