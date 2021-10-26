@@ -4,7 +4,7 @@ carthorse:
   when:
     - version-not-tagged
   actions:
-    - run: "sudo pip install -e .[build]"
-    - run: "sudo python setup.py sdist bdist_wheel"
+    - run: "pip install -e .[build]"
+    - run: "python setup.py sdist bdist_wheel"
     - run: "twine upload -u __token__ -p $PYPI_TOKEN dist/*"
     - create-tag
