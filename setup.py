@@ -13,7 +13,7 @@ setup(
     author='Chris Withers',
     author_email='chris@withers.org',
     license='MIT',
-    description="Automated testing for the examples in your documentation.",
+    description="Automated testing for the examples in your code and documentation.",
     long_description=open('README.rst').read(),
     url='https://github.com/simplistix/sybil',
     classifiers=[

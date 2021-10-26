@@ -10,7 +10,7 @@ Sybil
 .. _Docs: http://sybil.readthedocs.org/en/latest/
 
 
-This library provides a way to check examples in your documentation by parsing
+This library provides a way to check examples in your code and documentation by parsing
 them from their source and evaluating the parsed examples as part of
 your normal test run. Integration is provided for the main Python test
 runners.

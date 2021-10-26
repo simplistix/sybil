@@ -1,18 +1,18 @@
 Usage
 =====
 
-As a quick-start, here's how you would set up a ``conftest.py`` in your
-`Sphinx`__ source directory such that running `pytest`__ would check
-:ref:`doctest <doctest-simple-testfile>` and Python
-:rst:dir:`code-block` examples in your documentation source files, taking
+As a quick-start, here's how you would set up a ``conftest.py`` in the root of your
+project such that running `pytest`__ would check examples in your project's source code
+and `Sphinx`__ source. :ref:`doctest <doctest-simple-testfile>` and Python
+:rst:dir:`code-block` examples will be checked, taking
 into account the different representation of :class:`bytes` and
 :class:`unicode <str>`:
 
-.. literalinclude:: conftest.py
+.. literalinclude:: ../conftest.py
    :lines: 1-5, 7-11, 14-
 
-__ http://www.sphinx-doc.org/
 __ https://docs.pytest.org
+__ http://www.sphinx-doc.org/
 
 You'll also want to disable pytest's own doctest plugin by putting this in your pytest config:
 
@@ -28,7 +28,7 @@ configuration is shown below:
 Method of operation
 -------------------
 
-Sybil works by discovering a series of
+:class:`~sybil.Sybil` works by discovering a series of
 :class:`documents <sybil.Document>` as part of the
 :ref:`test runner integration <integrations>`. These documents are then
 :doc:`parsed <parsers>` into a set of non-overlapping
