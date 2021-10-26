@@ -1,11 +1,13 @@
 import re
 from bisect import bisect
 from io import open
-from typing import List, Iterable, Pattern, Tuple, Match
+from pathlib import Path
+from typing import List, Iterable, Pattern, Tuple, Match, Optional
 
 from .example import Example
+from .python import import_path
 from .region import Region
-from .typing import Parser
+from .typing import Parser, Evaluator
 
 
 class Document:
@@ -20,7 +22,7 @@ class Document:
     #: including not executing the example at all, modifying it, or the
     #: :class:`~sybil.document.Document` or calling the original evaluator on the example.
     #: This last case should always take the form of ``example.region.evaluator(example)``.
-    evaluator = None
+    evaluator: Evaluator = None
 
     def __init__(self, text: str, path: str):
         #: This is the text of the documentation source file.
@@ -122,3 +124,13 @@ class Document:
             source_end = end_match.start()
             source = self.text[source_start:source_end]
             yield start_match, end_match, source
+
+
+class PythonDocument(Document):
+
+    def evaluator(self, example: Example) -> Optional[str]:
+        module = import_path(Path(example.path))
+        self.namespace.update(module.__dict__)
+        result = example.region.evaluator(example)
+        self.evaluator = None
+        return result

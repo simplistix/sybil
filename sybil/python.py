@@ -1,6 +1,7 @@
 import importlib
 import sys
 from contextlib import contextmanager
+from pathlib import Path
 
 
 @contextmanager
@@ -16,3 +17,26 @@ def import_cleanup():
         sys.modules.pop(added_module)
     sys.path[:] = path
     importlib.invalidate_caches()
+
+
+INIT_FILE = '__init__.py'
+
+
+def import_path(path: Path):
+    container = path
+    while True:
+        container = container.parent
+        if not (container / INIT_FILE).exists():
+            break
+    relative = path.relative_to(container)
+    if relative.name == INIT_FILE:
+        parts = tuple(relative.parts)[:-1]
+    else:
+        parts = tuple(relative.parts)[:-1]+(relative.stem,)
+    module = '.'.join(parts)
+    try:
+        return importlib.import_module(module)
+    except ImportError as e:
+        raise ImportError(
+            f'{module!r} not importable from {path} as:\n{type(e).__name__}: {e}'
+        ) from None
