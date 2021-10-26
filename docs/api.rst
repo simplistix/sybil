@@ -2,7 +2,17 @@ API Reference
 =============
 
 .. automodule:: sybil
-  :members: Sybil, Region, Document, Example
+  :members: Sybil, Region, Example
+
+Documents
+---------
+
+.. autoclass:: sybil.Document
+  :members:
+
+.. automodule:: sybil.document
+  :members: PythonDocument
+
 
 capture parser
 --------------

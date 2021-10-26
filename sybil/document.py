@@ -14,9 +14,14 @@ class Document:
     """
     This is Sybil's representation of a documentation source file.
     It will be instantiated by Sybil and provided to each parser in turn.
+
+    Different types of document can be used by subclassing to provide the
+    required :any:`evaluation <evaluator>` and mapping the required file types
+    using the ``document_types`` parameter when instantiating a :class:`Sybil`.
     """
 
-    #: This can be set by :ref:`evaluators <developing-parsers>` to affect the evaluation
+    #: This can be set by :ref:`evaluators <developing-parsers>` or
+    #: :class:`subclasses <sybil.document.PythonDocument>` to affect the evaluation
     #: of future examples. It can be set to a callable that takes an
     #: :class:`~sybil.example.Example`. This callable can then do whatever it needs to do,
     #: including not executing the example at all, modifying it, or the
@@ -31,7 +36,7 @@ class Document:
         self.path: str = path
         self.end: int = len(text)
         self.regions: List[Tuple[int, Region]] = []
-        #: This dictionary is the namespace in which all example parsed from
+        #: This dictionary is the namespace in which all examples parsed from
         #: this document will be evaluated.
         self.namespace: dict = {}
 
@@ -127,6 +132,11 @@ class Document:
 
 
 class PythonDocument(Document):
+    """
+    A :class:`~sybil.Document` type that imports the document's source
+    file as a Python module, making names within it available in the document's
+    :attr:`~sybil.Document.namespace`.
+    """
 
     def evaluator(self, example: Example) -> Optional[str]:
         module = import_path(Path(example.path))
