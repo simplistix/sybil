@@ -6,5 +6,5 @@ carthorse:
   actions:
     - run: "sudo pip install -e .[build]"
     - run: "sudo python setup.py sdist bdist_wheel"
-    - run: "twine upload -u chrisw -p $PYPI_PASS dist/*"
+    - run: "twine upload -u __token__ -p $PYPI_TOKEN dist/*"
     - create-tag
