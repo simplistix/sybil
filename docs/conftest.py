@@ -12,5 +12,5 @@ pytest_collect_file = Sybil(
         parse_captures,
         skip,
     ],
-    pattern='*.rst',
+    patterns=['*.rst', '*.py'],
 ).pytest()

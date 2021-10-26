@@ -1,3 +1,5 @@
+import sys
+
 import pytest
 from py.path import local
 from pytest import CaptureFixture
@@ -276,3 +278,71 @@ def test_skips(tmpdir: local, capsys: CaptureFixture[str], runner: str):
     assert results.total == 10, results.out.text
     assert results.failures == 0, results.out.text
     assert results.errors == 0, results.out.text
+
+
+def clone_and_run_modules_tests(tmpdir: local, capsys: CaptureFixture[str], runner: str):
+    clone_functional_sample('modules', tmpdir)
+    write_config(tmpdir, runner,
+                 path="'./modules'",
+                 parsers="[PythonCodeBlockParser(), DocTestParser()]",
+                 patterns="['*.py']")
+    results = run(capsys, runner, tmpdir)
+    return results
+
+
+@pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
+def test_modules(tmpdir: local, capsys: CaptureFixture[str], runner: str):
+    sys.path.append((tmpdir / 'modules').strpath)
+    results = clone_and_run_modules_tests(tmpdir, capsys, runner)
+    assert results.total == 5, results.out.text
+    assert results.failures == 0, results.out.text
+    assert results.errors == 0, results.out.text
+
+
+def test_modules_not_importable_pytest(tmpdir: local, capsys: CaptureFixture[str]):
+    # NB: no append to sys.path
+    results = clone_and_run_modules_tests(tmpdir, capsys, PYTEST)
+    assert results.total == 5, results.out.text
+    assert results.failures == 5, results.out.text
+    assert results.errors == 0, results.out.text
+    out = results.out
+    out.then_find('a.py line=3 column=1')
+    out.then_find(f"ImportError: 'a' not importable from {tmpdir/'modules'/'a.py'} as:")
+    out.then_find("ModuleNotFoundError: No module named 'a'")
+    out.then_find('b.py line=7 column=1')
+    out.then_find(f"ImportError: 'b' not importable from {tmpdir/'modules'/'b.py'} as:")
+    out.then_find("ModuleNotFoundError: No module named 'b'")
+
+
+def test_modules_not_importable_unittest(tmpdir: local, capsys: CaptureFixture[str]):
+    # NB: no append to sys.path
+    results = clone_and_run_modules_tests(tmpdir, capsys, UNITTEST)
+    assert results.total == 5, results.out.text
+    assert results.failures == 0, results.out.text
+    assert results.errors == 5, results.out.text
+    a_py = tmpdir/'modules'/'a.py'
+    b_py = tmpdir/'modules'/'b.py'
+    out = results.out
+    out.then_find(f'ERROR: {a_py},line:3,column:1')
+    out.then_find(f"ImportError: 'a' not importable from {tmpdir/'modules'/'a.py'} as:")
+    out.then_find("ModuleNotFoundError: No module named 'a'")
+    out.then_find(f'ERROR: {b_py},line:2,column:1')
+    out.then_find(f"ImportError: 'b' not importable from {tmpdir/'modules'/'b.py'} as:")
+    out.then_find("ModuleNotFoundError: No module named 'b'")
+
+
+@pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
+def test_package_and_docs(tmpdir: local, capsys: CaptureFixture[str], runner: str):
+    root = clone_functional_sample('package_and_docs', tmpdir)
+    write_config(root, runner,
+                 patterns="['**/*.py', '**/*.rst']")
+    sys.path.append((root / 'src').strpath)
+    results = run(capsys, runner, root)
+    assert results.total == 7, results.out.text
+    assert results.failures == 1, results.out.text
+    assert results.errors == 0, results.out.text
+    # output from the one expected failure!
+    results.out.then_find('Expected:')
+    results.out.then_find('good')
+    results.out.then_find('Got:')
+    results.out.then_find('bad')

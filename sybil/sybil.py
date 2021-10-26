@@ -2,12 +2,13 @@ import sys
 from pathlib import Path
 from typing import Sequence, Callable, Collection, Mapping, Optional, Type
 
-from .document import Document
+from .document import Document, PythonDocument
 from .typing import Parser
 
 
 DEFAULT_DOCUMENT_TYPES = {
     None: Document,
+    '.py': PythonDocument,
 }
 
 
