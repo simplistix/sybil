@@ -5,27 +5,11 @@ from doctest import (
     DocTestRunner as BaseDocTestRunner,
     Example as DocTestExample,
     _unittest_reportflags,
-    register_optionflag
 )
 from typing import Iterable
 
 from .. import Document, Example
 from ..region import Region
-
-
-def make_literal(literal):
-    return re.compile(literal+r"((['\"])[^\2]*?\2)", re.MULTILINE)
-
-
-BYTE_LITERAL = make_literal('b')
-UNICODE_LITERAL = make_literal('u')
-
-
-#: A :ref:`doctest option flag<option-flags-and-directives>` that
-#: causes byte and unicode literals in doctest expected
-#: output to be rewritten such that they are compatible with the version of
-#: Python with which the tests are executed.
-FIX_BYTE_UNICODE_REPR = register_optionflag('FIX_BYTE_UNICODE_REPR')
 
 
 class DocTest(BaseDocTest):
@@ -48,11 +32,6 @@ class DocTestRunner(BaseDocTestRunner):
 
     def _failure_header(self, test, example):
         return ''
-
-
-def fix_byte_unicode_repr(want):
-    pattern = UNICODE_LITERAL
-    return pattern.sub(r"\1", want)
 
 
 class DocTestParser(BaseDocTestParser):
@@ -85,11 +64,6 @@ class DocTestParser(BaseDocTestParser):
             # Extract info from the regexp match.
             (source, options, want, exc_msg) = \
                      self._parse_example(m, document.path, lineno)
-
-            if self.runner.optionflags & FIX_BYTE_UNICODE_REPR:
-                want = fix_byte_unicode_repr(want)
-                if exc_msg:
-                    exc_msg = fix_byte_unicode_repr(exc_msg)
 
             # Create an Example, and add it to the list.
             if not self._IS_BLANK_OR_COMMENT(source):

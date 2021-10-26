@@ -201,7 +201,7 @@ would mean that ``expected_listing`` could be used in other examples in the
 document:
 
 >>> expected_listing.split()
-[u'root.txt', u'subdir/', u'subdir/file.txt', u'subdir/logs/']
+['root.txt', 'subdir/', 'subdir/file.txt', 'subdir/logs/']
 
 It can also be used with :rst:dir:`code-block` examples that define content rather
 executable code, for example:

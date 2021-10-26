@@ -5,7 +5,7 @@ import pytest
 
 from sybil.document import Document
 from sybil.example import SybilFailure
-from sybil.parsers.doctest import DocTestParser, FIX_BYTE_UNICODE_REPR
+from sybil.parsers.doctest import DocTestParser
 from tests.helpers import sample_path, parse
 
 
@@ -53,7 +53,7 @@ def test_fail_with_options():
 
 
 def test_literals():
-    parser = DocTestParser(FIX_BYTE_UNICODE_REPR)
+    parser = DocTestParser()
     examples, _ = parse('doctest_literals.txt', parser, expected=5)
     for example in examples:
         example.evaluate()

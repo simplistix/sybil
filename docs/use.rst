@@ -4,9 +4,7 @@ Usage
 As a quick-start, here's how you would set up a ``conftest.py`` in the root of your
 project such that running `pytest`__ would check examples in your project's source code
 and `Sphinx`__ source. :ref:`doctest <doctest-simple-testfile>` and Python
-:rst:dir:`code-block` examples will be checked, taking
-into account the different representation of :class:`bytes` and
-:class:`unicode <str>`:
+:rst:dir:`code-block` examples will be checked:
 
 .. literalinclude:: ../conftest.py
    :lines: 1-5, 7-11, 14-

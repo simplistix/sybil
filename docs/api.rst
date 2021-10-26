@@ -30,7 +30,7 @@ capture parser
 -----------------------------------------------
 
 .. automodule:: sybil.parsers.doctest
-  :members: DocTestParser,FIX_BYTE_UNICODE_REPR
+  :members: DocTestParser
 
 skip parser
 --------------
