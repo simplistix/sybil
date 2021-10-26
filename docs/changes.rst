@@ -1,7 +1,7 @@
 Changes
 =======
 
-3.0.0 (Unreleased)
+3.0.0 (26 Oct 2021)
 -------------------
 
 - Require pytest 6.2.0.
@@ -16,6 +16,12 @@ Changes
 - :class:`~sybil.parsers.codeblock.CodeBlockParser` has been renamed to
   :class:`~sybil.parsers.codeblock.PythonCodeBlockParser`, see the
   :ref:`codeblock-parser` documentation for details.
+
+- Support has been added to check examples in Python source code in addition to
+  documentation source files.
+
+- :attr:`~sybil.parsers.doctest.FIX_BYTE_UNICODE_REPR` has been removed as it should no
+  longer be needed.
 
 Thanks to Stefan Behnel for his work on :ref:`codeblock-parser` parsing!
 
