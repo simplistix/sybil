@@ -243,7 +243,7 @@ def parse(document):
 
 def test_namespace(capsys):
     sybil = Sybil([parse], path='./samples')
-    documents = [sybil.parse(p) for p in sybil.path.glob('sample*.txt')]
+    documents = [sybil.parse(p) for p in sorted(sybil.path.glob('sample*.txt'))]
     actual = []
     for document in documents:
         for example in document:
