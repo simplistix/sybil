@@ -38,7 +38,7 @@ def unittest_integration(sybil: 'Sybil'):
 
     def load_tests(loader=None, tests=None, pattern=None):
         suite = TestSuite()
-        for path in sybil.path.glob('**/*'):
+        for path in sorted(sybil.path.glob('**/*')):
             if path.is_file() and sybil.should_parse(path):
                 document = sybil.parse(path)
 
