@@ -9,7 +9,7 @@ base_dir = os.path.dirname(__file__)
 
 setup(
     name='sybil',
-    version='3.0.0',
+    version='3.0.1',
     author='Chris Withers',
     author_email='chris@withers.org',
     license='MIT',

@@ -1,6 +1,12 @@
 Changes
 =======
 
+3.0.1 (25 Feb 2022)
+-------------------
+
+- Continue with the ever shifting sands of pytest APIs, this time appeasing
+  warnings from pytest 7 that when fixed break compatibility with pytest 6.
+
 3.0.0 (26 Oct 2021)
 -------------------
 
