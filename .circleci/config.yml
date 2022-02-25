@@ -13,6 +13,12 @@ common: &common
               - cimg/python:3.6
               - cimg/python:3.9
               - cimg/python:3.10
+            extra_packages:
+              - "'pytest>=6.2,<7'"
+              - "'pytest>=7'"
+          exclude:
+            - {"image": "cimg/python:3.6", "extra_packages": "'pytest>=7'"}
+            - {"image": "cimg/python:3.9", "extra_packages": "'pytest>=6.2,<7'"}
 
     - python/coverage:
         name: coverage

@@ -20,6 +20,7 @@ from .. import example
 if TYPE_CHECKING:
     from ..sybil import Sybil
 
+PYTEST_VERSION = tuple(int(i) for i in pytest.__version__.split('.'))
 
 example_module_path = abspath(getsourcefile(example))
 
@@ -95,8 +96,8 @@ class SybilItem(pytest.Item):
 
 class SybilFile(pytest.File):
 
-    def __init__(self, fspath, parent, sybil: 'Sybil'):
-        super(SybilFile, self).__init__(fspath, parent)
+    def __init__(self, *, sybil: 'Sybil', **kwargs):
+        super(SybilFile, self).__init__(**kwargs)
         self.sybil: 'Sybil' = sybil
 
     def collect(self):
@@ -116,7 +117,13 @@ class SybilFile(pytest.File):
 def pytest_integration(sybil: 'Sybil'):
 
     def pytest_collect_file(path: py.path.local, parent: Collector):
-        if sybil.should_parse(Path(path.strpath)):
-            return SybilFile.from_parent(parent, fspath=path, sybil=sybil)
+        fspath = path
+        path = Path(fspath.strpath)
+        if sybil.should_parse(path):
+            if PYTEST_VERSION[0] >= 7:
+                return SybilFile.from_parent(parent, path=path, sybil=sybil)
+            else:
+                return SybilFile.from_parent(parent, fspath=fspath, sybil=sybil)
+
 
     return pytest_collect_file
