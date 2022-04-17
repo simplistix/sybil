@@ -1,6 +1,11 @@
 Changes
 =======
 
+unreleased
+----------
+
+-  Unittest integration: Allow TestCase init with list of examples.
+
 3.0.1 (25 Feb 2022)
 -------------------
 
