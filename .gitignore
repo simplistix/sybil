@@ -6,3 +6,4 @@
 _build/
 .*cache/
 pytestdebug.log
+*.pyc
