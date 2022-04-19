@@ -119,10 +119,10 @@ def test_unittest(capsys: CaptureFixture[str]):
     out.then_find('FAIL:')
     out.then_find('fail.rst,line:8,column:1')
     out.then_find('Y count was 3 instead of 2')
-    out.then_find('Ran 8 tests')
+    out.then_find('Ran 10 tests')
 
-    assert results.total == 8
-    assert results.failures == 1
+    assert results.total == 10
+    assert results.failures == 2
     assert results.errors == 1
 
 
