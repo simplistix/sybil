@@ -16,24 +16,9 @@ and evaluates them in the document's :attr:`~sybil.Document.namespace`.
 The parser can optionally be instantiated with
 :ref:`doctest option flags<option-flags-and-directives>`.
 
-An additional option flag, :attr:`sybil.parsers.doctest.FIX_BYTE_UNICODE_REPR`, is provided.
-When used, this flag causes byte and unicode literals in doctest expected
-output to be rewritten such that they are compatible with the version of
-Python with which the tests are executed. If your example output includes either
-``b'...'`` or ``u'...'`` and your code is expected to run under both Python 2
-and Python 3, then you will likely need this option.
-
 The parser is used by instantiating :class:`sybil.parsers.doctest.DocTestParser`
 with the required options and passing it as an element in the list passed as the
 ``parsers`` parameter to :class:`~sybil.Sybil`.
-
-.. warning::
-
-    :attr:`~sybil.parsers.doctest.FIX_BYTE_UNICODE_REPR` is quite simplistic. It will catch
-    examples but you may hit problems where, for example, ``['b', '']`` in expected
-    output will be rewritten as ``['', '']`` on Python 2 and ``['u', '']`` as ``['', '']``.
-    on Python 3. To work around this, either only run Sybil on Python 3 and do not
-    use this option, or pick different example output.
 
 .. _codeblock-parser:
 
