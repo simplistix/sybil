@@ -5,7 +5,7 @@ on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 intersphinx_mapping = {
     'https://docs.python.org/3/': None,
-    'http://www.sphinx-doc.org/en/stable/': None,
+    'https://www.sphinx-doc.org/en/stable/': None,
 }
 
 extensions = [
