@@ -28,14 +28,12 @@ setup(
         'Programming Language :: Python :: 3.10',
     ],
     packages=find_packages(exclude=['tests', 'functional_tests']),
-    zip_safe=False,
-    include_package_data=True,
     python_requires=">=3.6",
     extras_require=dict(
         test=[
             'pytest>=6.2.0',
             'pytest-cov',
             ],
-        build=['furo', 'sphinx', 'setuptools-git', 'twine', 'wheel']
+        build=['furo', 'sphinx', 'twine', 'wheel']
     ),
 )
