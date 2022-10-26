@@ -31,6 +31,7 @@ setup(
     python_requires=">=3.6",
     extras_require=dict(
         test=[
+            'myst_parser',
             'pytest>=6.2.0',
             'pytest-cov',
             'testfixtures',
