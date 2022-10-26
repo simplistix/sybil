@@ -4,6 +4,7 @@ import textwrap
 from typing import Iterable
 
 from sybil import Region, Document, Example
+from sybil.evaluators.python import pad, PythonEvaluator
 from sybil.typing import Evaluator
 
 CODEBLOCK_START = re.compile(
@@ -35,13 +36,7 @@ class CodeBlockParser:
         if evaluator is not None:
             self.evaluate = evaluator
 
-    def pad(self, source: str, line: int) -> str:
-        """
-        Pad the supplied source such that line numbers will be based on the one provided
-        when the source is evaluated.
-        """
-        # There must be a nicer way to get line numbers to be correct...
-        return (line+1)*'\n' + source
+    pad = staticmethod(pad)
 
     def evaluate(self, example: Example):
         raise NotImplementedError
@@ -76,15 +71,4 @@ class PythonCodeBlockParser(CodeBlockParser):
     """
 
     def __init__(self, future_imports=()):
-        super().__init__(language='python')
-        self.flags = 0
-        for future_import in future_imports:
-            self.flags |= getattr(__future__, future_import).compiler_flag
-
-    def evaluate(self, example: Example) -> None:
-        # There must be a nicer way to get line numbers to be correct...
-        source = self.pad(example.parsed, example.line)
-        code = compile(source, example.path, 'exec', flags=self.flags, dont_inherit=True)
-        exec(code, example.namespace)
-        # exec adds __builtins__, we don't want it:
-        del example.namespace['__builtins__']
+        super().__init__(language='python', evaluator=PythonEvaluator(future_imports))
