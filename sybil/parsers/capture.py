@@ -1,19 +1,14 @@
 import re
 import string
 from typing import Iterable
-from io import StringIO
 from textwrap import dedent
 
-from sybil import Region, Document, Example
+from sybil import Region, Document
+from sybil.evaluators.capture import evaluate_capture
 
 CAPTURE_DIRECTIVE = re.compile(
     r'^(?P<indent>(\t| )*)\.\.\s*-+>\s*(?P<name>\S+).*$'
 )
-
-
-def evaluate_capture(example: Example) -> None:
-    name, text = example.parsed
-    example.namespace[name] = text
 
 
 def indent_matches(line, indent):
