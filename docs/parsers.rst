@@ -78,7 +78,7 @@ Other Languages
 
 .. note::
 
-    If your :rst:dir:`code-block` examples define content rather executable code, you may
+    If your :rst:dir:`code-block` examples define content rather than executable code, you may
     find the :ref:`capture <capture-parser>` parser is more useful.
 
 :class:`sybil.parsers.codeblock.CodeBlockParser` can be used to check examples in any language
