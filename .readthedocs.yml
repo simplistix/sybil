@@ -1,8 +1,10 @@
 version: 2
 python:
-  version: 3.7
+  version: "3"
   install:
     - method: pip
       path: .
       extra_requirements:
          - build
+sphinx:
+  fail_on_warning: true
