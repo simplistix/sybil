@@ -36,9 +36,7 @@ def indent_matches(line, indent):
 class DocumentReverseIterator(list):
 
     def __init__(self, document):
-        # using splitlines(keepends=True) would be more explicit
-        # but Python 2 :-(
-        self[:] = StringIO(document.text)
+        self[:] = document.text.splitlines(keepends=True)
         self.current_line = len(self)
         self.current_line_end_position = len(document.text)
 
