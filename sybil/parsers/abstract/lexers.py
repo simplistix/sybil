@@ -7,6 +7,31 @@ from sybil.region import LexedRegion, Lexeme
 
 
 class BlockLexer:
+    """
+    This is a base class useful for any :any:`Lexer` that must handle block-style languages
+    such as ReStructured Text or MarkDown.
+
+    It yields a sequence of :class:`~sybil.LexedRegion` objects for each case where the
+    ``start_pattern`` matches. A ``source`` :class:`~sybil.Lexeme` is created from the text between
+    the end of the start pattern and the start of the end pattern.
+
+    :param start_pattern:
+        This is used to match the start of the block. Any named groups will be returned
+        in the :attr:`~sybil.LexedRegion.lexemes` :class:`dict` of resulting
+        :class:`~sybil.LexedRegion` objects. If a ``prefix`` named group forms
+        part of the match, this will be template substituted into the ``end_pattern_template``
+        before it is compiled.
+
+    :param end_pattern_template:
+        This is used to match the end of any block found by the ``start_pattern``.
+        It is templated with any ``prefix`` group from the ``start_pattern`` :class:`~typing.Match`
+        and ``len_prefix``, the length of that prefix, before being compiled into a
+        :class:`~typing.Pattern`.
+
+    :param mapping:
+        If provided, this is used to rename lexemes from the keys in the mapping to their values.
+        Only mapped lexemes will be returned in any :class:`~sybil.LexedRegion` objects.
+    """
 
     def __init__(
             self,

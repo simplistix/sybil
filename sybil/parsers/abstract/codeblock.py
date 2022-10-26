@@ -1,5 +1,5 @@
 from itertools import chain
-from typing import Iterable, Sequence
+from typing import Iterable, Sequence, Optional
 
 from sybil import Region, Document, Example
 from sybil.typing import Evaluator, Lexer
@@ -7,15 +7,22 @@ from sybil.typing import Evaluator, Lexer
 
 class AbstractCodeBlockParser:
     """
-    A class to instantiate and include when your documentation makes use of
-    :ref:`codeblock-parser` examples.
+    An abstract parser for use when evaluating blocks of code.
+
+    :param lexers:
+        A sequence of :any:`Lexer` objects that will be applied in turn to each
+        :class:`~sybil.Document`
+        that is parsed. The :class:`~sybil.LexedRegion` objects returned by these lexers must have
+        both an ``arguments`` string, containing the language of the lexed region, and a
+        ``source`` :class:`~sybil.Lexeme` containing the source code of the lexed region.
 
     :param language:
-        The language that this parser should look for.
+        The language that this parser should look for. Lexed regions which don't have this
+        language in their ``arguments`` lexeme will be ignored.
 
     :param evaluator:
         The evaluator to use for evaluating code blocks in the specified language.
-        You can also override the :meth:`evaluate` below.
+        You can also override the :meth:`evaluate` method below.
     """
 
     language: str
@@ -28,7 +35,11 @@ class AbstractCodeBlockParser:
         if evaluator is not None:
             self.evaluate = evaluator
 
-    def evaluate(self, example: Example):
+    def evaluate(self, example: Example) -> Optional[str]:
+        """
+        The :any:`Evaluator` used for regions yields by this parser can be provided by
+        implementing this method.
+        """
         raise NotImplementedError
 
     def __call__(self, document: Document) -> Iterable[Region]:

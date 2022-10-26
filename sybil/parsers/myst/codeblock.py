@@ -13,15 +13,14 @@ from ...evaluators.doctest import DocTestEvaluator
 
 class CodeBlockParser(AbstractCodeBlockParser):
     """
-    A class to instantiate and include when your documentation makes use of
-    :ref:`codeblock-parser` examples.
+    A :any:`Parser` for :ref:`myst-codeblock-parser` examples.
 
     :param language:
         The language that this parser should look for.
 
     :param evaluator:
         The evaluator to use for evaluating code blocks in the specified language.
-        You can also override the :meth:`evaluate` below.
+        You can also override the :meth:`evaluate` method below.
     """
 
     def __init__(self, language: str = None, evaluator: Evaluator = None):
@@ -50,8 +49,7 @@ class CodeBlockParser(AbstractCodeBlockParser):
 
 class PythonCodeBlockParser(CodeBlockParser):
     """
-    A class to instantiate and include when your documentation makes use of
-    Python :ref:`codeblock-parser` examples.
+    A :any:`Parser` for Python :ref:`myst-codeblock-parser` examples.
 
     :param future_imports:
         An optional list of strings that will be turned into

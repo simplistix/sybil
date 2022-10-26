@@ -20,9 +20,12 @@ from sybil.example import Example
 from sybil.region import LexedRegion
 from sybil.typing import Parser, Lexer
 
+HERE = Path(__file__).parent
+DOCS = HERE.parent / 'docs'
+
 
 def sample_path(name) -> str:
-    return join(dirname(__file__), 'samples', name)
+    return str(HERE / 'samples' / name)
 
 
 def lex(name: str, lexer: Lexer) -> List[LexedRegion]:
@@ -44,6 +47,14 @@ def check_excinfo(example: Example, excinfo: ExceptionInfo, text: str, *, lineno
     document = example.document
     assert details.filename == document.path, f'{details.filename!r} != {document.path!r}'
     assert details.lineno == lineno, f'{details.lineno} != {lineno}'
+
+
+def check_path(path: str, sybil: Sybil, *, expected: int):
+    document = sybil.parse(DOCS / path)
+    examples = list(document)
+    for example in examples:
+        example.evaluate()
+    assert len(examples) == expected, len(examples)
 
 
 def check_text(text: str, sybil: Sybil):

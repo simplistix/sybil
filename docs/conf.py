@@ -4,8 +4,9 @@ import os, pkg_resources, datetime, time
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 intersphinx_mapping = {
-    'https://docs.python.org/3/': None,
-    'https://www.sphinx-doc.org/en/stable/': None,
+    'python': ('https://docs.python.org/3/', None),
+    'sphinx': ('https://www.sphinx-doc.org/en/stable/', None),
+    'myst': ('https://myst-parser.readthedocs.io/en/latest', None),
 }
 
 extensions = [
@@ -21,7 +22,6 @@ build_date = datetime.datetime.utcfromtimestamp(int(os.environ.get('SOURCE_DATE_
 copyright = '2017 - %s Chris Withers' % build_date.year
 version = release = pkg_resources.get_distribution(project).version
 exclude_patterns = [
-    'description.rst',
     '_build',
     'example*',
 ]
@@ -39,3 +39,8 @@ latex_documents = [
 ]
 
 autodoc_member_order = 'bysource'
+nitpicky = True
+nitpick_ignore = [
+    ('py:class', 'Evaluator')  # https://github.com/sphinx-doc/sphinx/issues/10785
+]
+toc_object_entries = False

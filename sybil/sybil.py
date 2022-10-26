@@ -18,7 +18,7 @@ class Sybil:
     in documentation and ensuring they are correct.
     
     :param parsers: 
-      A sequence of callables. See :doc:`parsers`.
+      A sequence of callables. See :ref:`parsers`.
       
     :param path:
       The path in which source files are found, relative
@@ -38,7 +38,7 @@ class Sybil:
       paths that will be parsed for examples.
 
     :param exclude:
-      An optional :func:`patterns <fnmatch.fnmatch>` for source file names
+      An optional :func:`pattern <fnmatch.fnmatch>` for source file names
       that will excluded when looking for examples.
 
     :param excludes:
@@ -52,17 +52,17 @@ class Sybil:
     :param setup:
       An optional callable that will be called once before any examples from
       a :class:`~sybil.document.Document` are evaluated. If provided, it is
-      called with the document's :attr:`~sybil.document.Document.namespace`.
+      called with the document's :attr:`~sybil.Document.namespace`.
       
     :param teardown:
       An optional callable that will be called after all the examples from
       a :class:`~sybil.document.Document` have been evaluated. If provided, 
-      it is called with the document's :attr:`~sybil.document.Document.namespace`.
+      it is called with the document's :attr:`~sybil.Document.namespace`.
       
     :param fixtures:
       An optional sequence of strings specifying the names of fixtures to 
       be requested when using the  :ref:`pytest integration <pytest_integration>`.
-      The fixtures will be inserted into the document's :attr:`~sybil.document.Document.namespace`
+      The fixtures will be inserted into the document's :attr:`~sybil.Document.namespace`
       before any examples for that document are evaluated.
       All scopes of fixture are supported.
 
@@ -91,9 +91,9 @@ class Sybil:
     ):
 
         self.parsers: Sequence[Parser] = parsers
-        calling_filename =sys._getframe(1).f_globals.get('__file__')
+        calling_filename = sys._getframe(1).f_globals.get('__file__')
         if calling_filename:
-            start_path =  Path(calling_filename).parent / path
+            start_path = Path(calling_filename).parent / path
         else:
             start_path = Path(path)
         self.path: Path = start_path.absolute()
@@ -114,6 +114,9 @@ class Sybil:
         self.default_document_type: Type[Document] = self.document_types[None]
 
     def __add__(self, other: 'Sybil'):
+        """
+        :class:`Sybil` instances can be concatenated into a :class:`~sybil.sybil.SybilCollection`.
+        """
         assert isinstance(other, Sybil)
         return SybilCollection((self, other))
 
@@ -155,6 +158,12 @@ class Sybil:
 
 
 class SybilCollection(list):
+    """
+    When :class:`Sybil` instances are concatenated, the collection returned can
+    be used in the same way as a single :class:`Sybil`.
+
+    This allows multiple configurations to be used in a single test run.
+    """
 
     def pytest(self):
         """

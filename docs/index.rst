@@ -1,20 +1,22 @@
 .. include:: ../README.rst
   :end-before: The `documentation
 
-Sybil comes with an array of included :doc:`parsers <parsers>`, including ones for
+Sybil comes with an array of included :ref:`parsers <parsers>`, including ones for
 :mod:`doctest` and :rst:dir:`code-block` examples, and
 is designed so that it's easy to provide your own additional parsers.
 
 .. toctree::
    :maxdepth: 3
 
+   quickstart.rst
    use.rst
-   parsers.rst
-   api.rst
+   ReST Parsers <rest.rst>
+   myst.rst
 
 .. toctree::
    :maxdepth: 1
 
+   api.rst
    development.rst
    changes.rst
    license.rst

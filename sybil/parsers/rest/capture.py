@@ -44,7 +44,9 @@ class DocumentReverseIterator(list):
 
 
 class CaptureParser:
-
+    """
+    A :any:`Parser` for :ref:`captures <capture-parser>`.
+    """
     def __call__(self, document: Document) -> Iterable[Region]:
         lines = DocumentReverseIterator(document)
 

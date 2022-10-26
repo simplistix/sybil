@@ -15,6 +15,24 @@ END_PATTERN_TEMPLATE = '(\n\\Z|\n[ \t]{{0,{len_prefix}}}(?=\\S))'
 
 
 class DirectiveLexer(BlockLexer):
+    """
+    A :class:`~sybil.parsers.abstract.lexers.BlockLexer` for ReST directives that extracts the
+    following lexemes:
+
+    - ``directive`` as a  :class:`str`.
+    - ``arguments`` as a :class:`str`.
+    - ``source`` as a :class:`~sybil.Lexeme`.
+
+    :param directive:
+        a :class:`str` containing a regular expression pattern to match directive names.
+
+    :param arguments:
+        a :class:`str` containing a regular expression pattern to match directive arguments.
+
+    :param mapping:
+        If provided, this is used to rename lexemes from the keys in the mapping to their values.
+        Only mapped lexemes will be returned in any :class:`~sybil.LexedRegion` objects.
+    """
 
     delimiter = '::'
 
@@ -38,5 +56,32 @@ class DirectiveLexer(BlockLexer):
 
 
 class DirectiveInCommentLexer(DirectiveLexer):
+    """
+    A :class:`~sybil.parsers.abstract.lexers.BlockLexer` for faux ReST directives in comments
+    such as:
+
+    .. code-block:: rest
+
+        .. not-really-a-directive: some-argument
+
+          Source here...
+
+    It extracts the following lexemes:
+
+    - ``directive`` as a  :class:`str`.
+    - ``arguments`` as a :class:`str`.
+    - ``source`` as a :class:`~sybil.Lexeme`.
+
+    :param directive:
+        a :class:`str` containing a regular expression pattern to match directive names.
+
+    :param arguments:
+        a :class:`str` containing a regular expression pattern to match directive arguments.
+
+    :param mapping:
+        If provided, this is used to rename lexemes from the keys in the mapping to their values.
+        Only mapped lexemes will be returned in any :class:`~sybil.LexedRegion` objects.
+    """
+
     # This is the pattern used for invisible code blocks and the like.
     delimiter = ':'

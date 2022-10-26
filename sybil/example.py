@@ -1,7 +1,6 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from .region import Region
-from .typing import Parsed
 
 if TYPE_CHECKING:
     from .document import Document
@@ -49,8 +48,8 @@ class Example:
         self.end: int = region.end
         #: The version of this example provided by the parser that yielded
         #: the :class:`~sybil.Region` containing it.
-        self.parsed: Parsed = region.parsed
-        #: The :attr:`~sybil.document.Document.namespace` of the document from
+        self.parsed: Any = region.parsed
+        #: The :attr:`~sybil.Document.namespace` of the document from
         #: which this example came.
         self.namespace: dict = namespace
 

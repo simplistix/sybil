@@ -9,7 +9,7 @@ language:
 2
 ```
 
-A Python REPL / DocTest example using a MyST role:
+A Python REPL / DocTest example using a MyST directive:
 
 ```{code-block} python
 >>> x += 1; x

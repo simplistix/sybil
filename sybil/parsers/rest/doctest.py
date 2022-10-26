@@ -8,8 +8,7 @@ from .lexers import DirectiveLexer
 
 class DocTestParser:
     """
-    A class to instantiate and include when your documentation makes use of
-    :ref:`doctest-parser` examples.
+    A :any:`Parser` for :ref:`doctest-parser` examples.
 
     :param optionflags:
         :ref:`doctest option flags<option-flags-and-directives>` to use
@@ -25,8 +24,7 @@ class DocTestParser:
 
 class DocTestDirectiveParser:
     """
-    A class to instantiate and include when your documentation makes use of
-    doctest directives.
+    A :any:`Parser` for :rst:dir:`doctest` directives.
 
     :param optionflags:
         :ref:`doctest option flags<option-flags-and-directives>` to use
