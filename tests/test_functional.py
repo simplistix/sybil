@@ -387,3 +387,44 @@ def test_multiple_sybils_process_one_each(tmpdir: local, capsys: CaptureFixture[
     write_config(tmpdir, runner, template=config_template)
     results = run(capsys, runner, tmpdir)
     assert results.total == 2, results.out.text
+
+
+@pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
+def test_myst(capsys: CaptureFixture[str], runner: str):
+    results = run(capsys, runner, functional_sample('myst'))
+    out = results.out
+
+    # Check all the tests are found:
+    out.assert_has_run(runner, '/doctest.md', line=7)
+    out.assert_has_run(runner, '/doctest.md', line=14)
+    out.assert_has_run(runner, '/doctest.md', line=25)
+    out.assert_has_run(runner, '/doctest.md', line=31)
+    out.assert_has_run(runner, '/python.md', line=5)
+    out.assert_has_run(runner, '/python.md', line=11)
+    out.assert_has_run(runner, '/python.md', line=17)
+    out.assert_has_run(runner, '/python.md', line=26)
+    out.assert_has_run(runner, '/python.md', line=41)
+    out.assert_has_run(runner, '/python.md', line=47)
+    out.assert_has_run(runner, '/python.md', line=49)
+
+    # unittest treats exceptions as errors rather than failures,
+    # and they appear at the top of the output, hence the conditionals below.
+
+    # Check counts:
+    assert results.total == 4+7, results.out.text
+    if runner == PYTEST:
+        assert results.failures == 2 + 1, results.out.text
+        assert results.errors == 0, results.out.text
+    else:
+        assert results.failures == 2 + 0, results.out.text
+        assert results.errors == 1, results.out.text
+
+    # Check error text:
+    if runner == UNITTEST:
+        out.then_find("Exception: boom!")
+    out.then_find("doctest.md, line 25, column 1 did not evaluate as expected:")
+    out.then_find("Expected:\n    3\nGot:\n    2\n")
+    out.then_find("doctest.md, line 31, column 1 did not evaluate as expected:")
+    out.then_find("Expected:\n    4\nGot:\n    2\n")
+    if runner == PYTEST:
+        out.then_find("Exception: boom!")
