@@ -16,17 +16,17 @@ Changes
 
 - Add support for Python 3.10
 
-- Remove the ``encoding`` parameter to :class:`~sybil.parsers.doctest.DocTestParser`
+- Remove the ``encoding`` parameter to :class:`~sybil.parsers.rest.DocTestParser`
   as it is no longer used.
 
-- :class:`~sybil.parsers.codeblock.CodeBlockParser` has been renamed to
-  :class:`~sybil.parsers.codeblock.PythonCodeBlockParser`, see the
+- :class:`~sybil.parsers.rest.CodeBlockParser` has been renamed to
+  :class:`~sybil.parsers.rest.PythonCodeBlockParser`, see the
   :ref:`codeblock-parser` documentation for details.
 
 - Support has been added to check examples in Python source code in addition to
   documentation source files.
 
-- :attr:`~sybil.parsers.doctest.FIX_BYTE_UNICODE_REPR` has been removed as it should no
+- ``FIX_BYTE_UNICODE_REPR`` has been removed as it should no
   longer be needed.
 
 Thanks to Stefan Behnel for his work on :ref:`codeblock-parser` parsing!
@@ -34,7 +34,7 @@ Thanks to Stefan Behnel for his work on :ref:`codeblock-parser` parsing!
 2.0.1 (29 Nov 2020)
 -------------------
 
-- Make :class:`~sybil.parsers.doctest.DocTestParser` more permissive with respect
+- Make :class:`~sybil.parsers.rest.DocTestParser` more permissive with respect
   to tabs in documents. Tabs that aren't in the doctest block not longer cause
   parsing of the document to fail.
 
@@ -66,8 +66,7 @@ Thanks to Stefan Behnel for his work on :ref:`codeblock-parser` parsing!
 1.2.2 (20 Feb 2020)
 -------------------
 
-- Improvements to :attr:`~sybil.parsers.doctest.FIX_BYTE_UNICODE_REPR`
-  for multiple strings on a single line.
+- Improvements to ``FIX_BYTE_UNICODE_REPR`` for multiple strings on a single line.
 
 - Better handling of files with Windows line endings on Linux under Python 2.
 
@@ -91,8 +90,7 @@ Thanks to Stefan Behnel for his work on :ref:`codeblock-parser` parsing!
   __ https://circleci.com/gh/simplistix/sybil
   __ https://github.com/cjw296/carthorse
 
-- Add warning about the limitations of
-  :attr:`~sybil.parsers.doctest.FIX_BYTE_UNICODE_REPR`.
+- Add warning about the limitations of ``FIX_BYTE_UNICODE_REPR``.
 
 - Support explicit filenames to include and patterns to exclude
   when instantiating a :class:`~sybil.Sybil`.
@@ -113,7 +111,7 @@ Thanks to Stefan Behnel for his work on :ref:`codeblock-parser` parsing!
 -----------------------
 
 - Literal tabs may no longer be included in text that is parsed by the
-  :class:`~sybil.parsers.doctest.DocTestParser`. Previously, tabs were
+  :class:`~sybil.parsers.rest.DocTestParser`. Previously, tabs were
   expanded which could cause unpleasant problems.
 
 1.0.6 (30 November 2017)
@@ -132,27 +130,27 @@ Thanks to Bruno Oliveira for this fix!
 1.0.4 (5 June 2017)
 -------------------
 
-- Fix another bug in :class:`~sybil.parsers.codeblock.CodeBlockParser` where
+- Fix another bug in :class:`~sybil.parsers.rest.CodeBlockParser` where
   a :rst:dir:`code-block` followed by a less-indented block would be
   incorrectly indented, resulting in a :class:`SyntaxError`.
 
 1.0.3 (2 June 2017)
 -------------------
 
-- Fix bug in :class:`~sybil.parsers.codeblock.CodeBlockParser` where it
+- Fix bug in :class:`~sybil.parsers.rest.CodeBlockParser` where it
   would incorrectly parse indented code blocks.
 
 1.0.2 (1 June 2017)
 -------------------
 
-- Fix bug in :class:`~sybil.parsers.codeblock.CodeBlockParser` where it
+- Fix bug in :class:`~sybil.parsers.rest.CodeBlockParser` where it
   would not find indented code blocks.
 
 1.0.1 (30 May 2017)
 -------------------
 
 - Fix bug where unicode and byte literals weren't corrected in doctest
-  tracebacks, even when :attr:`sybil.parsers.doctest.FIX_BYTE_UNICODE_REPR`
+  tracebacks, even when ``FIX_BYTE_UNICODE_REPR``
   was specified.
 
 1.0.0 (26 May 2017)

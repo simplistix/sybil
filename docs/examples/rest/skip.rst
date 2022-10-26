@@ -14,9 +14,7 @@ This is pseudo-code:
 
 .. skip: end
 
-.. invisible-code-block: python
-
-  import sys
+>>> import sys
 
 This will only work on Python 3:
 

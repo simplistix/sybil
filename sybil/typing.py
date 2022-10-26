@@ -1,12 +1,14 @@
-from typing import Callable, TYPE_CHECKING, Iterable, TypeVar, Optional
+from typing import Callable, TYPE_CHECKING, Iterable, Optional, Any
 
 if TYPE_CHECKING:
-    from .document import Document
-    from .example import Example
-    from .region import Region, LexedRegion
+    import sybil
 
 
-Parsed = TypeVar('Parsed')
-Evaluator = Callable[['Example'], Optional[str]]
-Lexer = Callable[['Document'], Iterable['LexedRegion']]
-Parser = Callable[['Document'], Iterable['Region']]
+#: The signature for an evaluator. See :ref:`developing-parsers`.
+Evaluator = Callable[['sybil.Example'], Optional[str]]
+
+#: The signature for a lexer. See :ref:`developing-parsers`.
+Lexer = Callable[['sybil.Document'], Iterable['sybil.LexedRegion']]
+
+#: The signature for a parser. See :ref:`developing-parsers`.
+Parser = Callable[['sybil.Document'], Iterable['sybil.Region']]

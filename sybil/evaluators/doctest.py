@@ -29,6 +29,15 @@ class DocTestRunner(BaseDocTestRunner):
 
 
 class DocTestEvaluator:
+    """
+    The :any:`Evaluator` to use for :class:`Regions <sybil.Region>` yielded by
+    a :class:`~sybil.parsers.abstract.doctest.DocTestStringParser`.
+
+
+    :param optionflags:
+        :ref:`doctest option flags<option-flags-and-directives>` to use
+        when evaluating examples.
+    """
 
     def __init__(self, optionflags=0):
         self.runner = DocTestRunner(optionflags)

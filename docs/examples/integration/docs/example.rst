@@ -1,4 +1,4 @@
-Another fairly pointless function:
+A fairly pointless function:
 
 .. code-block:: python
 

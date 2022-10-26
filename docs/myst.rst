@@ -1,0 +1,242 @@
+Myst Parsers
+============
+
+Sybil includes a range of parsers for extracting and checking examples from
+:external+myst:doc:`MyST <index>` including the ability to :ref:`skip <myst-skip-parser>` the
+evaluation of examples where necessary.
+
+.. _myst-doctest-parser:
+
+doctest
+-------
+
+A selection of parsers are included that can extract and check doctest examples in
+``python`` `fenced code blocks`__,
+MyST ``code-block`` :ref:`directives <syntax/directives>` and
+MyST ``doctest`` :ref:`directives <syntax/directives>`.
+
+__ https://spec.commonmark.org/0.30/#fenced-code-blocks
+
+Most cases can be covered using a :class:`sybil.parsers.myst.PythonCodeBlockParser`.
+For example:
+
+.. literalinclude:: examples/myst/doctest.md
+  :language: markdown
+
+
+All three examples in the two blocks above can be checked with the following
+configuration:
+
+.. code-block:: python
+
+   from sybil import Sybil
+   from sybil.parsers.myst import PythonCodeBlockParser
+   sybil = Sybil(parsers=[PythonCodeBlockParser()])
+
+.. invisible-code-block: python
+
+  from tests.helpers import check_path
+  check_path('examples/myst/doctest.md', sybil, expected=3)
+
+Alternatively, the ReST :ref:`doctest parser <doctest-parser>` will
+find all doctest examples in a Markdown file. If any should not be checked,
+you can make use of the :ref:`skip <myst-skip-parser>` parser.
+
+``doctest`` directive
+~~~~~~~~~~~~~~~~~~~~~
+
+If you have made use of MyST ``doctest`` :ref:`directives <syntax/directives>`
+such as this:
+
+.. literalinclude:: examples/myst/doctest-directive.md
+  :language: markdown
+
+You can use the :class:`sybil.parsers.myst.DocTestDirectiveParser` as follows:
+
+.. code-block:: python
+
+   from sybil import Sybil
+   from sybil.parsers.myst import DocTestDirectiveParser
+   sybil = Sybil(parsers=[DocTestDirectiveParser()])
+
+.. invisible-code-block: python
+
+  from tests.helpers import check_path
+  check_path('examples/myst/doctest-directive.md', sybil, expected=2)
+
+``eval-rst`` directive
+~~~~~~~~~~~~~~~~~~~~~~
+
+If you have used ReST :rst:dir:`doctest` directive inside a MyST ``eval-rst``
+:ref:`directive <syntax/directives>` such as this:
+
+
+.. literalinclude:: examples/myst/doctest-eval-rst.md
+  :language: markdown
+
+
+Then you would use the normal :class:`sybil.parsers.rest.DocTestDirectiveParser` as follows:
+
+.. code-block:: python
+
+   from sybil import Sybil
+   from sybil.parsers.rest import DocTestDirectiveParser as ReSTDocTestDirectiveParser
+   sybil = Sybil(parsers=[ReSTDocTestDirectiveParser()])
+
+.. invisible-code-block: python
+
+  from tests.helpers import check_path
+  check_path('examples/myst/doctest-eval-rst.md', sybil, expected=1)
+
+.. _myst-codeblock-parser:
+
+Code blocks
+-----------
+
+The codeblock parsers extract examples from `fenced code blocks`__,
+MyST ``code-block`` :ref:`directives <syntax/directives>` and "invisible"
+code blocks in both styles of Markdown mult-line comment.
+
+__ https://spec.commonmark.org/0.30/#fenced-code-blocks
+
+Python
+~~~~~~
+
+Python examples can be checked in either ``python`` `fenced code blocks`__ or
+MyST ``code-block`` :ref:`directives <syntax/directives>` using the
+:class:`sybil.parsers.myst.PythonCodeBlockParser`.
+
+__ https://spec.commonmark.org/0.30/#fenced-code-blocks
+
+Including all the boilerplate necessary for examples to successfully evaluate and be checked
+can hinder writing documentation. To help with this, "invisible" code blocks are also supported.
+These take advantage of either style of Markdown block comments.
+
+For example:
+
+.. literalinclude:: examples/myst/codeblock-python.md
+  :language: markdown
+
+These examples can be checked with the following configuration:
+
+.. code-block:: python
+
+   from sybil import Sybil
+   from sybil.parsers.myst import PythonCodeBlockParser
+   sybil = Sybil(parsers=[PythonCodeBlockParser()])
+
+.. invisible-code-block: python
+
+  from tests.helpers import check_path
+  check_path('examples/myst/codeblock-python.md', sybil, expected=4)
+
+
+.. _myst-codeblock-other:
+
+Other languages
+~~~~~~~~~~~~~~~
+
+:class:`sybil.parsers.myst.CodeBlockParser` can be used to check examples in any language
+you require, either by instantiating with a specified language and evaluator, or by subclassing
+to create your own parser.
+
+As an example, let's look at evaluating bash commands in a subprocess and checking the output is
+as expected:
+
+.. literalinclude:: examples/myst/codeblock-bash.md
+  :language: markdown
+
+.. -> bash_document_text
+
+We can do this using :class:`~sybil.parsers.myst.CodeBlockParser` as follows:
+
+.. code-block:: python
+
+    from subprocess import check_output
+    from textwrap import dedent
+
+    from sybil import Sybil
+    from sybil.parsers.myst import CodeBlockParser
+
+    def evaluate_bash(example):
+        command, expected = dedent(example.parsed).strip().split('\n')
+        actual = check_output(command[2:].split()).strip().decode('ascii')
+        assert actual == expected, repr(actual) + ' != ' + repr(expected)
+
+    parser = CodeBlockParser(language='bash', evaluator=evaluate_bash)
+    sybil = Sybil(parsers=[parser])
+
+.. invisible-code-block: python
+
+  from tests.helpers import check_path
+  check_path('examples/myst/codeblock-bash.md', sybil, expected=1)
+
+Alternatively, we can create our own parser class and use it as follows:
+
+.. code-block:: python
+
+    from subprocess import check_output
+    from textwrap import dedent
+
+    from sybil import Sybil
+    from sybil.parsers.myst import CodeBlockParser
+
+    class BashCodeBlockParser(CodeBlockParser):
+
+        language = 'bash'
+
+        def evaluate(self, example):
+            command, expected = dedent(example.parsed).strip().split('\n')
+            actual = check_output(command[2:].split()).strip().decode('ascii')
+            assert actual == expected, repr(actual) + ' != ' + repr(expected)
+
+    sybil = Sybil([BashCodeBlockParser()])
+
+.. invisible-code-block: python
+
+  from tests.helpers import check_path
+  check_path('examples/myst/codeblock-bash.md', sybil, expected=1)
+
+.. _myst-skip-parser:
+
+Skipping examples
+-----------------
+
+:func:`sybil.parsers.myst.SkipParser` takes advantage of Markdown comments to allow checking of
+specified examples to be skipped.
+
+For example:
+
+.. literalinclude:: examples/myst/skip.md
+  :language: markdown
+  :lines: 1-8
+
+If you need to skip a collection of examples, this can be done as follows:
+
+.. literalinclude:: examples/myst/skip.md
+  :language: markdown
+  :lines: 10-25
+
+You can also add conditions to either ``next`` or ``start`` as shown below:
+
+.. literalinclude:: examples/myst/skip.md
+  :language: markdown
+  :lines: 27-
+
+As you can see, any names used in the expression passed to ``if`` must be
+present in the document's :attr:`~sybil.Document.namespace`.
+:ref:`invisible code blocks <myst-codeblock-parser>`, :class:`setup <sybil.Sybil>`
+methods or :ref:`fixtures <pytest_integration>` are good ways to provide these.
+
+The above examples could be checked with the following configuration:
+
+.. code-block:: python
+
+   from sybil import Sybil
+   from sybil.parsers.myst import PythonCodeBlockParser, SkipParser
+   sybil = Sybil(parsers=[PythonCodeBlockParser(), SkipParser()])
+
+.. invisible-code-block: python
+
+  from tests.helpers import check_path
+  check_path('examples/myst/skip.md', sybil, expected=9)

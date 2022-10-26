@@ -1,30 +1,35 @@
 from typing import Dict, Any, Union
 
-from sybil.typing import Parsed, Evaluator
+from sybil.typing import Evaluator
 
 
 class Lexeme(str):
+    """
+    Where needed, this can store both the text of the lexeme
+    and it's line offset relative to the line number of the example
+    that contains it.
+    """
 
     def __new__(cls, text: str, offset, line_offset: int):
         return str.__new__(cls, text)
 
     def __init__(self, text: str, offset, line_offset: int):
-        """
-        Where needed, this can store both the text of the lexeme
-        and it's line offset relative to the line number of the example
-        that contains it.
-        """
         self.text, self.offset, self.line_offset = text, offset, line_offset
 
 
 class LexedRegion:
     """
     A region that has been lexed from a source language but not yet
-    parsed to have semantic meaning.
+    parsed or assigned an :any:`Evaluator`.
     """
 
     def __init__(self, start: int, end: int, lexemes: Dict[str, Union[str, Lexeme]]):
-        self.start, self.end, self.lexemes = start, end, lexemes
+        #: The start of this lexed region within the document's :attr:`~sybil.Document.text`.
+        self.start: int = start
+        #: The end of this lexed region within the document's :attr:`~sybil.Document.text`.
+        self.end: int = end
+        #: The lexemes extracted from the region.
+        self.lexemes: Dict[str, Union[str, Lexeme]] = lexemes
 
 
 class Region:
@@ -48,10 +53,16 @@ class Region:
         as it should be.
     """
 
-    def __init__(self, start: int, end: int, parsed: Parsed, evaluator: Evaluator):
-        self.start, self.end, self.parsed, self.evaluator = (
-            start, end, parsed, evaluator
-        )
+    def __init__(self, start: int, end: int, parsed: Any, evaluator: Evaluator):
+        #: The start of this region within the document's :attr:`~sybil.Document.text`.
+        self.start: int = start
+        #: The end of this region within the document's :attr:`~sybil.Document.text`.
+        self.end: int = end
+        #: The parsed version of this region. This only needs to have meaning to
+        #: the :attr:`evaluator`.
+        self.parsed: Any = parsed
+        #: The :any:`Evaluator` for this region.
+        self.evaluator: Evaluator = evaluator
 
     def __repr__(self) -> str:
         return '<Region start={} end={} {!r}>'.format(

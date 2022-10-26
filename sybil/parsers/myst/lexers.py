@@ -8,12 +8,25 @@ CODEBLOCK_END_TEMPLATE = r"(?<=\n){prefix}```\n"
 
 
 class FencedCodeBlockLexer(BlockLexer):
+    """
+    A :class:`~sybil.parsers.abstract.lexers.BlockLexer` for Markdown fenced code blocks.
+
+    The following lexemes are extracted:
+
+    - ``language`` as a  :class:`str`.
+    - ``source`` as a :class:`~sybil.Lexeme`.
+
+
+    :param language:
+        a :class:`str` containing a regular expression pattern to match language names.
+
+    :param mapping:
+        If provided, this is used to rename lexemes from the keys in the mapping to their
+        values. Only mapped lexemes will be returned in any :class:`~sybil.LexedRegion` objects.
+
+    """
 
     def __init__(self, language: str, mapping: Dict[str, str] = None):
-        """
-        A lexer for Markdown fenced code blocks.
-        ``language`` is a regex pattern.
-        """
         super().__init__(
             start_pattern=re.compile(CODEBLOCK_START_TEMPLATE.format(language=language)),
             end_pattern_template=CODEBLOCK_END_TEMPLATE,
@@ -32,12 +45,39 @@ DIRECTIVE_START_TEMPLATE = (
 
 
 class DirectiveLexer(BlockLexer):
+    """
+    A :class:`~sybil.parsers.abstract.lexers.BlockLexer` for MyST directives such as:
+
+    .. code-block:: markdown
+
+        ```{directivename} arguments
+        ---
+        key1: val1
+        key2: val2
+        ---
+        This is
+        directive content
+        ```
+
+    The following lexemes are extracted:
+
+    - ``directive`` as a  :class:`str`.
+    - ``arguments`` as a :class:`str`.
+    - ``source`` as a :class:`~sybil.Lexeme`.
+
+    :param directive:
+        a :class:`str` containing a regular expression pattern to match directive names.
+
+    :param arguments:
+        a :class:`str` containing a regular expression pattern to match directive arguments.
+
+    :param mapping:
+        If provided, this is used to rename lexemes from the keys in the mapping to their
+        values. Only mapped lexemes will be returned in any :class:`~sybil.LexedRegion` objects.
+
+    """
 
     def __init__(self, directive: str, arguments: str = '', mapping: Dict[str, str] = None):
-        """
-        An lexer for MyST directives.
-        Both ``directive`` and ``arguments`` are regex patterns.
-        """
         super().__init__(
             start_pattern=re.compile(
                 DIRECTIVE_START_TEMPLATE.format(directive=directive, arguments=arguments),
@@ -55,12 +95,34 @@ DIRECTIVE_IN_PERCENT_COMMENT_END = '(?<=\n)(?!{prefix})'
 
 
 class DirectiveInPercentCommentLexer(BlockLexer):
+    """
+    A :class:`~sybil.parsers.abstract.lexers.BlockLexer` for faux MyST directives in
+    %-style Markdown comments such as:
+
+    .. code-block:: markdown
+
+        ; not-really-a-directive: some-argument
+        ;
+        ;     Source here...
+
+    It extracts the following lexemes:
+
+    - ``directive`` as a  :class:`str`.
+    - ``arguments`` as a :class:`str`.
+    - ``source`` as a :class:`~sybil.Lexeme`.
+
+    :param directive:
+        a :class:`str` containing a regular expression pattern to match directive names.
+
+    :param arguments:
+        a :class:`str` containing a regular expression pattern to match directive arguments.
+
+    :param mapping:
+        If provided, this is used to rename lexemes from the keys in the mapping to their values.
+        Only mapped lexemes will be returned in any :class:`~sybil.LexedRegion` objects.
+    """
 
     def __init__(self, directive: str, arguments: str = '', mapping: Dict[str, str] = None):
-        """
-        An lexer for directives in %-style Markdown comments.
-        Both ``directive`` and ``arguments`` are regex patterns.
-        """
         super().__init__(
             start_pattern=re.compile(
                 DIRECTIVE_IN_PERCENT_COMMENT_START.format(directive=directive, arguments=arguments),
@@ -78,12 +140,36 @@ DIRECTIVE_IN_HTML_COMMENT_END = '(?<=\n){prefix}--->'
 
 
 class DirectiveInHTMLCommentLexer(BlockLexer):
+    """
+    A :class:`~sybil.parsers.abstract.lexers.BlockLexer` for faux MyST directives in
+    HTML-style Markdown comments such as:
+
+    .. code-block:: markdown
+
+        <!--- not-really-a-directive: some-argument
+
+            Source here...
+
+        --->
+
+    It extracts the following lexemes:
+
+    - ``directive`` as a  :class:`str`.
+    - ``arguments`` as a :class:`str`.
+    - ``source`` as a :class:`~sybil.Lexeme`.
+
+    :param directive:
+        a :class:`str` containing a regular expression pattern to match directive names.
+
+    :param arguments:
+        a :class:`str` containing a regular expression pattern to match directive arguments.
+
+    :param mapping:
+        If provided, this is used to rename lexemes from the keys in the mapping to their values.
+        Only mapped lexemes will be returned in any :class:`~sybil.LexedRegion` objects.
+    """
 
     def __init__(self, directive: str, arguments: str = '', mapping: Dict[str, str] = None):
-        """
-        An lexer for directives in %-style Markdown comments.
-        Both ``directive`` and ``arguments`` are regex patterns.
-        """
         super().__init__(
             start_pattern=re.compile(
                 DIRECTIVE_IN_HTML_COMMENT_START.format(directive=directive, arguments=arguments),

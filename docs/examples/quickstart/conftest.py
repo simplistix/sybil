@@ -1,19 +1,12 @@
 from doctest import ELLIPSIS
+
 from sybil import Sybil
-from sybil.parsers.rest import (
-    CaptureParser,
-    DocTestParser,
-    PythonCodeBlockParser,
-    SkipParser,
-)
+from sybil.parsers.rest import DocTestParser, PythonCodeBlockParser
 
 pytest_collect_file = Sybil(
     parsers=[
-        CaptureParser(),
         DocTestParser(optionflags=ELLIPSIS),
         PythonCodeBlockParser(),
-        SkipParser(),
     ],
     patterns=['*.rst', '*.py'],
-    exclude='docs/examples/*/*.rst',
 ).pytest()

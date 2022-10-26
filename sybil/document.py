@@ -15,17 +15,18 @@ class Document:
     This is Sybil's representation of a documentation source file.
     It will be instantiated by Sybil and provided to each parser in turn.
 
-    Different types of document can be used by subclassing to provide the
-    required :any:`evaluation <evaluator>` and mapping the required file types
-    using the ``document_types`` parameter when instantiating a :class:`Sybil`.
+    Different types of document can be handled by subclassing to provide the
+    required :any:`evaluation <evaluator>`. The required file extensions, such as ``'.py'``,
+    can then be mapped to these subclasses using :class:`Sybil's <Sybil>`
+    ``document_types`` parameter.
     """
 
-    #: This can be set by :ref:`evaluators <developing-parsers>` or
+    #: This can be set by :any:`evaluators <Evaluator>` or
     #: :class:`subclasses <sybil.document.PythonDocument>` to affect the evaluation
     #: of future examples. It can be set to a callable that takes an
     #: :class:`~sybil.example.Example`. This callable can then do whatever it needs to do,
-    #: including not executing the example at all, modifying it, or the
-    #: :class:`~sybil.document.Document` or calling the original evaluator on the example.
+    #: including not executing the example at all, modifying the :class:`~sybil.example.Example`
+    #: or the :class:`~sybil.document.Document`, or calling the original evaluator on the example.
     #: This last case should always take the form of ``example.region.evaluator(example)``.
     evaluator: Evaluator = None
 
@@ -56,7 +57,7 @@ class Document:
 
     def line_column(self, position: int) -> str:
         """
-        Return a line and column location in this document based on a byte
+        Return a line and column location in this document based on a character
         position.
         """
         line = self.text.count('\n', 0, position)+1
@@ -112,7 +113,7 @@ class Document:
         self, start_pattern: Pattern[str], end_pattern: Pattern[str]
     ) -> Tuple[Match, Match, str]:
         """
-        This helper method can be called used to extract source text
+        This helper method can be used to extract source text
         for regions based on the two :ref:`regular expressions <re-objects>`
         provided.
         
@@ -139,7 +140,11 @@ class PythonDocument(Document):
     """
 
     def evaluator(self, example: Example) -> Optional[str]:
-        module = import_path(Path(example.path))
+        """
+        Imports the document's source file as a Python module when the first
+        :class:`~sybil.example.Example` from it is evaluated.
+        """
+        module = import_path(Path(self.path))
         self.namespace.update(module.__dict__)
         result = example.region.evaluator(example)
         self.evaluator = None

@@ -4,16 +4,28 @@ from doctest import (
 )
 from typing import Iterable
 
+from sybil.evaluators.doctest import DocTestEvaluator
 from sybil.region import Region
-from sybil.typing import Evaluator
 
 
 class DocTestStringParser(BaseDocTestParser):
+    """
+    This isn't a true :any:`Parser` in that it must be called with a :class:`str` containing
+    the doctest example's source and the file name that the example came from.
+    """
 
-    def __init__(self, evaluator: Evaluator):
-        self.evaluator = evaluator
+    def __init__(self, evaluator: DocTestEvaluator):
+        #: The evaluator to use for any doctests found in the supplied source string.
+        self.evaluator: DocTestEvaluator = evaluator
 
     def __call__(self, string: str, name: str) -> Iterable[Region]:
+        """
+        This will yield :class:`sybil.Region` objects for any doctext examples found in
+        the supplied ``string`` with the :attr:`evaluator` supplied to its constructor
+        and the file ``name`` supplied.
+
+        Each section starting with a ``>>>`` will form a separate region.
+        """
         # a cut down version of doctest.DocTestParser.parse:
         # If all lines begin with the same indentation, then strip it.
         min_indent = self._min_indent(string)
