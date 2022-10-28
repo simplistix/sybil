@@ -16,11 +16,18 @@ from testfixtures import compare
 from sybil import Sybil
 from sybil.document import Document
 from sybil.example import Example
-from sybil.typing import Parser
+from sybil.region import LexedRegion
+from sybil.typing import Parser, Lexer
 
 
 def sample_path(name) -> str:
     return join(dirname(__file__), 'samples', name)
+
+
+def lex(name: str, lexer: Lexer) -> List[LexedRegion]:
+    path = sample_path(name)
+    document = Document(Path(path).read_text(), path)
+    return list(lexer(document))
 
 
 def parse(name: str, *parsers: Parser, expected: int) -> Tuple[List[Example], dict]:
@@ -150,9 +157,9 @@ def run(capsys: CaptureFixture[str], integration: str, path: local) -> Results:
 
 CONFIG_TEMPLATE = """
 from sybil import Sybil
-from sybil.parsers.codeblock import PythonCodeBlockParser
-from sybil.parsers.doctest import DocTestParser
-from sybil.parsers.skip import skip
+from sybil.parsers.rest import PythonCodeBlockParser
+from sybil.parsers.rest import DocTestParser
+from sybil.parsers.rest import SkipParser
 {assigned_name} = Sybil(
 {params}
 ).{integration}()

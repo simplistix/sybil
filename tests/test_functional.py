@@ -272,7 +272,7 @@ def test_filter_multiple_patterns(tmpdir: local, capsys: CaptureFixture[str], ru
 def test_skips(tmpdir: local, capsys: CaptureFixture[str], runner: str):
     root = clone_functional_sample('skips', tmpdir)
     write_config(root, runner,
-                 parsers="[PythonCodeBlockParser(), skip, DocTestParser()]",
+                 parsers="[PythonCodeBlockParser(), SkipParser(), DocTestParser()]",
                  patterns="['*.rst']")
     results = run(capsys, runner, root)
     assert results.total == 10, results.out.text

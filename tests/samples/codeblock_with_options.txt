@@ -1,0 +1,14 @@
+More likely is one down here:
+
+.. code-block:: python
+   :caption: A cool example
+
+   raise Exception('Boom 1')
+
+This will keep working but not be an effective test once PEP 563 finally lands:
+
+.. code-block:: python
+   :caption: A cool example
+   :another: option
+
+   raise Exception('Boom 2')

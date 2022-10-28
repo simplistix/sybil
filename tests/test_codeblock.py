@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 
 import pytest
+from testfixtures import compare
 
 from sybil import Example
 from sybil.document import Document
@@ -18,6 +19,8 @@ def test_basic():
     assert namespace['z'] == 0
     with pytest.raises(Exception) as excinfo:
         examples[1].evaluate()
+    compare(examples[1].parsed, expected="raise Exception('boom!')\n", show_whitespace=True)
+    assert examples[1].line == 9
     check_excinfo(examples[1], excinfo, 'boom!', lineno=11)
     assert examples[2].evaluate() is None
     assert namespace['y'] == 1
@@ -128,3 +131,16 @@ def test_windows_line_endings(tmp_path: Path):
     example, = document
     example.evaluate()
     assert document.namespace['x'] == 123
+
+
+def test_line_numbers_with_options():
+    parser = PythonCodeBlockParser()
+    examples, namespace = parse('codeblock_with_options.txt', parser, expected=2)
+    with pytest.raises(Exception) as excinfo:
+        examples[0].evaluate()
+    # check the line number of the first block, which is the hardest case:
+    check_excinfo(examples[0], excinfo, 'Boom 1', lineno=6)
+    with pytest.raises(Exception) as excinfo:
+        examples[1].evaluate()
+    # check the line number of the second block:
+    check_excinfo(examples[1], excinfo, 'Boom 2', lineno=14)
