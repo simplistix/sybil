@@ -1,4 +1,30 @@
+from typing import Dict, Any, Union
+
 from sybil.typing import Parsed, Evaluator
+
+
+class Lexeme(str):
+
+    def __new__(cls, text: str, line_offset: int):
+        return str.__new__(cls, text)
+
+    def __init__(self, text: str, line_offset: int):
+        """
+        Where needed, this can store both the text of the lexeme
+        and it's line offset relative to the line number of the example
+        that contains it.
+        """
+        self.text, self.line_offset = text, line_offset
+
+
+class LexedRegion:
+    """
+    A region that has been lexed from a source language but not yet
+    parsed to have semantic meaning.
+    """
+
+    def __init__(self, start: int, end: int, lexemes: Dict[str, Union[str, Lexeme]]):
+        self.start, self.end, self.lexemes = start, end, lexemes
 
 
 class Region:
@@ -15,7 +41,7 @@ class Region:
         :class:`~sybil.document.Document`.
     
     :param parsed: 
-        The parsed version of the  example.
+        The parsed version of the example.
     
     :param evaluator: 
         The callable to use to evaluate this example and check if it is

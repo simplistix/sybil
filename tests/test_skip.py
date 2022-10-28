@@ -3,14 +3,12 @@ from unittest import SkipTest
 
 import pytest
 
-from sybil.parsers.codeblock import PythonCodeBlockParser
-from sybil.parsers.doctest import DocTestParser
-from sybil.parsers.skip import skip
+from sybil.parsers.rest import PythonCodeBlockParser, DocTestParser, SkipParser
 from .helpers import parse
 
 
 def test_basic():
-    examples, namespace = parse('skip.txt', PythonCodeBlockParser(), skip, expected=9)
+    examples, namespace = parse('skip.txt', PythonCodeBlockParser(), SkipParser(), expected=9)
     for example in examples:
         example.evaluate()
     assert namespace['run'] == [2, 5]
@@ -18,7 +16,9 @@ def test_basic():
 
 def test_conditional_edge_cases():
     examples, namespace = parse(
-        'skip-conditional-edges.txt', DocTestParser(), PythonCodeBlockParser(), skip, expected=9
+        'skip-conditional-edges.txt',
+        DocTestParser(), PythonCodeBlockParser(), SkipParser(),
+        expected=9
     )
     namespace['sys'] = sys
     namespace['run'] = []
@@ -34,7 +34,7 @@ def test_conditional_edge_cases():
 
 
 def test_conditional_full():
-    examples, namespace = parse('skip-conditional.txt', DocTestParser(), skip, expected=9)
+    examples, namespace = parse('skip-conditional.txt', DocTestParser(), SkipParser(), expected=9)
     namespace['result'] = result = []
     for example in examples:
         try:
@@ -52,7 +52,7 @@ def test_conditional_full():
 
 
 def test_bad():
-    examples, namespace = parse('skip-conditional-bad.txt', skip, expected=3)
+    examples, namespace = parse('skip-conditional-bad.txt', SkipParser(), expected=3)
 
     with pytest.raises(ValueError) as excinfo:
         examples[0].evaluate()

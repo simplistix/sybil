@@ -10,7 +10,7 @@ def pad(source: str, line: int) -> str:
     when the source is evaluated.
     """
     # There must be a nicer way to get line numbers to be correct...
-    return (line + 1) * '\n' + source
+    return line  * '\n' + source
 
 
 class PythonEvaluator:
@@ -22,7 +22,7 @@ class PythonEvaluator:
 
     def __call__(self, example: Example) -> None:
         # There must be a nicer way to get line numbers to be correct...
-        source = pad(example.parsed, example.line)
+        source = pad(example.parsed, example.line + example.parsed.line_offset)
         code = compile(source, example.path, 'exec', flags=self.flags, dont_inherit=True)
         exec(code, example.namespace)
         # exec adds __builtins__, we don't want it:

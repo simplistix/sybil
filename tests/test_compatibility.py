@@ -17,7 +17,7 @@ def test_imports():
 
 
 def test_code_block_parser_pad():
-    assert CodeBlockParser('foo').pad('x', line=2) == '\n\n\nx'
+    assert CodeBlockParser('foo').pad('x', line=2) == '\n\nx'
 
 
 def test_skip_parser_function():

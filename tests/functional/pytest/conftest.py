@@ -5,7 +5,7 @@ import re
 import pytest
 
 from sybil import Region, Sybil
-from sybil.parsers.codeblock import PythonCodeBlockParser
+from sybil.parsers.rest import PythonCodeBlockParser
 
 
 @pytest.fixture(scope="function")
