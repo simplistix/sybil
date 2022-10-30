@@ -114,16 +114,16 @@ class SybilFile(pytest.File):
             self.sybil.teardown(self.document.namespace)
 
 
-def pytest_integration(sybil: 'Sybil'):
+def pytest_integration(*sybils: 'Sybil'):
 
     def pytest_collect_file(path: py.path.local, parent: Collector):
         fspath = path
         path = Path(fspath.strpath)
-        if sybil.should_parse(path):
-            if PYTEST_VERSION[0] >= 7:
-                return SybilFile.from_parent(parent, path=path, sybil=sybil)
-            else:
-                return SybilFile.from_parent(parent, fspath=fspath, sybil=sybil)
-
+        for sybil in sybils:
+            if sybil.should_parse(path):
+                if PYTEST_VERSION[0] >= 7:
+                    return SybilFile.from_parent(parent, path=path, sybil=sybil)
+                else:
+                    return SybilFile.from_parent(parent, fspath=fspath, sybil=sybil)
 
     return pytest_collect_file
