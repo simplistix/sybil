@@ -3,6 +3,7 @@ from os.path import dirname, join
 from pathlib import Path
 from shutil import copytree
 from tempfile import NamedTemporaryFile
+from textwrap import dedent
 from traceback import TracebackException
 from typing import Tuple, List
 from unittest import TextTestRunner, main as unittest_main
@@ -176,13 +177,13 @@ CONFIG_ASSIGNED_NAME = {
 }
 
 
-def write_config(tmpdir: local, integration: str, **params: str) -> None:
+def write_config(tmpdir: local, integration: str, template=CONFIG_TEMPLATE, **params: str) -> None:
     import sys
     sys.modules.pop('test_docs', None)
     params_ = {'parsers': '[DocTestParser()]'}
     params_.update(params)
-    config = CONFIG_TEMPLATE.format(
-        assigned_name = CONFIG_ASSIGNED_NAME[integration],
+    config = dedent(template).format(
+        assigned_name=CONFIG_ASSIGNED_NAME[integration],
         params='\n'.join([f'    {name}={value},' for name, value in params_.items()]),
         integration=integration,
     )

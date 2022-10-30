@@ -346,3 +346,44 @@ def test_package_and_docs(tmpdir: local, capsys: CaptureFixture[str], runner: st
     results.out.then_find('good')
     results.out.then_find('Got:')
     results.out.then_find('bad')
+
+
+@pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
+def test_multiple_sybils_process_all(tmpdir: local, capsys: CaptureFixture[str], runner: str):
+    write_doctest(tmpdir, 'test.rst')
+    write_doctest(tmpdir, 'test.txt')
+    config_template = """
+    from sybil.parsers.rest import DocTestParser
+    from sybil import Sybil
+    
+    sybil1 = Sybil(parsers=[DocTestParser()], pattern='test.*')
+    sybil2 = Sybil(parsers=[DocTestParser()], pattern='test.*')
+    
+    {assigned_name} = (sybil1 + sybil2).{integration}()
+    """
+    write_config(tmpdir, runner, template=config_template)
+    results = run(capsys, runner, tmpdir)
+    if runner == PYTEST:
+        # the pytest integration only looks at each file once
+        expected_total = 2
+    else:
+        expected_total = 4
+    assert results.total == expected_total, results.out.text
+
+
+@pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
+def test_multiple_sybils_process_one_each(tmpdir: local, capsys: CaptureFixture[str], runner: str):
+    write_doctest(tmpdir, 'test.rst')
+    write_doctest(tmpdir, 'test.txt')
+    config_template = """
+    from sybil.parsers.rest import DocTestParser
+    from sybil import Sybil
+
+    rst = Sybil(parsers=[DocTestParser()], pattern='*.rst')
+    txt = Sybil(parsers=[DocTestParser()], pattern='*.txt')
+
+    {assigned_name} = (rst + txt).{integration}()
+    """
+    write_config(tmpdir, runner, template=config_template)
+    results = run(capsys, runner, tmpdir)
+    assert results.total == 2, results.out.text

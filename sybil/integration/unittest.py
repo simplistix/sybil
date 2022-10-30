@@ -34,20 +34,21 @@ class TestCase(BaseTestCase):
             cls.sybil.teardown(cls.namespace)
 
 
-def unittest_integration(sybil: 'Sybil'):
+def unittest_integration(*sybils: 'Sybil'):
 
     def load_tests(loader=None, tests=None, pattern=None):
         suite = TestSuite()
-        for path in sorted(sybil.path.glob('**/*')):
-            if path.is_file() and sybil.should_parse(path):
-                document = sybil.parse(path)
+        for sybil in sybils:
+            for path in sorted(sybil.path.glob('**/*')):
+                if path.is_file() and sybil.should_parse(path):
+                    document = sybil.parse(path)
 
-                case = type(document.path, (TestCase, ), dict(
-                    sybil=sybil, namespace=document.namespace,
-                ))
+                    case = type(document.path, (TestCase, ), dict(
+                        sybil=sybil, namespace=document.namespace,
+                    ))
 
-                for example in document:
-                    suite.addTest(case(example))
+                    for example in document:
+                        suite.addTest(case(example))
 
         return suite
 

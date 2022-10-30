@@ -1,6 +1,5 @@
 from __future__ import print_function
 
-import os
 import re
 from functools import partial
 from os.path import split
@@ -252,6 +251,26 @@ class TestSybil:
         assert type(document) is TextDocument
         document = sybil.parse(write_doctest(tmpdir, 'test.rst'))
         assert type(document) is Document
+
+    def test_addition(self):
+        rest = Sybil([parse_for_x])
+        myst = Sybil([parse_for_y])
+        sybil = rest + myst
+        assert sybil == [rest, myst]
+        # check integrations exist:
+        assert sybil.pytest
+        assert sybil.unittest
+
+    def test_addition_to_collection(self):
+        rest = Sybil([parse_for_x])
+        myst = Sybil([parse_for_y])
+        bust = Sybil([parse_for_y])
+        sybil = rest + myst
+        sybil += [bust]
+        assert sybil == [rest, myst, bust]
+        # check integrations exist:
+        assert sybil.pytest
+        assert sybil.unittest
 
 
 def check_into_namespace(example):

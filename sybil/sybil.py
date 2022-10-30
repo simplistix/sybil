@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from typing import Sequence, Callable, Collection, Mapping, Optional, Type
+from typing import Sequence, Callable, Collection, Mapping, Optional, Type, List
 
 from .document import Document, PythonDocument
 from .typing import Parser
@@ -113,6 +113,10 @@ class Sybil:
             self.document_types.update(document_types)
         self.default_document_type: Type[Document] = self.document_types[None]
 
+    def __add__(self, other: 'Sybil'):
+        assert isinstance(other, Sybil)
+        return SybilCollection((self, other))
+
     def should_parse(self, path: Path) -> bool:
         try:
             path = path.relative_to(self.path)
@@ -149,3 +153,19 @@ class Sybil:
         from .integration.unittest import unittest_integration
         return unittest_integration(self)
 
+
+class SybilCollection(list):
+
+    def pytest(self):
+        """
+        The helper method for when you use :ref:`pytest_integration`.
+        """
+        from .integration.pytest import pytest_integration
+        return pytest_integration(*self)
+
+    def unittest(self):
+        """
+        The helper method for when you use :ref:`unitttest_integration`.
+        """
+        from .integration.unittest import unittest_integration
+        return unittest_integration(*self)
