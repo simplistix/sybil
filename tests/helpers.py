@@ -26,7 +26,7 @@ def sample_path(name) -> str:
 def parse(name: str, *parsers: Parser, expected: int) -> Tuple[List[Example], dict]:
     document = Document.parse(sample_path(name), *parsers)
     examples = list(document)
-    assert len(examples) == expected, f'{len(examples)} != {expected}'
+    assert len(examples) == expected, f'{len(examples)} != {expected}: {examples!r}'
     return examples, document.namespace
 
 
