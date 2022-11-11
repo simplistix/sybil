@@ -11,6 +11,7 @@ from _pytest._code import ExceptionInfo
 from _pytest.capture import CaptureFixture
 from _pytest.config import main as pytest_main
 from py.path import local
+from testfixtures import compare
 
 from sybil import Sybil
 from sybil.document import Document
@@ -30,7 +31,7 @@ def parse(name: str, *parsers: Parser, expected: int) -> Tuple[List[Example], di
 
 
 def check_excinfo(example: Example, excinfo: ExceptionInfo, text: str, *, lineno: int):
-    assert str(excinfo.value) == text, f'{str(excinfo.value)!r} != {text!r}'
+    compare(str(excinfo.value), expected=text)
     details = TracebackException.from_exception(excinfo.value, lookup_lines=False).stack[-1]
     document = example.document
     assert details.filename == document.path, f'{details.filename!r} != {document.path!r}'

@@ -33,6 +33,7 @@ setup(
         test=[
             'pytest>=6.2.0',
             'pytest-cov',
+            'testfixtures',
             ],
         build=['furo', 'sphinx', 'twine', 'wheel']
     ),
