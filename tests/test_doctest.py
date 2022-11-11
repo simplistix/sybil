@@ -2,11 +2,12 @@
 from doctest import REPORT_NDIFF, ELLIPSIS
 
 import pytest
+from testfixtures import compare
 
 from sybil.document import Document
 from sybil.example import SybilFailure
 from sybil.parsers.doctest import DocTestParser
-from tests.helpers import sample_path, parse
+from tests.helpers import sample_path, parse, check_excinfo
 
 
 def test_pass():
@@ -24,15 +25,20 @@ def test_pass():
 
 
 def test_fail():
+    path = sample_path('doctest_fail.txt')
     examples, namespace = parse('doctest_fail.txt', DocTestParser(), expected=2)
     with pytest.raises(SybilFailure) as excinfo:
         examples[0].evaluate()
-    assert excinfo.value.result == (
+    # Note on line numbers: This test shows how the example's line number is correct
+    # however, doctest doesn't do the line padding trick Sybil does with codeblocks,
+    # so the line number will never be correct, it's always 1.
+    compare(str(excinfo.value), expected=(
+        f"Example at {path}, line 1, column 1 did not evaluate as expected:\n"
         "Expected:\n"
         "    Not my output\n"
         "Got:\n"
         "    where's my output?\n"
-    )
+    ))
     with pytest.raises(SybilFailure) as excinfo:
         examples[1].evaluate()
     actual = excinfo.value.result
