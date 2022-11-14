@@ -31,3 +31,8 @@ class Region:
         return '<Region start={} end={} {!r}>'.format(
             self.start, self.end, self.evaluator
         )
+
+    def __lt__(self, other):
+        assert isinstance(other, type(self)), f"{type(other)} not supported for <"
+        assert self.start == other.start  # This is where this may happen, if not something weird
+        return True
