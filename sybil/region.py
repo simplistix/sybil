@@ -5,16 +5,16 @@ from sybil.typing import Parsed, Evaluator
 
 class Lexeme(str):
 
-    def __new__(cls, text: str, line_offset: int):
+    def __new__(cls, text: str, offset, line_offset: int):
         return str.__new__(cls, text)
 
-    def __init__(self, text: str, line_offset: int):
+    def __init__(self, text: str, offset, line_offset: int):
         """
         Where needed, this can store both the text of the lexeme
         and it's line offset relative to the line number of the example
         that contains it.
         """
-        self.text, self.line_offset = text, line_offset
+        self.text, self.offset, self.line_offset = text, offset, line_offset
 
 
 class LexedRegion:
@@ -62,3 +62,11 @@ class Region:
         assert isinstance(other, type(self)), f"{type(other)} not supported for <"
         assert self.start == other.start  # This is where this may happen, if not something weird
         return True
+
+    def adjust(self, lexed: Union['Region', 'LexedRegion'], lexeme: Lexeme):
+        """
+        Adjust the start and end of this region based on the provided :class:`Lexeme`
+        and :class:`LexedRegion` or :class:`Region` that lexeme came from.
+        """
+        self.start += (lexed.start + lexeme.offset)
+        self.end += lexed.start

@@ -33,6 +33,7 @@ class BlockLexer:
             stripped = ''.join(line[len(prefix):] for line in lines)
             lexemes['source'] = Lexeme(
                 textwrap.dedent(stripped),
+                offset=source_start-start_match.start(),
                 line_offset=start_match.group(0).count('\n')-1
             )
             if self.mapping:
