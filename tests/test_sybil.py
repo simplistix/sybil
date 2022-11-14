@@ -133,6 +133,32 @@ class TestDocument:
             ' from line 1, column 2 to line 1, column 4'
         )
 
+    def test_add_at_same_place(self, document):
+        region1 = Region(0, 2, None, None)
+        region2 = Region(0, 3, None, None)
+        document.add(region1)
+        with pytest.raises(ValueError) as excinfo:
+            document.add(region2)
+        assert str(excinfo.value) == (
+            '<Region start=0 end=3 None>'
+            ' from line 1, column 1 to line 1, column 4 overlaps '
+            '<Region start=0 end=2 None>'
+            ' from line 1, column 1 to line 1, column 3'
+        )
+
+    def test_add_identical(self, document):
+        region1 = Region(0, 2, None, None)
+        region2 = Region(0, 2, None, None)
+        document.add(region1)
+        with pytest.raises(ValueError) as excinfo:
+            document.add(region2)
+        assert str(excinfo.value) == (
+            '<Region start=0 end=2 None>'
+            ' from line 1, column 1 to line 1, column 3 overlaps '
+            '<Region start=0 end=2 None>'
+            ' from line 1, column 1 to line 1, column 3'
+        )
+
     def test_add_overlaps_with_next(self, document):
         region1 = Region(0, 1, None, None)
         region2 = Region(1, 3, None, None)
