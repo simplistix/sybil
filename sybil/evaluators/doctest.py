@@ -38,7 +38,7 @@ class DocTestEvaluator:
         namespace = sybil_example.namespace
         output = []
         self.runner.run(
-            DocTest([example], namespace, name=None,
+            DocTest([example], namespace, name=sybil_example.path,
                     filename=None, lineno=example.lineno, docstring=None),
             clear_globs=False,
             out=output.append
