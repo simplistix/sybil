@@ -69,7 +69,7 @@ class Finder:
         self.index = self.text.index(substring, self.index)
 
     def assert_present(self, text):
-        assert text in self.text, repr(self.text)
+        assert text in self.text, f'{self.text}\n{self.text!r}'
 
     def assert_not_present(self, text):
         index = self.text.find(text)
