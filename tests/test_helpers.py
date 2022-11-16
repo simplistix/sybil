@@ -8,8 +8,14 @@ from sybil.python import import_cleanup
 from .helpers import Finder
 
 
-def test_finder():
-    # make sure the helper above works:
+def test_finder_present_but_is_not_present():
+    finder = Finder('foo\nbaz\n')
+    with pytest.raises(AssertionError) as info:
+        finder.assert_present('bob')
+    assert str(info.value) == "foo\nbaz\n\n'foo\\nbaz\\n'"
+
+
+def test_finder_not_present_but_is_present():
     finder = Finder('foo baz bar')
     with pytest.raises(AssertionError) as info:
         finder.assert_not_present('baz')
