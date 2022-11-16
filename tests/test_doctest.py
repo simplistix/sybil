@@ -6,8 +6,8 @@ from testfixtures import compare
 
 from sybil.document import Document
 from sybil.example import SybilFailure
-from sybil.parsers.doctest import DocTestParser
-from tests.helpers import sample_path, parse, check_excinfo
+from sybil.parsers.rest import DocTestParser, DocTestDirectiveParser
+from tests.helpers import sample_path, parse
 
 
 def test_pass():
@@ -85,3 +85,37 @@ def test_irrelevant_tabs():
 def test_unicode():
     examples, _ = parse('doctest_unicode.txt', DocTestParser(), expected=1)
     examples[0].evaluate()
+
+
+def test_directive():
+    path = sample_path('doctest_directive.txt')
+    examples, _ = parse('doctest_directive.txt', DocTestDirectiveParser(), expected=3)
+    examples[0].evaluate()
+    with pytest.raises(SybilFailure) as excinfo:
+        examples[1].evaluate()
+    compare(str(excinfo.value), expected = (
+        f"Example at {path}, line 13, column 1 did not evaluate as expected:\n"
+        "Expected:\n"
+        "    Unexpected!\n"
+        "Got:\n"
+        "    2\n"
+    ))
+    with pytest.raises(SybilFailure) as excinfo:
+        examples[2].evaluate()
+    actual = excinfo.value.result
+    assert actual.startswith('Exception raised:')
+    assert actual.endswith('Exception: boom!\n')
+
+
+def test_directive_with_options():
+    path = sample_path('doctest_directive.txt')
+    parser = DocTestDirectiveParser(optionflags=REPORT_NDIFF|ELLIPSIS)
+    examples, namespace = parse('doctest_directive.txt', parser, expected=3)
+    with pytest.raises(SybilFailure) as excinfo:
+        examples[1].evaluate()
+    compare(str(excinfo.value), expected = (
+        f"Example at {path}, line 13, column 1 did not evaluate as expected:\n"
+        "Differences (ndiff with -expected +actual):\n"
+        "    - Unexpected!\n"
+        "    + 2\n"
+    ))

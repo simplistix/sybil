@@ -1,0 +1,20 @@
+Who knew that you could have a doctest role?
+You have to make sure to enable "sphinx.ext.doctest"...
+
+.. doctest::
+
+    >>> 1 + 1
+    2
+
+This is what it looks like when output doesn't match expectations:
+
+.. doctest::
+
+    >>> 1 + 1
+    Unexpected!
+
+This is what it looks like when an exception is raised:
+
+.. doctest::
+
+    >>> raise Exception('boom!')
