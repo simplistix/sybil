@@ -15,5 +15,4 @@ pytest_collect_file = Sybil(
         SkipParser(),
     ],
     patterns=['*.rst', '*.py'],
-    exclude='docs/examples/*/*.rst',
 ).pytest()

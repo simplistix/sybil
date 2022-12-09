@@ -10,6 +10,7 @@ is designed so that it's easy to provide your own additional parsers.
 
    quickstart.rst
    use.rst
+   patterns.rst
    ReST Parsers <rest.rst>
    myst.rst
 
