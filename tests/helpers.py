@@ -1,4 +1,5 @@
 import sys
+from contextlib import contextmanager
 from os.path import dirname, join
 from pathlib import Path
 from shutil import copytree
@@ -12,11 +13,13 @@ from _pytest._code import ExceptionInfo
 from _pytest.capture import CaptureFixture
 from _pytest.config import main as pytest_main
 from py.path import local
+from seedir import seedir
 from testfixtures import compare
 
 from sybil import Sybil
 from sybil.document import Document
 from sybil.example import Example
+from sybil.python import import_cleanup
 from sybil.region import LexedRegion
 from sybil.typing import Parser, Lexer
 
@@ -65,6 +68,22 @@ def check_text(text: str, sybil: Sybil):
     (example,) = document
     example.evaluate()
     return document
+
+
+def check_tree(expected: str, path: str):
+    raw = seedir(
+        DOCS / path,
+        printout=False,
+        first='folders',
+        sort=True,
+        regex=True,
+        exclude_folders=r'\..+|__pycache__'
+    )
+    actual = '\n'+raw.split('\n', 1)[1]
+    text = compare(expected=expected.strip(), actual=actual.strip(), raises=False)
+    if text:  # pragma: no cover
+        text += '\n\nShould be:\n'+actual
+        raise AssertionError(text)
 
 
 FUNCTIONAL_TEST_DIR = join(dirname(__file__), 'functional')
@@ -206,3 +225,11 @@ def write_doctest(tmpdir: local, *path: str) -> Path:
     file_path.parent.mkdir(parents=True, exist_ok=True)
     file_path.write_text(f">>> assert '{file_path.name}' == '{file_path.name}'")
     return file_path
+
+
+@contextmanager
+def add_to_python_path(path: Path):
+    with import_cleanup():
+        sys.path.append(str(path))
+        yield
+        sys.path.pop()

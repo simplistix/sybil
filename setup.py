@@ -34,6 +34,7 @@ setup(
             'myst_parser',
             'pytest>=6.2.0',
             'pytest-cov',
+            'seedir',
             'testfixtures',
             ],
         build=['furo', 'sphinx', 'twine', 'wheel']
