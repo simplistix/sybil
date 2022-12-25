@@ -78,6 +78,8 @@ your examples are correct:
 
 .. literalinclude:: examples/myst_text_rest_src/conftest.py
 
+.. _migrating-from-sphinx.ext.doctest:
+
 Migrating from sphinx.ext.doctest
 ---------------------------------
 

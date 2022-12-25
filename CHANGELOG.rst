@@ -1,6 +1,17 @@
 Changes
 =======
 
+4.0.0 (25 Dec 2022)
+-------------------
+
+- Restructure to support lexing source languages such as ReST and MyST
+  while testing examples in target languages such as Python, doctest and bash.
+
+- Add support for :doc:`MyST examples <myst>`.
+
+- Include a :ref:`plan for migrating <migrating-from-sphinx.ext.doctest>`
+  from ``sphinx.ext.doctest``.
+
 3.0.1 (25 Feb 2022)
 -------------------
 
