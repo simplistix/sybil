@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import os, pkg_resources, datetime, time
 
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
     'sphinx': ('https://www.sphinx-doc.org/en/stable/', None),
