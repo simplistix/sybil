@@ -8,4 +8,4 @@ class SkipParser(AbstractSkipParser):
     A :any:`Parser` for :ref:`skip <myst-skip-parser>` instructions.
     """
 
-    pattern = re.compile(r'^[ \t]*;\s*skip:\s*(\w+)(?:\s+if(.+)$)?', re.MULTILINE)
+    pattern = re.compile(r'^[ \t]*[;%]\s*skip:\s*(\w+)(?:\s+if(.+)$)?', re.MULTILINE)

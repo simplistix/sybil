@@ -44,7 +44,7 @@ What about a bullet?
   
 - Bullet 2:
 
-    ; skip: next
+    % skip: next
 
     <!---  invisible-code-block: python
     
