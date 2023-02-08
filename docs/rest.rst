@@ -106,6 +106,11 @@ These could be checked with the following configuration:
   from tests.helpers import check_path
   check_path('examples/rest/codeblock-python.rst', sybil, expected=2)
 
+.. note::
+
+  You should not wrap doctest examples in a ``python`` :rst:dir:`code-block`,
+  they will render correctly without that and you should use the :ref:`doctest-parser`
+  parser to check them.
 
 .. _codeblock-other:
 

@@ -42,6 +42,12 @@ Alternatively, the ReST :ref:`doctest parser <doctest-parser>` will
 find all doctest examples in a Markdown file. If any should not be checked,
 you can make use of the :ref:`skip <myst-skip-parser>` parser.
 
+.. note::
+
+  You can only use the ReST :ref:`doctest parser <doctest-parser>` if no doctest
+  examples are contained in examples parsed by the other parsers listed here.
+  If you do, :class:`ValueError` exceptions relating to overlapping regions will be raised.
+
 ``doctest`` directive
 ~~~~~~~~~~~~~~~~~~~~~
 
