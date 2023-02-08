@@ -1,4 +1,4 @@
-; skip: next
+% skip: next
 
 This would be wrong:
 
@@ -9,7 +9,7 @@ True
 
 This is pseudo-code:
 
-; skip: start
+% skip: start
 
 ```python
 def foo(...) -> bool:
@@ -22,7 +22,7 @@ When you want to foo, you could do it like this:
 foo('baz', 'bob', ...)
 ```
 
-; skip: end
+% skip: end
 
 % invisible-code-block: python
 %
@@ -30,7 +30,7 @@ foo('baz', 'bob', ...)
 
 This will only work on Python 3:
 
-; skip: next if(sys.version_info < (3, 0), reason="python 3 only")
+% skip: next if(sys.version_info < (3, 0), reason="python 3 only")
 
 ```python
 >>> repr(b'foo')
