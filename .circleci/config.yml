@@ -12,7 +12,7 @@ common: &common
             image:
               - cimg/python:3.6
               - cimg/python:3.9
-              - cimg/python:3.10
+              - cimg/python:3.11
             extra_packages:
               - "'pytest>=6.2,<7'"
               - "'pytest>=7'"
