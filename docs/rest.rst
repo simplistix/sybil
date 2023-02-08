@@ -56,6 +56,11 @@ These could be checked with the following configuration:
   from tests.helpers import check_path
   check_path('examples/rest/doctest-directive.rst', sybil, expected=1)
 
+.. note::
+
+  You will have to enable :external+sphinx:doc:`sphinx.ext.doctest <usage/extensions/doctest>`
+  in your ``conf.py`` for Sphinx to render :rst:dir:`doctest` directives.
+
 .. _codeblock-parser:
 
 Code blocks

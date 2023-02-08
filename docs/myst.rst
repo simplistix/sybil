@@ -64,6 +64,11 @@ You can use the :class:`sybil.parsers.myst.DocTestDirectiveParser` as follows:
   from tests.helpers import check_path
   check_path('examples/myst/doctest-directive.md', sybil, expected=2)
 
+.. note::
+
+  You will have to enable :external+sphinx:doc:`sphinx.ext.doctest <usage/extensions/doctest>`
+  in your ``conf.py`` for Sphinx to render :rst:dir:`doctest` directives.
+
 ``eval-rst`` directive
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -87,6 +92,11 @@ Then you would use the normal :class:`sybil.parsers.rest.DocTestDirectiveParser`
 
   from tests.helpers import check_path
   check_path('examples/myst/doctest-eval-rst.md', sybil, expected=1)
+
+.. note::
+
+  You will have to enable :external+sphinx:doc:`sphinx.ext.doctest <usage/extensions/doctest>`
+  in your ``conf.py`` for Sphinx to render :rst:dir:`doctest` directives.
 
 .. _myst-codeblock-parser:
 
