@@ -1,6 +1,17 @@
 Changes
 =======
 
+4.0.1 (8 Feb 2023)
+------------------
+
+- Switch :func:`sybil.parsers.myst.SkipParser` to use the correct comment character.
+
+- Note that the :external+sphinx:doc:`doctest extension <usage/extensions/doctest>` needs to be
+  enabled to render :rst:dir:`doctest` directives.
+
+- Warn about :ref:`ReST <doctest-parser>` and :ref:`MyST <myst-doctest-parser>` doctest parsers
+  and overlapping blocks.
+
 4.0.0 (25 Dec 2022)
 -------------------
 
