@@ -25,6 +25,9 @@ Documents
 .. autoclass:: sybil.document.PythonDocument
   :members:
 
+.. autoclass:: sybil.document.PythonDocStringDocument
+  :members:
+
 Regions
 -------
 

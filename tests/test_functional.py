@@ -7,7 +7,7 @@ from pytest import CaptureFixture
 from sybil.python import import_cleanup
 from .helpers import (
     run_pytest, run_unittest, PYTEST, run, write_config, UNITTEST, write_doctest,
-    functional_sample, clone_functional_sample
+    functional_sample, clone_functional_sample, skip_if_37_or_older
 )
 
 
@@ -331,6 +331,7 @@ def test_modules_not_importable_unittest(tmpdir: local, capsys: CaptureFixture[s
     out.then_find("ModuleNotFoundError: No module named 'b'")
 
 
+@skip_if_37_or_older()
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
 def test_package_and_docs(tmpdir: local, capsys: CaptureFixture[str], runner: str):
     root = clone_functional_sample('package_and_docs', tmpdir)
