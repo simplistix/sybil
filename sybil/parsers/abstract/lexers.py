@@ -5,6 +5,9 @@ from typing import Dict, Iterable, Pattern
 from sybil import Document
 from sybil.region import LexedRegion, Lexeme
 
+class LexingException(Exception):
+    pass
+
 
 class BlockLexer:
     """
@@ -52,6 +55,11 @@ class BlockLexer:
                 prefix=prefix, len_prefix=len(prefix)
             ))
             end_match = end_pattern.search(document.text, source_start)
+            if end_match is None:
+                raise LexingException(
+                    f'Could not match {end_pattern.pattern!r} in {document.path}:\n'
+                    f'{document.text[source_start:]!r}'
+                )
             source_end = end_match.start()
             source = document.text[source_start:source_end]
             lines = source.splitlines(keepends=True)
