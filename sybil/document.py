@@ -1,12 +1,15 @@
+import ast
 import re
+from ast import AsyncFunctionDef, FunctionDef, ClassDef, Module, Expr, Str, Constant
 from bisect import bisect
 from io import open
 from pathlib import Path
-from typing import List, Iterable, Pattern, Tuple, Match, Optional
+from typing import List, Iterable, Pattern, Tuple, Match, Optional, Sequence
 
 from .example import Example
 from .python import import_path
 from .region import Region
+from .text import LineNumberOffsets
 from .typing import Parser, Evaluator
 
 
@@ -132,6 +135,9 @@ class Document:
             yield start_match, end_match, source
 
 
+DOCSTRING_PUNCTUATION = re.compile('["\']{3}|["\']')
+
+
 class PythonDocument(Document):
     """
     A :class:`~sybil.Document` type that imports the document's source
@@ -149,3 +155,53 @@ class PythonDocument(Document):
         result = example.region.evaluator(example)
         self.evaluator = None
         return result
+
+
+class PythonDocStringDocument(PythonDocument):
+    """
+    A :class:`~sybil.document.PythonDocument` subclass that only considers the text of
+    docstrings in the document's source.
+    """
+
+    @staticmethod
+    def extract_docstrings(python_source_code: str) -> Sequence[Tuple[int, int, str]]:
+        line_offsets = LineNumberOffsets(python_source_code)
+        for node in ast.walk(ast.parse(python_source_code)):
+            if not isinstance(node, (AsyncFunctionDef, FunctionDef, ClassDef, Module)):
+                continue
+            if not (node.body and isinstance(node.body[0], Expr)):
+                continue
+            docstring = node.body[0].value
+            if not (
+                    isinstance(docstring, Str) or
+                    isinstance(docstring, Constant) and isinstance(docstring.value, str)
+            ):
+                continue
+            node_start = line_offsets.get(docstring.lineno-1, docstring.col_offset)
+            node_end = line_offsets.get(docstring.end_lineno-1, docstring.end_col_offset)
+            punc = DOCSTRING_PUNCTUATION.match(python_source_code, node_start, node_end)
+            punc_size = punc.end() - punc.start()
+            start = punc.end()
+            end = node_end - punc_size
+            yield start, end, python_source_code[start:end]
+
+    @classmethod
+    def parse(cls, path: str, *parsers: Parser, encoding: str = 'utf-8') -> 'Document':
+        """
+        Read the text from the supplied path to a Python source file and parse any docstrings
+        it contains into a document using the supplied parsers.
+        """
+        with open(path, encoding=encoding) as source:
+            document = cls(source.read(), path)
+            for start, end, text in cls.extract_docstrings(document.text):
+                docstring_document = cls(text, path)
+                print(repr(docstring_document.text))
+                print(docstring_document.text)
+                for parser in parsers:
+                    for region in parser(docstring_document):
+                        region.start += start
+                        region.end += start
+                        print(region)
+                        print(repr(document.text[region.start:region.end]))
+                        document.add(region)
+        return document

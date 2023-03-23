@@ -1,3 +1,4 @@
+import ast
 import sys
 from contextlib import contextmanager
 from os.path import dirname, join
@@ -6,9 +7,10 @@ from shutil import copytree
 from tempfile import NamedTemporaryFile
 from textwrap import dedent
 from traceback import TracebackException
-from typing import Tuple, List
+from typing import Tuple, List, Sequence
 from unittest import TextTestRunner, main as unittest_main
 
+import pytest
 from _pytest._code import ExceptionInfo
 from _pytest.capture import CaptureFixture
 from _pytest.config import main as pytest_main
@@ -233,3 +235,19 @@ def add_to_python_path(path: Path):
         sys.path.append(str(path))
         yield
         sys.path.pop()
+
+
+def ast_docstrings(python_source_code: str) -> Sequence[str]:
+    for node in ast.walk(ast.parse(python_source_code)):
+        try:
+            docstring = ast.get_docstring(node, clean=False)
+        except TypeError:
+            pass
+        else:
+            if docstring:
+                yield docstring
+
+
+def skip_if_37_or_older():
+    return pytest.mark.skipif(sys.version_info[:2] < (3, 8), reason="requires python3.8 or higher")
+

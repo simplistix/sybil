@@ -5,7 +5,7 @@ import pytest
 from py.path import local
 
 from sybil.python import import_cleanup
-from .helpers import Finder
+from .helpers import Finder, ast_docstrings
 
 
 def test_finder_present_but_is_not_present():
@@ -36,3 +36,15 @@ def test_import_cleanup(tmpdir: local):
 
     assert sys.modules == initial_modules
     assert sys.path == initial_path
+
+
+def test_all_python_files(all_python_files):
+    count = len(all_python_files)
+    assert count > 50, count
+
+
+def test_ast_docstrings(all_python_files):
+    seen_docstrings = 0
+    for _, source in all_python_files:
+        seen_docstrings += len(tuple(ast_docstrings(source)))
+    assert seen_docstrings > 50, seen_docstrings

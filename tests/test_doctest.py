@@ -1,13 +1,15 @@
 # coding=utf-8
-from doctest import REPORT_NDIFF, ELLIPSIS
+from doctest import REPORT_NDIFF, ELLIPSIS, DocTestParser as BaseDocTestParser
+from pathlib import Path
 
 import pytest
 from testfixtures import compare
 
-from sybil.document import Document
+from sybil.document import Document, PythonDocStringDocument
 from sybil.example import SybilFailure
+from sybil.parsers.abstract import DocTestStringParser
 from sybil.parsers.rest import DocTestParser, DocTestDirectiveParser
-from tests.helpers import sample_path, parse
+from .helpers import sample_path, parse, FUNCTIONAL_TEST_DIR, skip_if_37_or_older
 
 
 def test_pass():
@@ -119,3 +121,64 @@ def test_directive_with_options():
         "    - Unexpected!\n"
         "    + 2\n"
     ))
+
+
+# Number of doctests that can't be parsed in a file when looking at the whole file source:
+ROOT = Path(FUNCTIONAL_TEST_DIR)
+UNPARSEABLE = {
+   ROOT / 'package_and_docs' / 'src' / 'parent' / 'child' / 'module_b.py': 1,
+}
+MINIMUM_EXPECTED_DOCTESTS = 9
+
+
+@skip_if_37_or_older()
+def test_sybil_example_count(all_python_files):
+    parser = DocTestStringParser()
+
+    seen_examples_from_source = 0
+    seen_examples_from_docstrings = 0
+
+    for path, source in all_python_files:
+        seen_examples_from_source += len(tuple(parser(source, path)))
+        for start, end, docstring in PythonDocStringDocument.extract_docstrings(source):
+            seen_examples_from_docstrings += len(tuple(parser(docstring, path)))
+
+    assert seen_examples_from_source > MINIMUM_EXPECTED_DOCTESTS, seen_examples_from_source
+    assert seen_examples_from_docstrings > MINIMUM_EXPECTED_DOCTESTS, seen_examples_from_docstrings
+    assert seen_examples_from_docstrings == seen_examples_from_source
+
+
+def check_sybil_against_doctest(path, text):
+    skip_if_37_or_older()
+    problems = []
+    name = str(path)
+    regions = list(DocTestStringParser()(text, path))
+    sybil_examples = [region.parsed for region in regions]
+    doctest_examples = BaseDocTestParser().get_examples(text, name)
+    problems.append(compare(
+        expected=doctest_examples, actual=sybil_examples, raises=False, show_whitespace=True
+    ))
+    for region in regions:
+        example = region.parsed
+        region_source = text[region.start:region.end]
+        for name in 'source', 'want':
+            expected = getattr(example, name)
+            if expected not in region_source:  # pragma: no cover - Only on failures!
+                problems.append(f'{region}:{name}\n{expected!r} not in {region_source!r}')
+    problems = [problem for problem in problems if problem]
+    if problems:  # pragma: no cover - Only on failures!
+        raise AssertionError('doctests not correctly extracted:\n\n'+'\n\n'.join(problems))
+
+
+def test_all_docstest_examples_extracted_from_source_correctly(python_file):
+    path, source = python_file
+    if path in UNPARSEABLE:
+        return
+    check_sybil_against_doctest(path, source)
+
+
+@skip_if_37_or_older()
+def test_all_docstest_examples_extracted_from_docstrings_correctly(python_file):
+    path, source = python_file
+    for start, end, docstring in PythonDocStringDocument.extract_docstrings(source):
+        check_sybil_against_doctest(path, docstring)
