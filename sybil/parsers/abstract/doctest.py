@@ -27,11 +27,6 @@ class DocTestStringParser(BaseDocTestParser):
         Each section starting with a ``>>>`` will form a separate region.
         """
         # a cut down version of doctest.DocTestParser.parse:
-        # If all lines begin with the same indentation, then strip it.
-        min_indent = self._min_indent(string)
-        if min_indent > 0:
-            string = '\n'.join([l[min_indent:] for l in string.split('\n')])
-
         charno, lineno = 0, 0
         # Find all doctest examples in the string:
         for m in self._EXAMPLE_RE.finditer(string):
@@ -47,7 +42,7 @@ class DocTestStringParser(BaseDocTestParser):
                     m.end(),
                     DocTestExample(source, want, exc_msg,
                                    lineno=lineno,
-                                   indent=min_indent + len(m.group('indent')),
+                                   indent=len(m.group('indent')),
                                    options=options),
                     self.evaluator
 
