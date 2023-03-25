@@ -9,7 +9,7 @@ import pytest
 from py.path import local
 
 from sybil import Sybil, Region
-from sybil.document import Document
+from sybil.document import Document, PythonDocument
 from sybil.example import Example, SybilFailure
 
 from .helpers import sample_path, write_doctest
@@ -251,6 +251,17 @@ class TestSybil:
         assert type(document) is TextDocument
         document = sybil.parse(write_doctest(tmpdir, 'test.rst'))
         assert type(document) is Document
+
+    def test_override_document_mapping(self):
+        sybil = Sybil([parse_for_x, parse_for_y], document_types={'.py': PythonDocument})
+        document = sybil.parse(Path(sample_path('sample1.txt')))
+        assert (evaluate_examples(document) ==
+                ['X count was 4, as expected',
+                 'Y count was 3, as expected'])
+        document = sybil.parse(Path(sample_path('comments.py')))
+        assert (evaluate_examples(document) ==
+                ['X count was 4, as expected',
+                 'Y count was 3, as expected'])
 
     def test_addition(self):
         rest = Sybil([parse_for_x])
