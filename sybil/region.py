@@ -31,6 +31,14 @@ class LexedRegion:
         #: The lexemes extracted from the region.
         self.lexemes: Dict[str, Union[str, Lexeme]] = lexemes
 
+    def __repr__(self):
+        lexemes_for_repr = {}
+        for name, lexeme in self.lexemes.items():
+            if len(lexeme) > 10:
+                lexeme = lexeme[:10]+'...'
+            lexemes_for_repr[name] = lexeme
+        return f'<LexedRegion start={self.start} end={self.end} {lexemes_for_repr}>'
+
 
 class Region:
     """
