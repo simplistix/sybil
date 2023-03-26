@@ -10,17 +10,12 @@ common: &common
         matrix:
           parameters:
             image:
-              - cimg/python:3.6
               - cimg/python:3.7
               - cimg/python:3.8
               - cimg/python:3.9
               - cimg/python:3.11
             extra_packages:
-              - "'pytest>=6.2,<7'"
-              - "'pytest>=7'"
-          exclude:
-            - {"image": "cimg/python:3.6", "extra_packages": "'pytest>=7'"}
-            - {"image": "cimg/python:3.9", "extra_packages": "'pytest>=6.2,<7'"}
+              - "'pytest>=7.1'"
 
     - python/coverage:
         name: coverage
