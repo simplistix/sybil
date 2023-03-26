@@ -84,7 +84,7 @@ def test_myst_percent_comment_invisible_directive():
 
 def test_myst_percent_comment_invisible_directive_mapping():
     lexer = DirectiveInPercentCommentLexer(
-        directive='.+', arguments='python', mapping={'arguments': 'language'}
+        directive='inv[^:]+', arguments='python', mapping={'arguments': 'language'}
     )
     compare(lex('myst-lexers.md', lexer), expected=[
         LexedRegion(449, 504, {'language': 'python'}),

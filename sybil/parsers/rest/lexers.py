@@ -5,10 +5,10 @@ from sybil.parsers.abstract.lexers import BlockLexer
 
 START_PATTERN_TEMPLATE =(
     r'^(?P<prefix>[ \t]*)\.\.\s*(?P<directive>{directive})'
-    r'{delimiter}\s*'
+    r'({delimiter}\s*'
     r'(?P<arguments>[\w-]+\b)?'
     r'(?:\s*\:[\w-]+\:.*\n)*'
-    r'(?:\s*\n)*\n'
+    r'(?:\s*\n)*\n)?'
 )
 
 END_PATTERN_TEMPLATE = '(\n\\Z|\n[ \t]{{0,{len_prefix}}}(?=\\S))'

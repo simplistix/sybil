@@ -89,7 +89,7 @@ class DirectiveLexer(BlockLexer):
 
 
 DIRECTIVE_IN_PERCENT_COMMENT_START = (
-    r"^(?P<prefix>[ \t]*%)[ \t]*(?P<directive>{directive}):[ \t]*(?P<arguments>{arguments})$\n"
+    r"^(?P<prefix>[ \t]*%)[ \t]*(?P<directive>{directive})(:[ \t]*(?P<arguments>{arguments}))?$\n"
 )
 DIRECTIVE_IN_PERCENT_COMMENT_END = '(?<=\n)(?!{prefix})'
 
