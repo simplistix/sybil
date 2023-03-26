@@ -62,6 +62,8 @@ Parsing
 .. autoclass:: sybil.parsers.abstract.skip.AbstractSkipParser
     :members: pattern
 
+.. autoclass:: sybil.parsers.abstract.clear.AbstractClearNamespaceParser
+
 
 ReST Parsing and Lexing
 -----------------------
@@ -84,6 +86,8 @@ ReST Parsing and Lexing
 
 .. autoclass:: sybil.parsers.rest.SkipParser
 
+.. autoclass:: sybil.parsers.rest.ClearNamespaceParser
+
 MyST Parsing and Lexing
 -----------------------
 
@@ -103,6 +107,8 @@ MyST Parsing and Lexing
 .. autoclass:: sybil.parsers.myst.DocTestDirectiveParser
 
 .. autoclass:: sybil.parsers.myst.SkipParser
+
+.. autoclass:: sybil.parsers.myst.ClearNamespaceParser
 
 Evaluation
 ----------

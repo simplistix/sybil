@@ -312,3 +312,27 @@ The above examples could be checked with the following configuration:
 
   from tests.helpers import check_path
   check_path('examples/rest/skip.rst', sybil, expected=9)
+
+.. _clear-namespace:
+
+Clearing the namespace
+----------------------
+
+If you want to isolate the testing of your examples within a single source file, you may want
+to clear the :class:`~sybil.Document.namespace`. This can be done as follows:
+
+.. literalinclude:: examples/rest/clear.rst
+  :language: rest
+
+The following configuration is required:
+
+.. code-block:: python
+
+   from sybil import Sybil
+   from sybil.parsers.rest import DocTestParser, ClearNamespaceParser
+   sybil = Sybil(parsers=[DocTestParser(), ClearNamespaceParser()])
+
+.. invisible-code-block: python
+
+  from tests.helpers import check_path
+  check_path('examples/rest/clear.rst', sybil, expected=4)

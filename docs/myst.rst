@@ -256,3 +256,27 @@ The above examples could be checked with the following configuration:
 
   from tests.helpers import check_path
   check_path('examples/myst/skip.md', sybil, expected=9)
+
+.. _myst-clear-namespace:
+
+Clearing the namespace
+----------------------
+
+If you want to isolate the testing of your examples within a single source file, you may want
+to clear the :class:`~sybil.Document.namespace`. This can be done as follows:
+
+.. literalinclude:: examples/myst/clear.md
+  :language: rest
+
+The following configuration is required:
+
+.. code-block:: python
+
+   from sybil import Sybil
+   from sybil.parsers.myst import PythonCodeBlockParser, ClearNamespaceParser
+   sybil = Sybil(parsers=[PythonCodeBlockParser(), ClearNamespaceParser()])
+
+.. invisible-code-block: python
+
+  from tests.helpers import check_path
+  check_path('examples/myst/clear.md', sybil, expected=4)

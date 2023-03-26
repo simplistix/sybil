@@ -103,3 +103,6 @@ __ https://github.com/simplistix/sybil/issues
 
 - :rst:dir:`testcode` and :rst:dir:`testoutput` would need parsers and evaluators to be written,
   however, they could probably just be replaced with a :ref:`doctest-parser` block.
+
+- ``groups`` aren't supported, but you can achieve test isolation using
+  :ref:`clear-namespace <clear-namespace>`.
