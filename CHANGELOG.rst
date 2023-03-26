@@ -1,6 +1,20 @@
 Changes
 =======
 
+5.0.0 (26 Mar 2023)
+-------------------
+
+- By default, on Python 3.8 and above, when parsing ``.py`` files, only examples in docstrings
+  will be parsed.
+
+- The :attr:`~sybil.Document.namespace` can now be cleared in both
+  :ref:`ReST <clear-namespace>` and
+  :ref:`MyST <myst-clear-namespace>`.
+
+- Support for Python 3.6 has been dropped.
+
+- Support for pytest versions earlier than 7.1 has been dropped.
+
 4.0.1 (8 Feb 2023)
 ------------------
 
