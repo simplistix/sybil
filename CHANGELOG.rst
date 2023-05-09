@@ -1,6 +1,11 @@
 Changes
 =======
 
+5.0.1 (9 May 2023)
+------------------
+
+- Fix a bug that prevent r-prefixed docstrings from being correctly parsed from ``.py`` files.
+
 5.0.0 (26 Mar 2023)
 -------------------
 
