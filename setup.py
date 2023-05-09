@@ -31,6 +31,12 @@ setup(
             'seedir',
             'testfixtures',
             ],
-        build=['furo', 'sphinx', 'twine', 'wheel']
+        build=[
+            'furo',
+            'sphinx',
+            'twine',
+            'urllib3<2',  # workaround for RTD builds failing with old SSL
+            'wheel',
+        ]
     ),
 )
