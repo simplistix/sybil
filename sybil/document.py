@@ -135,7 +135,7 @@ class Document:
             yield start_match, end_match, source
 
 
-DOCSTRING_PUNCTUATION = re.compile('["\']{3}|["\']')
+DOCSTRING_PUNCTUATION = re.compile('[rf]?(["\']{3}|["\'])')
 
 
 class PythonDocument(Document):
@@ -180,7 +180,7 @@ class PythonDocStringDocument(PythonDocument):
             node_start = line_offsets.get(docstring.lineno-1, docstring.col_offset)
             node_end = line_offsets.get(docstring.end_lineno-1, docstring.end_col_offset)
             punc = DOCSTRING_PUNCTUATION.match(python_source_code, node_start, node_end)
-            punc_size = punc.end() - punc.start()
+            punc_size = len(punc.group(1))
             start = punc.end()
             end = node_end - punc_size
             yield start, end, python_source_code[start:end]
