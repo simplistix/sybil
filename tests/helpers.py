@@ -39,6 +39,11 @@ def lex(name: str, lexer: Lexer) -> List[LexedRegion]:
     return list(lexer(document))
 
 
+def lex_text(text: str, lexer: Lexer) -> List[LexedRegion]:
+    document = Document(text, 'sample.txt')
+    return list(lexer(document))
+
+
 def parse(name: str, *parsers: Parser, expected: int) -> Tuple[List[Example], dict]:
     document = Document.parse(sample_path(name), *parsers)
     examples = list(document)
