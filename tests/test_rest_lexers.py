@@ -1,8 +1,9 @@
 from testfixtures import compare
 
+from sybil import Document
 from sybil.parsers.rest.lexers import DirectiveLexer
 from sybil.region import LexedRegion
-from .helpers import lex
+from .helpers import lex, lex_text
 
 
 def test_examples_from_parsing_tests():
@@ -45,3 +46,49 @@ def test_directive_nested_in_md():
             'source': '>>> 1 + 1\n3',
         }),
     ])
+
+
+def test_directive_with_single_line_body_at_end_of_string():
+    text = """
+        My comment
+    
+        .. code-block:: python
+            test_my_code("Hello World")
+    """
+    lexer = DirectiveLexer(directive='code-block')
+    start = 25
+    end = 95
+    compare(lex_text(text, lexer), expected=[
+        LexedRegion(start, end, {
+            'directive': 'code-block', 'arguments': 'python',
+            'source': 'test_my_code("Hello World")',
+        }),
+    ])
+    compare(text[start:end], show_whitespace=True, expected=(
+        '        .. code-block:: python\n'
+        '            test_my_code("Hello World")'
+    ))
+
+
+def test_directive_with_multi_line_body_at_end_of_string():
+    text = """
+        My comment
+
+        .. code-block:: python
+            test_my_code("Hello")
+            test_my_code("World")
+    """
+    lexer = DirectiveLexer(directive='code-block')
+    start = 21
+    end = 119
+    compare(lex_text(text, lexer), expected=[
+        LexedRegion(start, end, {
+            'directive': 'code-block', 'arguments': 'python',
+            'source': 'test_my_code("Hello")\ntest_my_code("World")',
+        }),
+    ])
+    compare(text[start:end], show_whitespace=True, expected=(
+        '        .. code-block:: python\n'
+        '            test_my_code("Hello")\n'
+        '            test_my_code("World")'
+    ))

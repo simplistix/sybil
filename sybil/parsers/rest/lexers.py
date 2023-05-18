@@ -11,7 +11,7 @@ START_PATTERN_TEMPLATE =(
     r'(?:\s*\n)*\n)?'
 )
 
-END_PATTERN_TEMPLATE = '(\n\\Z|\n[ \t]{{0,{len_prefix}}}(?=\\S))'
+END_PATTERN_TEMPLATE = r'(\n\Z|\n[ \t]{{0,{len_prefix}}}(?=\S|\Z))'
 
 
 class DirectiveLexer(BlockLexer):

@@ -5,10 +5,10 @@ from pathlib import Path
 import pytest
 from testfixtures import compare
 
-from sybil import Example
+from sybil import Example, Sybil
 from sybil.document import Document
 from sybil.parsers.codeblock import PythonCodeBlockParser, CodeBlockParser
-from .helpers import check_excinfo, parse
+from .helpers import check_excinfo, parse, sample_path, check_path, SAMPLE_PATH, add_to_python_path
 
 
 def test_basic():
@@ -144,3 +144,9 @@ def test_line_numbers_with_options():
         examples[1].evaluate()
     # check the line number of the second block:
     check_excinfo(examples[1], excinfo, 'Boom 2', lineno=14)
+
+
+def test_codeblocks_in_docstrings():
+    sybil = Sybil([PythonCodeBlockParser()])
+    with add_to_python_path(SAMPLE_PATH):
+        check_path(sample_path('docstrings.py'), sybil, expected=3)
