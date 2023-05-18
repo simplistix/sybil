@@ -40,7 +40,7 @@ class Sybil:
 
     :param exclude:
       An optional :func:`pattern <fnmatch.fnmatch>` for source file names
-      that will excluded when looking for examples.
+      that will be excluded when looking for examples.
 
     :param excludes:
       An optional  sequence of :func:`patterns <fnmatch.fnmatch>` for source paths
