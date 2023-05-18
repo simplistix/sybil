@@ -4,10 +4,12 @@ import pytest
 from py.path import local
 from pytest import CaptureFixture
 
+from sybil import Sybil
+from sybil.parsers.rest import PythonCodeBlockParser, DocTestParser
 from sybil.python import import_cleanup
 from .helpers import (
     run_pytest, run_unittest, PYTEST, run, write_config, UNITTEST, write_doctest,
-    functional_sample, clone_functional_sample, skip_if_37_or_older
+    functional_sample, clone_functional_sample, skip_if_37_or_older, check_path, sample_path
 )
 
 
@@ -429,3 +431,8 @@ def test_myst(capsys: CaptureFixture[str], runner: str):
     out.then_find("Expected:\n    4\nGot:\n    2\n")
     if runner == PYTEST:
         out.then_find("Exception: boom!")
+
+@skip_if_37_or_older()
+def test_codeblock_with_protocol_then_doctest():
+    sybil = Sybil([PythonCodeBlockParser(), DocTestParser()])
+    check_path(sample_path('protocol-typing.rst'), sybil, expected=3)

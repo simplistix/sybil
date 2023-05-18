@@ -46,10 +46,18 @@ class DocTestEvaluator:
         example = sybil_example.parsed
         namespace = sybil_example.namespace
         output = []
-        self.runner.run(
-            DocTest([example], namespace, name=sybil_example.path,
-                    filename=None, lineno=example.lineno, docstring=None),
-            clear_globs=False,
-            out=output.append
-        )
+        remove_name = False
+        try:
+            if '__name__' not in namespace:
+                remove_name = True
+                namespace['__name__'] = '__test__'
+            self.runner.run(
+                DocTest([example], namespace, name=sybil_example.path,
+                        filename=None, lineno=example.lineno, docstring=None),
+                clear_globs=False,
+                out=output.append
+            )
+        finally:
+            if remove_name:
+                del namespace['__name__']
         return ''.join(output)
