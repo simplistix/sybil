@@ -27,10 +27,10 @@ from sybil.typing import Parser, Lexer
 
 HERE = Path(__file__).parent
 DOCS = HERE.parent / 'docs'
-
+SAMPLE_PATH = HERE / 'samples'
 
 def sample_path(name) -> str:
-    return str(HERE / 'samples' / name)
+    return str(SAMPLE_PATH / name)
 
 
 def lex(name: str, lexer: Lexer) -> List[LexedRegion]:
