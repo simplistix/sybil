@@ -195,13 +195,9 @@ class PythonDocStringDocument(PythonDocument):
             document = cls(source.read(), path)
             for start, end, text in cls.extract_docstrings(document.text):
                 docstring_document = cls(text, path)
-                print(repr(docstring_document.text))
-                print(docstring_document.text)
                 for parser in parsers:
                     for region in parser(docstring_document):
                         region.start += start
                         region.end += start
-                        print(region)
-                        print(repr(document.text[region.start:region.end]))
                         document.add(region)
         return document
