@@ -16,6 +16,7 @@ def test_examples_from_parsing_tests():
 
 def test_repr():
     compare(
-        str(LexedRegion(36, 56, {'language': 'python', 'source': 'X'*1000})),
-        expected="<LexedRegion start=36 end=56 {'language': 'python', 'source': 'XXXXXXXXXX...'}>"
+        str(LexedRegion(36, 56, {'language': 'python', 'foo': None, 'source': 'X'*1000})),
+        expected="<LexedRegion start=36 end=56 "
+                 "{'language': 'python', 'foo': None, 'source': 'XXXXXXXXXX...'}>"
     )
