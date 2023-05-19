@@ -1,6 +1,17 @@
 Changes
 =======
 
+5.0.2 (19 May 2023)
+-------------------
+
+- Fixed bug in the :func:`repr` of :class:`LexedRegion` instances where a lexeme was ``None``.
+
+- Fixed lexing of ReST directives, such as :rst:dir:`code-block`, where they occurred
+  at the end of a docstring.
+
+- Ensure the :class:`~sybil.Document.namespace` in which doctests are evaluated always has a
+  ``__name__``. This is required by an implementation detail of :any:`typing.runtime_checkable`.
+
 5.0.1 (9 May 2023)
 ------------------
 
