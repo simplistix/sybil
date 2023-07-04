@@ -78,11 +78,23 @@ class SybilItem(pytest.Item):
     def runtest(self):
         self.example.evaluate()
 
-    def _prunetraceback(self, excinfo):
-        tb = excinfo.traceback.cut(path=example_module_path)
-        tb = tb[1]
-        if getattr(tb, '_rawentry', None) is not None:
-            excinfo.traceback = Traceback(tb._rawentry, excinfo)
+    if PYTEST_VERSION >= (7, 4, 0):
+
+        def _traceback_filter(self, excinfo: ExceptionInfo[BaseException]) -> Traceback:
+            traceback = excinfo.traceback
+            tb = traceback.cut(path=example_module_path)
+            tb = tb[1]
+            if getattr(tb, '_rawentry', None) is not None:
+                traceback = Traceback(tb._rawentry)
+            return traceback
+
+    else:
+
+        def _prunetraceback(self, excinfo):
+            tb = excinfo.traceback.cut(path=example_module_path)
+            tb = tb[1]
+            if getattr(tb, '_rawentry', None) is not None:
+                excinfo.traceback = Traceback(tb._rawentry, excinfo)
 
     def repr_failure(
         self,

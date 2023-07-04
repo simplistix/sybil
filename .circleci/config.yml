@@ -15,7 +15,8 @@ common: &common
               - cimg/python:3.9
               - cimg/python:3.11
             extra_packages:
-              - "'pytest>=7.1'"
+              - "'pytest>=7.1,<7.4'"
+              - "'pytest>=7.4'"
 
     - python/coverage:
         name: coverage
