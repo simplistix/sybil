@@ -4,9 +4,9 @@ import sys
 import pytest
 from testfixtures import compare
 
-from sybil import Example
+from sybil import Example, Sybil
 from sybil.parsers.myst import PythonCodeBlockParser, CodeBlockParser
-from .helpers import check_excinfo, parse
+from .helpers import check_excinfo, parse, check_text
 
 
 def test_basic():
@@ -33,6 +33,25 @@ def test_basic():
     assert examples[6].evaluate() is None
     assert 'YesVars' in namespace
     assert '__builtins__' not in namespace
+
+
+def test_doctest_at_end_of_fenced_codeblock_no_expected_output():
+    myst_source = """
+```python
+>>> b = 2
+```
+"""
+    check_text(myst_source, Sybil([PythonCodeBlockParser()]))
+
+
+def test_doctest_at_end_of_fenced_codeblock_expected_output():
+    myst_source = """
+```python
+>>> 1 + 1
+2
+```
+"""
+    check_text(myst_source, Sybil([PythonCodeBlockParser()]))
 
 
 def test_other_language_composition_pass():
