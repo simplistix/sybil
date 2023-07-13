@@ -52,7 +52,7 @@ def test_examples_from_parsing_tests():
             'directive': 'code-block', 'arguments': 'python',
             'source': "raise Exception('boom!')\n",
         }),
-        LexedRegion(640, 687, {
+        LexedRegion(701, 748, {
             'directive': 'code-block', 'arguments': 'python',
             'source': 'define_this = 1\n',
         }),
