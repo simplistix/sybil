@@ -18,7 +18,7 @@ stuff within a doc:
 % invisible-code-block: python
 %
 %  z += 1
-
+[__init__.py](..%2F..%2Fsybil%2Fparsers%2Fmyst%2F__init__.py)
 This paranoidly checks that we can use binary and unicode literals:
 
 <!--- invisible-code-block: python
@@ -54,7 +54,8 @@ uni = u'x'
     VISIBLE "HAI WORLD!"
     KTHXBYE
   ```
-- Here's another code block that should still be found!:
+- Here's another code block that should still be found, even though it's
+  at the end of the document, so don't add more after it!:
 
   ```python
 
