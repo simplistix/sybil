@@ -1,6 +1,11 @@
 Changes
 =======
 
+5.0.3 (14 Jul 2023)
+-------------------
+
+- Fix bug in traceback trimming on the latest release of pytest.
+
 5.0.2 (19 May 2023)
 -------------------
 
