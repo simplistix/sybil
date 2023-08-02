@@ -18,7 +18,7 @@ class Skip:
     def __init__(self, original_evaluator) -> None:
         self.original_evaluator = original_evaluator
         self.restore_next = False
-        self.reason = None
+        self.exception = None
 
     def __call__(self, example):
         document = example.document
@@ -39,7 +39,7 @@ class Skip:
                 namespace['If'] = If(condition)
                 reason = eval('If'+condition, namespace)
                 if reason:
-                    self.reason = SkipTest(reason)
+                    self.exception = SkipTest(reason)
                 else:
                     document.evaluator = self.original_evaluator
                     return
@@ -53,8 +53,8 @@ class Skip:
             else:
                 raise ValueError('Bad skip action: '+action)
 
-        elif self.reason:
-            raise self.reason
+        elif self.exception:
+            raise self.exception
 
 
 def evaluate_skip(example: Example) -> None:
