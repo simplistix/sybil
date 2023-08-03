@@ -101,9 +101,9 @@ class DirectiveInPercentCommentLexer(BlockLexer):
 
     .. code-block:: markdown
 
-        ; not-really-a-directive: some-argument
-        ;
-        ;     Source here...
+        % not-really-a-directive: some-argument
+        %
+        %     Source here...
 
     It extracts the following lexemes:
 
