@@ -2,6 +2,7 @@ import sys
 from unittest import SkipTest
 
 import pytest
+from testfixtures import ShouldRaise
 
 from sybil.parsers.rest import PythonCodeBlockParser, DocTestParser, SkipParser
 from .helpers import parse
@@ -18,7 +19,7 @@ def test_conditional_edge_cases() -> None:
     examples, namespace = parse(
         'skip-conditional-edges.txt',
         DocTestParser(), PythonCodeBlockParser(), SkipParser(),
-        expected=9
+        expected=10
     )
     namespace['sys'] = sys
     namespace['run'] = []
@@ -28,7 +29,7 @@ def test_conditional_edge_cases() -> None:
             example.evaluate()
         except SkipTest as e:
             skipped.append(str(e))
-    assert namespace['run'] == [1, 2]
+    assert namespace['run'] == [1, 2, 3]
     # we should always have one and only one skip from this document.
     assert skipped == ['only true on python 2']
 
@@ -52,15 +53,46 @@ def test_conditional_full() -> None:
 
 
 def test_bad() -> None:
-    examples, namespace = parse('skip-conditional-bad.txt', SkipParser(), expected=3)
+    examples, namespace = parse('skip-conditional-bad.txt', SkipParser(), expected=4)
 
     with pytest.raises(ValueError) as excinfo:
         examples[0].evaluate()
     assert str(excinfo.value) == 'Bad skip action: lolwut'
 
+    examples[1].evaluate()
+
     with pytest.raises(ValueError) as excinfo:
-        examples[1].evaluate()
-    assert str(excinfo.value) == 'Cannot have condition on end'
+        examples[2].evaluate()
+    assert str(excinfo.value) == "Cannot have condition on 'skip: end'"
 
     with pytest.raises(SyntaxError):
+        examples[3].evaluate()
+
+
+def test_start_follows_start() -> None:
+    examples, namespace = parse('skip-start-start.txt', DocTestParser(), SkipParser(), expected=7)
+    namespace['result'] = result = []
+    for example in examples[:2]:
+        example.evaluate()
+    with ShouldRaise(ValueError("'skip: start' cannot follow 'skip: start'")):
         examples[2].evaluate()
+    assert result == []
+
+
+def test_next_follows_start() -> None:
+    examples, namespace = parse('skip-start-next.txt', DocTestParser(), SkipParser(), expected=7)
+    namespace['result'] = result = []
+    for example in examples[:2]:
+        example.evaluate()
+    with ShouldRaise(ValueError("'skip: next' cannot follow 'skip: start'")):
+        examples[2].evaluate()
+    assert result == []
+
+
+def test_end_no_start() -> None:
+    examples, namespace = parse('skip-just-end.txt', DocTestParser(), SkipParser(), expected=3)
+    namespace['result'] = result = []
+    examples[0].evaluate()
+    with ShouldRaise(ValueError("'skip: end' must follow 'skip: start'")):
+        examples[1].evaluate()
+    assert result == ['good']

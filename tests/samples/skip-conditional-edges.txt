@@ -23,9 +23,11 @@ This will only parse on Python 3:
 
 >>> def myfunc2(*, keyword_only): pass
 
+>>> run.append(2)
+
 .. skip: end
 
 This should also run:
 
->>> run.append(2)
+>>> run.append(3)
 

@@ -1,0 +1,19 @@
+.. skip: start
+
+Should not run:
+
+>>> result.append('bad 1')
+
+.. skip: next
+
+>>> result.append('bad 2')
+
+Also should not run:
+
+>>> result.append('bad 3')
+
+.. skip: end
+
+Should run:
+
+>>> result.append('good')

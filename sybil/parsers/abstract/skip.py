@@ -2,7 +2,7 @@ import re
 from typing import Iterable, Pattern
 
 from sybil import Document, Region
-from sybil.evaluators.skip import evaluate_skip
+from sybil.evaluators.skip import Skipper
 
 
 class AbstractSkipParser:
@@ -15,6 +15,9 @@ class AbstractSkipParser:
     #: which should contain the source for an optional parenthesis-surrounded Python expression.
     pattern: Pattern[str]
 
+    def __init__(self):
+        self.skipper = Skipper()
+
     def __call__(self, document: Document) -> Iterable[Region]:
         for match in re.finditer(self.pattern, document.text):
-            yield Region(match.start(), match.end(), match.groups(), evaluate_skip)
+            yield Region(match.start(), match.end(), match.groups(), self.skipper)
