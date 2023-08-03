@@ -1,6 +1,9 @@
+from dataclasses import dataclass
+from typing import Optional, Dict
 from unittest import SkipTest
 
-from sybil import Example
+from sybil import Example, Document
+from sybil.typing import Evaluator
 
 
 class If:
@@ -13,52 +16,78 @@ class If:
             return reason or self.default_reason
 
 
-class Skip:
+@dataclass
+class SkipState:
+    original_evaluator: Optional[Evaluator]
+    remove: bool = False
+    exception: Optional[Exception] = None
+    last_action: str = None
 
-    def __init__(self, original_evaluator) -> None:
-        self.original_evaluator = original_evaluator
-        self.restore_next = False
-        self.exception = None
 
-    def __call__(self, example):
+class Skipper:
+
+    def __init__(self) -> None:
+        self.document_state: Dict[Document, SkipState] = {}
+
+    def state_for(self, example: Example) -> SkipState:
         document = example.document
+        if document not in self.document_state:
+            self.document_state[document] = SkipState(document.evaluator)
+        return self.document_state[example.document]
 
-        if self.restore_next:
-            document.evaluator = self.original_evaluator
-
-        if example.region.evaluator is evaluate_skip:
-
-            action, condition = example.parsed
-
-            if condition:
-
-                if action == 'end':
-                    raise ValueError('Cannot have condition on end')
-
-                namespace = document.namespace.copy()
-                namespace['If'] = If(condition)
-                reason = eval('If'+condition, namespace)
-                if reason:
-                    self.exception = SkipTest(reason)
-                else:
-                    document.evaluator = self.original_evaluator
-                    return
-
-            if action == 'next':
-                self.restore_next = True
-            elif action == 'start':
-                pass
-            elif action == 'end':
-                document.evaluator = self.original_evaluator
+    def maybe_install(self, example: Example, state: SkipState, condition: Optional[str]) -> None:
+        document = example.document
+        install = True
+        if condition:
+            namespace = document.namespace.copy()
+            namespace['if_'] = If(condition)
+            reason = eval('if_'+condition, namespace)
+            if reason:
+                state.exception = SkipTest(reason)
             else:
-                raise ValueError('Bad skip action: '+action)
+                install = False
+        if install and document.evaluator is not self:
+            document.evaluator = self
 
-        elif self.exception:
-            raise self.exception
+    def remove(self, example: Example) -> None:
+        document = example.document
+        state = self.state_for(example)
+        document.evaluator = state.original_evaluator
+        del self.document_state[document]
 
+    def evaluate_skip_example(self, example: Example):
+        state = self.state_for(example)
+        action, condition = example.parsed
 
-def evaluate_skip(example: Example) -> None:
-    evaluator = example.document.evaluator
-    if not isinstance(evaluator, Skip):
-        example.document.evaluator = evaluator = Skip(evaluator)
-    evaluator(example)
+        if action not in ('start', 'next', 'end'):
+            raise ValueError('Bad skip action: ' + action)
+        if state.last_action is None and action not in ('start', 'next'):
+            raise ValueError(f"'skip: {action}' must follow 'skip: start'")
+        elif state.last_action and action !='end':
+            raise ValueError(f"'skip: {action}' cannot follow 'skip: {state.last_action}'")
+
+        state.last_action = action
+
+        if action == 'start':
+            self.maybe_install(example, state, condition)
+        elif action == 'next':
+            self.maybe_install(example, state, condition)
+            state.remove = True
+        elif action == 'end':
+            self.remove(example)
+            if condition:
+                raise ValueError("Cannot have condition on 'skip: end'")
+
+    def evaluate_other_example(self, example: Example) -> None:
+        state = self.state_for(example)
+        if state.remove:
+            self.remove(example)
+            state.remove = False
+        if state.exception is not None:
+            raise state.exception
+
+    def __call__(self, example: Example) -> None:
+        if example.region.evaluator is self:
+            self.evaluate_skip_example(example)
+        else:
+            self.evaluate_other_example(example)

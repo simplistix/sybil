@@ -1,0 +1,7 @@
+>>> result.append('good')
+
+.. skip: end
+
+Should run:
+
+>>> result.append('bad')

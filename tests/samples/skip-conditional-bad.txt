@@ -4,6 +4,8 @@ Bad action:
 
 Condition on end:
 
+.. skip: start
+
 .. skip: end if(1 > 2)
 
 Malformed if:
