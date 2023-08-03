@@ -24,7 +24,7 @@ def test_fenced_code_block_with_mapping() -> None:
 
 
 def test_myst_directives() -> None:
-    lexer = DirectiveLexer(directive='[^}]+', arguments='.*')
+    lexer = DirectiveLexer(directive='[^}]+')
     compare(lex('myst-lexers.md', lexer), expected=[
         LexedRegion(110, 145, {
             'directive': 'code-block', 'arguments': 'python',
@@ -68,7 +68,7 @@ def test_myst_directives_with_mapping() -> None:
 
 def test_myst_percent_comment_invisible_directive() -> None:
     lexer = DirectiveInPercentCommentLexer(
-        directive='(invisible-)?code(-block)?', arguments='py.*'
+        directive='(invisible-)?code(-block)?'
     )
     compare(lex('myst-lexers.md', lexer), expected=[
         LexedRegion(449, 504, {
@@ -93,7 +93,7 @@ def test_myst_percent_comment_invisible_directive_mapping() -> None:
 
 def test_myst_html_comment_invisible_directive() -> None:
     lexer = DirectiveInHTMLCommentLexer(
-        directive='(invisible-)?code(-block)?', arguments='py.*'
+        directive='(invisible-)?code(-block)?'
     )
     compare(lex('myst-lexers.md', lexer), show_whitespace=True, expected=[
         LexedRegion(702, 827, {
