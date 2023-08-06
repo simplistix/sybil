@@ -94,12 +94,9 @@ class Sybil:
 
         self.parsers: Sequence[Parser] = parsers
         current_frame = inspect.currentframe()
-        if current_frame is not None:
-            calling_frame = current_frame.f_back
-            calling_filename = inspect.getframeinfo(calling_frame).filename
-            start_path = Path(calling_filename).parent / path
-        else:
-            start_path = Path(path)
+        calling_frame = current_frame.f_back
+        calling_filename = inspect.getframeinfo(calling_frame).filename
+        start_path = Path(calling_filename).parent / path
         self.path: Path = start_path.absolute()
         self.patterns = list(patterns)
         if pattern:
