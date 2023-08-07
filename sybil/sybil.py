@@ -1,3 +1,4 @@
+import inspect
 import sys
 from pathlib import Path
 from typing import Sequence, Callable, Collection, Mapping, Optional, Type, List
@@ -92,11 +93,10 @@ class Sybil:
     ):
 
         self.parsers: Sequence[Parser] = parsers
-        calling_filename = sys._getframe(1).f_globals.get('__file__')
-        if calling_filename:
-            start_path = Path(calling_filename).parent / path
-        else:
-            start_path = Path(path)
+        current_frame = inspect.currentframe()
+        calling_frame = current_frame.f_back
+        calling_filename = inspect.getframeinfo(calling_frame).filename
+        start_path = Path(calling_filename).parent / path
         self.path: Path = start_path.absolute()
         self.patterns = list(patterns)
         if pattern:
