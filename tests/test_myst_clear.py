@@ -2,7 +2,7 @@ from sybil.parsers.myst import ClearNamespaceParser, PythonCodeBlockParser
 from .helpers import parse
 
 
-def test_basic():
+def test_basic() -> None:
     examples, namespace = parse(
         'myst-clear.md', PythonCodeBlockParser(), ClearNamespaceParser(), expected=4
     )

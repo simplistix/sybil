@@ -105,7 +105,7 @@ TEST_OUTPUT_TEMPLATES = {
 
 class Finder:
 
-    def __init__(self, text):
+    def __init__(self, text) -> None:
         self.text = text
         self.index = 0
 
@@ -132,7 +132,7 @@ class Results:
     def __init__(
         self, capsys: CaptureFixture[str], total: int, errors: int = 0, failures: int = 0,
         return_code: Optional[int] = None,
-    ):
+    ) -> None:
         self.total = total
         self.errors = errors
         self.failures = failures

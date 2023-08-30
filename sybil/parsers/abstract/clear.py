@@ -9,7 +9,7 @@ class AbstractClearNamespaceParser:
     An abstract parser for clearing the :class:`~sybil.Document.namespace`.
     """
 
-    def __init__(self, lexer: Lexer):
+    def __init__(self, lexer: Lexer) -> None:
         self.lexer = lexer
 
     @staticmethod

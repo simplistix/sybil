@@ -15,7 +15,7 @@ def pad(source: str, line: int) -> str:
 
 class PythonEvaluator:
 
-    def __init__(self, future_imports: Sequence[str] = ()):
+    def __init__(self, future_imports: Sequence[str] = ()) -> None:
         self.flags = 0
         for future_import in future_imports:
             self.flags |= getattr(__future__, future_import).compiler_flag

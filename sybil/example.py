@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 class SybilFailure(AssertionError):
 
-    def __init__(self, example: 'Example', result: str):
+    def __init__(self, example: 'Example', result: str) -> None:
         super(SybilFailure, self).__init__((
             'Example at {}, line {}, column {} did not evaluate as expected:\n'
             '{}'
@@ -27,7 +27,7 @@ class Example:
 
     def __init__(
         self, document: 'Document', line: int, column: int, region: Region, namespace: dict
-    ):
+    ) -> None:
         #: The :class:`~sybil.document.Document` from which this example came.
         self.document: 'Document' = document
         #: The absolute path of the :class:`~sybil.document.Document`.

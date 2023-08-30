@@ -14,7 +14,7 @@ class DocTestStringParser(BaseDocTestParser):
     the doctest example's source and the file name that the example came from.
     """
 
-    def __init__(self, evaluator: DocTestEvaluator = DocTestEvaluator()):
+    def __init__(self, evaluator: DocTestEvaluator = DocTestEvaluator()) -> None:
         #: The evaluator to use for any doctests found in the supplied source string.
         self.evaluator: DocTestEvaluator = evaluator
 

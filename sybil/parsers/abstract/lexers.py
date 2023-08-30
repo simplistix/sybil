@@ -41,7 +41,7 @@ class BlockLexer:
             start_pattern: Pattern,
             end_pattern_template: str,
             mapping: Optional[Dict[str, str]] = None,
-    ):
+    ) -> None:
         self.start_pattern = start_pattern
         self.end_pattern_template = end_pattern_template
         self.mapping = mapping

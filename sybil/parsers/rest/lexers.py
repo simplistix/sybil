@@ -36,7 +36,7 @@ class DirectiveLexer(BlockLexer):
 
     delimiter = '::'
 
-    def __init__(self, directive: str, arguments: str = '', mapping: Optional[Dict[str, str]] = None):
+    def __init__(self, directive: str, arguments: str = '', mapping: Optional[Dict[str, str]] = None) -> None:
         """
         A lexer for ReST directives.
         Both ``directive`` and ``arguments`` are regex patterns.

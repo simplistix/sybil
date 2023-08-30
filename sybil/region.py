@@ -13,7 +13,7 @@ class Lexeme(str):
     def __new__(cls, text: str, offset, line_offset: int):
         return str.__new__(cls, text)
 
-    def __init__(self, text: str, offset, line_offset: int):
+    def __init__(self, text: str, offset, line_offset: int) -> None:
         self.text, self.offset, self.line_offset = text, offset, line_offset
 
 
@@ -23,7 +23,7 @@ class LexedRegion:
     parsed or assigned an :any:`Evaluator`.
     """
 
-    def __init__(self, start: int, end: int, lexemes: Dict[str, Union[str, Lexeme]]):
+    def __init__(self, start: int, end: int, lexemes: Dict[str, Union[str, Lexeme]]) -> None:
         #: The start of this lexed region within the document's :attr:`~sybil.Document.text`.
         self.start: int = start
         #: The end of this lexed region within the document's :attr:`~sybil.Document.text`.
@@ -31,7 +31,7 @@ class LexedRegion:
         #: The lexemes extracted from the region.
         self.lexemes: Dict[str, Union[str, Lexeme]] = lexemes
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         lexemes_for_repr = {}
         for name, lexeme in self.lexemes.items():
             if lexeme and len(lexeme) > 10:
@@ -61,7 +61,7 @@ class Region:
         as it should be.
     """
 
-    def __init__(self, start: int, end: int, parsed: Any, evaluator: Evaluator):
+    def __init__(self, start: int, end: int, parsed: Any, evaluator: Evaluator) -> None:
         #: The start of this region within the document's :attr:`~sybil.Document.text`.
         self.start: int = start
         #: The end of this region within the document's :attr:`~sybil.Document.text`.

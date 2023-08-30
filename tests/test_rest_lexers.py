@@ -6,7 +6,7 @@ from sybil.region import LexedRegion
 from .helpers import lex, lex_text
 
 
-def test_examples_from_parsing_tests():
+def test_examples_from_parsing_tests() -> None:
     lexer = DirectiveLexer(directive='code-block', arguments='python')
     compare(lex('codeblock.txt', lexer)[:2], expected=[
         LexedRegion(23, 56, {
@@ -20,7 +20,7 @@ def test_examples_from_parsing_tests():
     ])
 
 
-def test_examples_from_directive_tests():
+def test_examples_from_directive_tests() -> None:
     lexer = DirectiveLexer(directive='doctest')
     compare(lex('doctest_directive.txt', lexer), expected=[
         LexedRegion(102, 136, {
@@ -38,7 +38,7 @@ def test_examples_from_directive_tests():
     ])
 
 
-def test_directive_nested_in_md():
+def test_directive_nested_in_md() -> None:
     lexer = DirectiveLexer(directive='doctest')
     compare(lex('doctest_rest_nested_in_md.md', lexer), expected=[
         LexedRegion(14, 47, {
@@ -48,7 +48,7 @@ def test_directive_nested_in_md():
     ])
 
 
-def test_directive_with_single_line_body_at_end_of_string():
+def test_directive_with_single_line_body_at_end_of_string() -> None:
     text = """
         My comment
     
@@ -70,7 +70,7 @@ def test_directive_with_single_line_body_at_end_of_string():
     ))
 
 
-def test_directive_with_multi_line_body_at_end_of_string():
+def test_directive_with_multi_line_body_at_end_of_string() -> None:
     text = """
         My comment
 

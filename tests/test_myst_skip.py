@@ -2,7 +2,7 @@ from sybil.parsers.myst import PythonCodeBlockParser, SkipParser
 from .helpers import parse
 
 
-def test_basic():
+def test_basic() -> None:
     examples, namespace = parse('myst-skip.md', PythonCodeBlockParser(), SkipParser(), expected=9)
     for example in examples:
         example.evaluate()

@@ -7,14 +7,14 @@ from sybil.parsers.rest import PythonCodeBlockParser, DocTestParser, SkipParser
 from .helpers import parse
 
 
-def test_basic():
+def test_basic() -> None:
     examples, namespace = parse('skip.txt', PythonCodeBlockParser(), SkipParser(), expected=9)
     for example in examples:
         example.evaluate()
     assert namespace['run'] == [2, 5]
 
 
-def test_conditional_edge_cases():
+def test_conditional_edge_cases() -> None:
     examples, namespace = parse(
         'skip-conditional-edges.txt',
         DocTestParser(), PythonCodeBlockParser(), SkipParser(),
@@ -33,7 +33,7 @@ def test_conditional_edge_cases():
     assert skipped == ['only true on python 2']
 
 
-def test_conditional_full():
+def test_conditional_full() -> None:
     examples, namespace = parse('skip-conditional.txt', DocTestParser(), SkipParser(), expected=9)
     namespace['result'] = result = []
     for example in examples:
@@ -51,7 +51,7 @@ def test_conditional_full():
     ]
 
 
-def test_bad():
+def test_bad() -> None:
     examples, namespace = parse('skip-conditional-bad.txt', SkipParser(), expected=3)
 
     with pytest.raises(ValueError) as excinfo:

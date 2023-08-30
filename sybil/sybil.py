@@ -90,7 +90,7 @@ class Sybil:
         fixtures: Sequence[str] = (),
         encoding: str = 'utf-8',
         document_types: Optional[Mapping[Optional[str], Type[Document]]] = None
-    ):
+    ) -> None:
 
         self.parsers: Sequence[Parser] = parsers
         current_frame = inspect.currentframe()

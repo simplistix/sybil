@@ -8,7 +8,7 @@ from sybil import Example
 
 
 class DocTest(BaseDocTest):
-    def __init__(self, examples, globs, name, filename, lineno, docstring):
+    def __init__(self, examples, globs, name, filename, lineno, docstring) -> None:
         # do everything like regular doctests, but don't make a copy of globs
         BaseDocTest.__init__(self, examples, globs, name, filename, lineno, docstring)
         self.globs = globs
@@ -16,7 +16,7 @@ class DocTest(BaseDocTest):
 
 class DocTestRunner(BaseDocTestRunner):
 
-    def __init__(self, optionflags):
+    def __init__(self, optionflags) -> None:
         optionflags |= _unittest_reportflags
         BaseDocTestRunner.__init__(
             self,
@@ -39,7 +39,7 @@ class DocTestEvaluator:
         when evaluating examples.
     """
 
-    def __init__(self, optionflags=0):
+    def __init__(self, optionflags=0) -> None:
         self.runner = DocTestRunner(optionflags)
 
     def __call__(self, sybil_example: Example) -> str:

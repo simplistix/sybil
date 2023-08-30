@@ -23,7 +23,7 @@ class CodeBlockParser(AbstractCodeBlockParser):
         You can also override the :meth:`evaluate` method below.
     """
 
-    def __init__(self, language: Optional[str] = None, evaluator: Optional[Evaluator] = None):
+    def __init__(self, language: Optional[str] = None, evaluator: Optional[Evaluator] = None) -> None:
         super().__init__(
             [
                 FencedCodeBlockLexer(
@@ -63,7 +63,7 @@ class PythonCodeBlockParser(CodeBlockParser):
 
     language = 'python'
 
-    def __init__(self, future_imports=(), doctest_optionflags=0):
+    def __init__(self, future_imports=(), doctest_optionflags=0) -> None:
         super().__init__(evaluator=PythonEvaluator(future_imports))
         self.doctest_parser = DocTestStringParser(DocTestEvaluator(doctest_optionflags))
 

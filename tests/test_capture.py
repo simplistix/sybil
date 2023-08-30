@@ -7,7 +7,7 @@ from sybil.parsers.rest import CaptureParser
 from tests.helpers import sample_path, parse
 
 
-def test_basic():
+def test_basic() -> None:
     examples, namespace = parse('capture.txt', CaptureParser(), expected=4)
     examples[0].evaluate()
     assert namespace['expected_listing'] == (
@@ -29,7 +29,7 @@ def test_basic():
     )
 
 
-def test_directive_indent_beyond_block():
+def test_directive_indent_beyond_block() -> None:
     path = sample_path('capture_bad_indent1.txt')
     with pytest.raises(ValueError) as excinfo:
         Document.parse(path, CaptureParser())
@@ -39,7 +39,7 @@ def test_directive_indent_beyond_block():
         )
 
 
-def test_directive_indent_equal_to_block():
+def test_directive_indent_equal_to_block() -> None:
     path = sample_path('capture_bad_indent2.txt')
     with pytest.raises(ValueError) as excinfo:
         Document.parse(path, CaptureParser())
@@ -49,7 +49,7 @@ def test_directive_indent_equal_to_block():
         )
 
 
-def test_capture_codeblock():
+def test_capture_codeblock() -> None:
     examples, namespace = parse('capture_codeblock.txt', CaptureParser(), expected=1)
     examples[0].evaluate()
     assert json.loads(namespace['json']) == {"a key": "value", "b key": 42}

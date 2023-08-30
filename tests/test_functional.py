@@ -19,7 +19,7 @@ def cleanup_imports():
         yield
 
 
-def test_pytest(capsys: CaptureFixture[str]):
+def test_pytest(capsys: CaptureFixture[str]) -> None:
     results = run_pytest(capsys, functional_sample('pytest'))
     out = results.out
 
@@ -101,7 +101,7 @@ def test_pytest(capsys: CaptureFixture[str]):
     assert results.total == 10
 
 
-def test_unittest(capsys: CaptureFixture[str]):
+def test_unittest(capsys: CaptureFixture[str]) -> None:
     results = run_unittest(capsys, functional_sample('unittest'))
     out = results.out
     out.then_find('sybil setup')
@@ -138,7 +138,7 @@ def make_tree(tmpdir: local) -> None:
 
 
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
-def test_filter_everything(tmpdir: local, capsys: CaptureFixture[str], runner: str):
+def test_filter_everything(tmpdir: local, capsys: CaptureFixture[str], runner: str) -> None:
     make_tree(tmpdir)
     write_config(tmpdir, runner)
     results = run(capsys, runner, tmpdir)
@@ -147,7 +147,7 @@ def test_filter_everything(tmpdir: local, capsys: CaptureFixture[str], runner: s
 
 
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
-def test_filter_just_pattern(tmpdir: local, capsys: CaptureFixture[str], runner: str):
+def test_filter_just_pattern(tmpdir: local, capsys: CaptureFixture[str], runner: str) -> None:
     make_tree(tmpdir)
     write_config(tmpdir, runner, pattern="'*.rst'")
     results = run(capsys, runner, tmpdir)
@@ -155,7 +155,7 @@ def test_filter_just_pattern(tmpdir: local, capsys: CaptureFixture[str], runner:
 
 
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
-def test_filter_fnmatch_pattern(tmpdir: local, capsys: CaptureFixture[str], runner: str):
+def test_filter_fnmatch_pattern(tmpdir: local, capsys: CaptureFixture[str], runner: str) -> None:
     make_tree(tmpdir)
     write_config(tmpdir, runner, pattern="'**/*.rst'")
     results = run(capsys, runner, tmpdir)
@@ -169,7 +169,7 @@ def test_filter_fnmatch_pattern(tmpdir: local, capsys: CaptureFixture[str], runn
 
 
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
-def test_filter_just_filenames(tmpdir: local, capsys: CaptureFixture[str], runner: str):
+def test_filter_just_filenames(tmpdir: local, capsys: CaptureFixture[str], runner: str) -> None:
     make_tree(tmpdir)
     write_config(tmpdir, runner,
                  filenames="['bar.rst']")
@@ -181,7 +181,7 @@ def test_filter_just_filenames(tmpdir: local, capsys: CaptureFixture[str], runne
 
 
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
-def test_filter_directory(tmpdir: local, capsys: CaptureFixture[str], runner: str):
+def test_filter_directory(tmpdir: local, capsys: CaptureFixture[str], runner: str) -> None:
     make_tree(tmpdir)
     write_config(tmpdir, runner,
                  path=f"'{tmpdir / 'parent'}'",
@@ -195,7 +195,7 @@ def test_filter_directory(tmpdir: local, capsys: CaptureFixture[str], runner: st
 
 
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
-def test_filter_directory_with_excludes(tmpdir: local, capsys: CaptureFixture[str], runner: str):
+def test_filter_directory_with_excludes(tmpdir: local, capsys: CaptureFixture[str], runner: str) -> None:
     make_tree(tmpdir)
     write_config(tmpdir, runner,
                  path=f"'{tmpdir / 'parent'}'",
@@ -208,7 +208,7 @@ def test_filter_directory_with_excludes(tmpdir: local, capsys: CaptureFixture[st
 
 
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
-def test_filter_filenames_and_excludes(tmpdir: local, capsys: CaptureFixture[str], runner: str):
+def test_filter_filenames_and_excludes(tmpdir: local, capsys: CaptureFixture[str], runner: str) -> None:
     make_tree(tmpdir)
     write_config(tmpdir, runner,
                  path=f"'{tmpdir / 'parent'}'",
@@ -220,7 +220,7 @@ def test_filter_filenames_and_excludes(tmpdir: local, capsys: CaptureFixture[str
 
 
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
-def test_filter_exclude_by_name(tmpdir: local, capsys: CaptureFixture[str], runner: str):
+def test_filter_exclude_by_name(tmpdir: local, capsys: CaptureFixture[str], runner: str) -> None:
     write_doctest(tmpdir, 'foo.txt')
     write_doctest(tmpdir, 'bar.txt')
     write_doctest(tmpdir, 'child', 'foo.txt')
@@ -235,7 +235,7 @@ def test_filter_exclude_by_name(tmpdir: local, capsys: CaptureFixture[str], runn
 
 
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
-def test_filter_include_filenames(tmpdir: local, capsys: CaptureFixture[str], runner: str):
+def test_filter_include_filenames(tmpdir: local, capsys: CaptureFixture[str], runner: str) -> None:
     write_doctest(tmpdir, 'foo.txt')
     write_doctest(tmpdir, 'bar.txt')
     write_doctest(tmpdir, 'baz', 'bar.txt')
@@ -248,7 +248,7 @@ def test_filter_include_filenames(tmpdir: local, capsys: CaptureFixture[str], ru
 
 
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
-def test_filter_globs(tmpdir: local, capsys: CaptureFixture[str], runner: str):
+def test_filter_globs(tmpdir: local, capsys: CaptureFixture[str], runner: str) -> None:
     write_doctest(tmpdir, 'middle', 'interesting', 'foo.txt')
     write_doctest(tmpdir, 'middle', 'boring', 'bad1.txt')
     write_doctest(tmpdir, 'middle', 'boring', 'bad2.txt')
@@ -261,7 +261,7 @@ def test_filter_globs(tmpdir: local, capsys: CaptureFixture[str], runner: str):
 
 
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
-def test_filter_multiple_patterns(tmpdir: local, capsys: CaptureFixture[str], runner: str):
+def test_filter_multiple_patterns(tmpdir: local, capsys: CaptureFixture[str], runner: str) -> None:
     write_doctest(tmpdir, 'test.rst')
     write_doctest(tmpdir, 'test.txt')
     write_config(tmpdir, runner,
@@ -271,7 +271,7 @@ def test_filter_multiple_patterns(tmpdir: local, capsys: CaptureFixture[str], ru
 
 
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
-def test_skips(tmpdir: local, capsys: CaptureFixture[str], runner: str):
+def test_skips(tmpdir: local, capsys: CaptureFixture[str], runner: str) -> None:
     root = clone_functional_sample('skips', tmpdir)
     write_config(root, runner,
                  parsers="[PythonCodeBlockParser(), SkipParser(), DocTestParser()]",
@@ -293,7 +293,7 @@ def clone_and_run_modules_tests(tmpdir: local, capsys: CaptureFixture[str], runn
 
 
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
-def test_modules(tmpdir: local, capsys: CaptureFixture[str], runner: str):
+def test_modules(tmpdir: local, capsys: CaptureFixture[str], runner: str) -> None:
     sys.path.append((tmpdir / 'modules').strpath)
     results = clone_and_run_modules_tests(tmpdir, capsys, runner)
     assert results.total == 5, results.out.text
@@ -301,7 +301,7 @@ def test_modules(tmpdir: local, capsys: CaptureFixture[str], runner: str):
     assert results.errors == 0, results.out.text
 
 
-def test_modules_not_importable_pytest(tmpdir: local, capsys: CaptureFixture[str]):
+def test_modules_not_importable_pytest(tmpdir: local, capsys: CaptureFixture[str]) -> None:
     # NB: no append to sys.path
     results = clone_and_run_modules_tests(tmpdir, capsys, PYTEST)
     assert results.total == 5, results.out.text
@@ -316,7 +316,7 @@ def test_modules_not_importable_pytest(tmpdir: local, capsys: CaptureFixture[str
     out.then_find("ModuleNotFoundError: No module named 'b'")
 
 
-def test_modules_not_importable_unittest(tmpdir: local, capsys: CaptureFixture[str]):
+def test_modules_not_importable_unittest(tmpdir: local, capsys: CaptureFixture[str]) -> None:
     # NB: no append to sys.path
     results = clone_and_run_modules_tests(tmpdir, capsys, UNITTEST)
     assert results.total == 5, results.out.text
@@ -335,7 +335,7 @@ def test_modules_not_importable_unittest(tmpdir: local, capsys: CaptureFixture[s
 
 @skip_if_37_or_older()
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
-def test_package_and_docs(tmpdir: local, capsys: CaptureFixture[str], runner: str):
+def test_package_and_docs(tmpdir: local, capsys: CaptureFixture[str], runner: str) -> None:
     root = clone_functional_sample('package_and_docs', tmpdir)
     write_config(root, runner,
                  patterns="['**/*.py', '**/*.rst']")
@@ -352,7 +352,7 @@ def test_package_and_docs(tmpdir: local, capsys: CaptureFixture[str], runner: st
 
 
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
-def test_multiple_sybils_process_all(tmpdir: local, capsys: CaptureFixture[str], runner: str):
+def test_multiple_sybils_process_all(tmpdir: local, capsys: CaptureFixture[str], runner: str) -> None:
     write_doctest(tmpdir, 'test.rst')
     write_doctest(tmpdir, 'test.txt')
     config_template = """
@@ -375,7 +375,7 @@ def test_multiple_sybils_process_all(tmpdir: local, capsys: CaptureFixture[str],
 
 
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
-def test_multiple_sybils_process_one_each(tmpdir: local, capsys: CaptureFixture[str], runner: str):
+def test_multiple_sybils_process_one_each(tmpdir: local, capsys: CaptureFixture[str], runner: str) -> None:
     write_doctest(tmpdir, 'test.rst')
     write_doctest(tmpdir, 'test.txt')
     config_template = """
@@ -393,7 +393,7 @@ def test_multiple_sybils_process_one_each(tmpdir: local, capsys: CaptureFixture[
 
 
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
-def test_myst(capsys: CaptureFixture[str], runner: str):
+def test_myst(capsys: CaptureFixture[str], runner: str) -> None:
     results = run(capsys, runner, functional_sample('myst'))
     out = results.out
 
@@ -433,6 +433,6 @@ def test_myst(capsys: CaptureFixture[str], runner: str):
         out.then_find("Exception: boom!")
 
 @skip_if_37_or_older()
-def test_codeblock_with_protocol_then_doctest():
+def test_codeblock_with_protocol_then_doctest() -> None:
     sybil = Sybil([PythonCodeBlockParser(), DocTestParser()])
     check_path(sample_path('protocol-typing.rst'), sybil, expected=3)
