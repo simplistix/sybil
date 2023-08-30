@@ -1,6 +1,6 @@
 import ast
 import re
-from ast import AsyncFunctionDef, FunctionDef, ClassDef, Module, Expr, Str, Constant
+from ast import AsyncFunctionDef, FunctionDef, ClassDef, Module, Expr, Constant
 from bisect import bisect
 from io import open
 from pathlib import Path
@@ -173,7 +173,6 @@ class PythonDocStringDocument(PythonDocument):
                 continue
             docstring = node.body[0].value
             if not (
-                    isinstance(docstring, Str) or
                     isinstance(docstring, Constant) and isinstance(docstring.value, str)
             ):
                 continue
