@@ -1,4 +1,4 @@
-def r_prefixed_docstring():
+def r_prefixed_docstring() -> None:
     r"""
     Wat? Why?!
     """

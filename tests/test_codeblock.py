@@ -11,7 +11,7 @@ from sybil.parsers.codeblock import PythonCodeBlockParser, CodeBlockParser
 from .helpers import check_excinfo, parse, sample_path, check_path, SAMPLE_PATH, add_to_python_path
 
 
-def test_basic():
+def test_basic() -> None:
     examples, namespace = parse('codeblock.txt', PythonCodeBlockParser(), expected=7)
     namespace['y'] = namespace['z'] = 0
     assert examples[0].evaluate() is None
@@ -37,7 +37,7 @@ def test_basic():
     assert '__builtins__' not in namespace
 
 
-def test_other_language_composition_pass():
+def test_other_language_composition_pass() -> None:
 
     def oh_hai(example):
         assert isinstance(example, Example)
@@ -48,7 +48,7 @@ def test_other_language_composition_pass():
     assert examples[0].evaluate() is None
 
 
-def test_other_language_composition_fail():
+def test_other_language_composition_fail() -> None:
     def oh_noez(example):
         if 'KTHXBYE' in example.parsed:
             raise ValueError('oh noez')
@@ -59,7 +59,7 @@ def test_other_language_composition_fail():
         examples[0].evaluate()
 
 
-def test_other_language_no_evaluator():
+def test_other_language_no_evaluator() -> None:
     parser = CodeBlockParser('foo')
     with pytest.raises(NotImplementedError):
         parser.evaluate(...)
@@ -74,7 +74,7 @@ class LolCodeCodeBlockParser(CodeBlockParser):
             raise ValueError(repr(example.parsed))
 
 
-def test_other_language_inheritance():
+def test_other_language_inheritance() -> None:
     examples, namespace = parse('codeblock_lolcode.txt', LolCodeCodeBlockParser(), expected=2)
     examples[0].evaluate()
     with pytest.raises(ValueError) as excinfo:
@@ -99,26 +99,26 @@ def future_import_checks(*future_imports):
     return namespace['foo']
 
 
-def test_no_future_imports():
+def test_no_future_imports() -> None:
     future_import_checks()
 
 
-def test_single_future_import():
+def test_single_future_import() -> None:
     future_import_checks('barry_as_FLUFL')
 
 
-def test_multiple_future_imports():
+def test_multiple_future_imports() -> None:
     future_import_checks('barry_as_FLUFL', 'print_function')
 
 
 @pytest.mark.skipif(sys.version_info < (3, 7), reason="requires python3.7 or higher")
-def test_functional_future_imports():
+def test_functional_future_imports() -> None:
     foo = future_import_checks('annotations')
     # This will keep working but not be an effective test once PEP 563 finally lands:
     assert foo.__code__.co_flags & __future__.annotations.compiler_flag
 
 
-def test_windows_line_endings(tmp_path: Path):
+def test_windows_line_endings(tmp_path: Path) -> None:
     p = tmp_path / "example.txt"
     p.write_bytes(
         b'This is my example:\r\n\r\n'
@@ -133,7 +133,7 @@ def test_windows_line_endings(tmp_path: Path):
     assert document.namespace['x'] == 123
 
 
-def test_line_numbers_with_options():
+def test_line_numbers_with_options() -> None:
     parser = PythonCodeBlockParser()
     examples, namespace = parse('codeblock_with_options.txt', parser, expected=2)
     with pytest.raises(Exception) as excinfo:
@@ -146,7 +146,7 @@ def test_line_numbers_with_options():
     check_excinfo(examples[1], excinfo, 'Boom 2', lineno=14)
 
 
-def test_codeblocks_in_docstrings():
+def test_codeblocks_in_docstrings() -> None:
     sybil = Sybil([PythonCodeBlockParser()])
     with add_to_python_path(SAMPLE_PATH):
         check_path(sample_path('docstrings.py'), sybil, expected=3)

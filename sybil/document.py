@@ -33,7 +33,7 @@ class Document:
     #: This last case should always take the form of ``example.region.evaluator(example)``.
     evaluator: Evaluator = None
 
-    def __init__(self, text: str, path: str):
+    def __init__(self, text: str, path: str) -> None:
         #: This is the text of the documentation source file.
         self.text: str = text
         #: This is the absolute path of the documentation source file.

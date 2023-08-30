@@ -5,7 +5,7 @@ from sybil import Example
 
 class If:
 
-    def __init__(self, default_reason):
+    def __init__(self, default_reason) -> None:
         self.default_reason = default_reason
 
     def __call__(self, condition, reason=None):
@@ -15,7 +15,7 @@ class If:
 
 class Skip:
 
-    def __init__(self, original_evaluator):
+    def __init__(self, original_evaluator) -> None:
         self.original_evaluator = original_evaluator
         self.restore_next = False
         self.reason = None

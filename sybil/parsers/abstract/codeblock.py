@@ -27,7 +27,7 @@ class AbstractCodeBlockParser:
 
     language: str
 
-    def __init__(self, lexers: Sequence[Lexer], language: Optional[str] = None, evaluator: Optional[Evaluator] = None):
+    def __init__(self, lexers: Sequence[Lexer], language: Optional[str] = None, evaluator: Optional[Evaluator] = None) -> None:
         self.lexers = lexers
         if language is not None:
             self.language = language

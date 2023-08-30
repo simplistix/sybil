@@ -22,20 +22,20 @@ def document():
 
 class TestRegion:
 
-    def test_repr(self):
+    def test_repr(self) -> None:
         region = Region(0, 1, 'parsed', 'evaluator')
         assert repr(region) == "<Region start=0 end=1 'evaluator'>"
 
 
 class TestExample:
 
-    def test_repr(self, document):
+    def test_repr(self, document) -> None:
         region = Region(0, 1, 'parsed', 'evaluator')
         example = Example(document, 1, 2, region, {})
         assert (repr(example) ==
                 "<Example path=/the/path line=1 column=2 using 'evaluator'>")
 
-    def test_evaluate_okay(self, document):
+    def test_evaluate_okay(self, document) -> None:
         def evaluator(example):
             example.namespace['parsed'] = example.parsed
         region = Region(0, 1, 'the data', evaluator)
@@ -45,7 +45,7 @@ class TestExample:
         assert result is None
         assert namespace == {'parsed': 'the data'}
 
-    def test_evaluate_not_okay(self, document):
+    def test_evaluate_not_okay(self, document) -> None:
         def evaluator(example):
             return 'foo!'
         region = Region(0, 1, 'the data', evaluator)
@@ -59,7 +59,7 @@ class TestExample:
         assert excinfo.value.example is example
         assert excinfo.value.result == 'foo!'
 
-    def test_evaluate_raises_exception(self, document):
+    def test_evaluate_raises_exception(self, document) -> None:
         def evaluator(example):
             raise ValueError('foo!')
         region = Region(0, 1, 'the data', evaluator)
@@ -71,26 +71,26 @@ class TestExample:
 
 class TestDocument:
 
-    def test_add(self, document):
+    def test_add(self, document) -> None:
         region = Region(0, 1, None, None)
         document.add(region)
         assert [e.region for e in document] == [region]
 
-    def test_add_no_overlap(self, document):
+    def test_add_no_overlap(self, document) -> None:
         region1 = Region(0, 1, None, None)
         region2 = Region(6, 8, None, None)
         document.add(region1)
         document.add(region2)
         assert [e.region for e in document] == [region1, region2]
 
-    def test_add_out_of_order(self, document):
+    def test_add_out_of_order(self, document) -> None:
         region1 = Region(0, 1, None, None)
         region2 = Region(6, 8, None, None)
         document.add(region2)
         document.add(region1)
         assert [e.region for e in document] == [region1, region2]
 
-    def test_add_adjacent(self, document):
+    def test_add_adjacent(self, document) -> None:
         region1 = Region(0, 1, None, None)
         region2 = Region(1, 2, None, None)
         region3 = Region(2, 3, None, None)
@@ -99,7 +99,7 @@ class TestDocument:
         document.add(region2)
         assert [e.region for e in document] == [region1, region2, region3]
 
-    def test_add_before_start(self, document):
+    def test_add_before_start(self, document) -> None:
         region = Region(-1, 0, None, None)
         with pytest.raises(ValueError) as excinfo:
             document.add(region)
@@ -109,7 +109,7 @@ class TestDocument:
             'is before start of document'
         )
 
-    def test_add_after_end(self, document):
+    def test_add_after_end(self, document) -> None:
         region = Region(len(document.text), len(document.text)+1, None, None)
         with pytest.raises(ValueError) as excinfo:
             document.add(region)
@@ -119,7 +119,7 @@ class TestDocument:
             'goes beyond end of document'
         )
 
-    def test_add_overlaps_with_previous(self, document):
+    def test_add_overlaps_with_previous(self, document) -> None:
         region1 = Region(0, 2, None, None)
         region2 = Region(1, 3, None, None)
         document.add(region1)
@@ -132,7 +132,7 @@ class TestDocument:
             ' from line 1, column 2 to line 1, column 4'
         )
 
-    def test_add_at_same_place(self, document):
+    def test_add_at_same_place(self, document) -> None:
         region1 = Region(0, 2, None, None)
         region2 = Region(0, 3, None, None)
         document.add(region1)
@@ -145,7 +145,7 @@ class TestDocument:
             ' from line 1, column 1 to line 1, column 3'
         )
 
-    def test_add_identical(self, document):
+    def test_add_identical(self, document) -> None:
         region1 = Region(0, 2, None, None)
         region2 = Region(0, 2, None, None)
         document.add(region1)
@@ -158,7 +158,7 @@ class TestDocument:
             ' from line 1, column 1 to line 1, column 3'
         )
 
-    def test_add_overlaps_with_next(self, document):
+    def test_add_overlaps_with_next(self, document) -> None:
         region1 = Region(0, 1, None, None)
         region2 = Region(1, 3, None, None)
         region3 = Region(2, 4, None, None)
@@ -173,11 +173,11 @@ class TestDocument:
             'from line 1, column 3 to line 1, column 5'
         )
 
-    def test_example_path(self, document):
+    def test_example_path(self, document) -> None:
         document.add(Region(0, 1, None, None))
         assert [e.document for e in document] == [document]
 
-    def test_example_line_and_column(self):
+    def test_example_line_and_column(self) -> None:
         text = 'R1XYZ\nR2XYZ\nR3XYZ\nR4XYZ\nR4XYZ\n'
         i = text.index
         document = Document(text, '')
@@ -222,7 +222,7 @@ def evaluate_examples(examples):
 
 class TestSybil:
 
-    def test_parse(self):
+    def test_parse(self) -> None:
         sybil = Sybil([parse_for_x, parse_for_y])
         document = sybil.parse(Path(sample_path('sample1.txt')))
         assert (evaluate_examples(document) ==
@@ -233,7 +233,7 @@ class TestSybil:
                 ['X count was 3 instead of 4',
                  'Y count was 3, as expected'])
 
-    def test_explicit_encoding(self, tmp_path: Path):
+    def test_explicit_encoding(self, tmp_path: Path) -> None:
         path = (tmp_path / 'encoded.txt')
         path.write_text(u'X 1 check\n\xa3', encoding='charmap')
         sybil = Sybil([parse_for_x], encoding='charmap')
@@ -241,7 +241,7 @@ class TestSybil:
         assert (evaluate_examples(document) ==
                 ['X count was 1, as expected'])
 
-    def test_augment_document_mapping(self, tmpdir: local):
+    def test_augment_document_mapping(self, tmpdir: local) -> None:
 
         class TextDocument(Document):
             pass
@@ -252,7 +252,7 @@ class TestSybil:
         document = sybil.parse(write_doctest(tmpdir, 'test.rst'))
         assert type(document) is Document
 
-    def test_override_document_mapping(self):
+    def test_override_document_mapping(self) -> None:
         sybil = Sybil([parse_for_x, parse_for_y], document_types={'.py': PythonDocument})
         document = sybil.parse(Path(sample_path('sample1.txt')))
         assert (evaluate_examples(document) ==
@@ -263,7 +263,7 @@ class TestSybil:
                 ['X count was 4, as expected',
                  'Y count was 3, as expected'])
 
-    def test_addition(self):
+    def test_addition(self) -> None:
         rest = Sybil([parse_for_x])
         myst = Sybil([parse_for_y])
         sybil = rest + myst
@@ -272,7 +272,7 @@ class TestSybil:
         assert sybil.pytest
         assert sybil.unittest
 
-    def test_addition_to_collection(self):
+    def test_addition_to_collection(self) -> None:
         rest = Sybil([parse_for_x])
         myst = Sybil([parse_for_y])
         bust = Sybil([parse_for_y])
@@ -297,7 +297,7 @@ def parse(document):
         yield Region(m.start(), m.end(), m.start(), check_into_namespace)
 
 
-def test_namespace(capsys):
+def test_namespace(capsys) -> None:
     sybil = Sybil([parse], path='./samples')
     documents = [sybil.parse(p) for p in sorted(sybil.path.glob('sample*.txt'))]
     actual = []

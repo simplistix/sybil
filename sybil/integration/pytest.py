@@ -27,7 +27,7 @@ example_module_path = abspath(getsourcefile(example))
 
 class SybilFailureRepr(TerminalRepr):
 
-    def __init__(self, item, message):
+    def __init__(self, item, message) -> None:
         self.item = item
         self.message = message
 
@@ -42,7 +42,7 @@ class SybilFailureRepr(TerminalRepr):
 
 class SybilItem(pytest.Item):
 
-    def __init__(self, parent, sybil, example):
+    def __init__(self, parent, sybil, example) -> None:
         name = 'line:{},column:{}'.format(example.line, example.column)
         super(SybilItem, self).__init__(name, parent)
         self.example = example
@@ -70,12 +70,12 @@ class SybilItem(pytest.Item):
         if cls is Session:
             return self.session
 
-    def setup(self):
+    def setup(self) -> None:
         self._request._fillfixtures()
         for name, fixture in self.funcargs.items():
             self.example.namespace[name] = fixture
 
-    def runtest(self):
+    def runtest(self) -> None:
         self.example.evaluate()
 
     if PYTEST_VERSION >= (7, 4, 0):
@@ -108,7 +108,7 @@ class SybilItem(pytest.Item):
 
 class SybilFile(pytest.File):
 
-    def __init__(self, *, sybil: 'Sybil', **kwargs):
+    def __init__(self, *, sybil: 'Sybil', **kwargs) -> None:
         super(SybilFile, self).__init__(**kwargs)
         self.sybil: 'Sybil' = sybil
 
@@ -117,11 +117,11 @@ class SybilFile(pytest.File):
         for example in self.document:
             yield SybilItem.from_parent(self, sybil=self.sybil, example=example)
 
-    def setup(self):
+    def setup(self) -> None:
         if self.sybil.setup:
             self.sybil.setup(self.document.namespace)
 
-    def teardown(self):
+    def teardown(self) -> None:
         if self.sybil.teardown:
             self.sybil.teardown(self.document.namespace)
 

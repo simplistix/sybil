@@ -30,7 +30,7 @@ def indent_matches(line, indent):
 
 class DocumentReverseIterator(list):
 
-    def __init__(self, document):
+    def __init__(self, document) -> None:
         self[:] = document.text.splitlines(keepends=True)
         self.current_line = len(self)
         self.current_line_end_position = len(document.text)

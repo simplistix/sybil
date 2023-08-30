@@ -8,7 +8,7 @@ from sybil.region import LexedRegion
 from .helpers import lex
 
 
-def test_fenced_code_block():
+def test_fenced_code_block() -> None:
     lexer = FencedCodeBlockLexer('py?thon')
     compare(lex('myst-lexers.md', lexer), expected=[
         LexedRegion(36, 56, {'language': 'python', 'source': '>>> 1+1\n2\n'}),
@@ -16,14 +16,14 @@ def test_fenced_code_block():
     ])
 
 
-def test_fenced_code_block_with_mapping():
+def test_fenced_code_block_with_mapping() -> None:
     lexer = FencedCodeBlockLexer('python', mapping={'source': 'body'})
     compare(lex('myst-lexers.md', lexer), expected=[
         LexedRegion(36, 56, {'body': '>>> 1+1\n2\n'})
     ])
 
 
-def test_myst_directives():
+def test_myst_directives() -> None:
     lexer = DirectiveLexer(directive='[^}]+', arguments='.*')
     compare(lex('myst-lexers.md', lexer), expected=[
         LexedRegion(110, 145, {
@@ -45,7 +45,7 @@ def test_myst_directives():
     ])
 
 
-def test_examples_from_parsing_tests():
+def test_examples_from_parsing_tests() -> None:
     lexer = DirectiveLexer(directive='code-block', arguments='python')
     compare(lex('myst-codeblock.md', lexer), expected=[
         LexedRegion(99, 151, {
@@ -59,14 +59,14 @@ def test_examples_from_parsing_tests():
     ])
 
 
-def test_myst_directives_with_mapping():
+def test_myst_directives_with_mapping() -> None:
     lexer = DirectiveLexer(directive='directivename', arguments='.*', mapping={'arguments': 'foo'})
     compare(lex('myst-lexers.md', lexer), expected=[
         LexedRegion(188, 273, {'foo': 'arguments'}),
     ])
 
 
-def test_myst_percent_comment_invisible_directive():
+def test_myst_percent_comment_invisible_directive() -> None:
     lexer = DirectiveInPercentCommentLexer(
         directive='(invisible-)?code(-block)?', arguments='py.*'
     )
@@ -82,7 +82,7 @@ def test_myst_percent_comment_invisible_directive():
     ])
 
 
-def test_myst_percent_comment_invisible_directive_mapping():
+def test_myst_percent_comment_invisible_directive_mapping() -> None:
     lexer = DirectiveInPercentCommentLexer(
         directive='inv[^:]+', arguments='python', mapping={'arguments': 'language'}
     )
@@ -91,7 +91,7 @@ def test_myst_percent_comment_invisible_directive_mapping():
     ])
 
 
-def test_myst_html_comment_invisible_directive():
+def test_myst_html_comment_invisible_directive() -> None:
     lexer = DirectiveInHTMLCommentLexer(
         directive='(invisible-)?code(-block)?', arguments='py.*'
     )
