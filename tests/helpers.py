@@ -7,7 +7,7 @@ from shutil import copytree
 from tempfile import NamedTemporaryFile
 from textwrap import dedent
 from traceback import TracebackException
-from typing import Tuple, List, Sequence
+from typing import Optional, Tuple, List, Sequence
 from unittest import TextTestRunner, main as unittest_main
 
 import pytest
@@ -131,7 +131,7 @@ class Results:
 
     def __init__(
         self, capsys: CaptureFixture[str], total: int, errors: int = 0, failures: int = 0,
-        return_code: int = None,
+        return_code: Optional[int] = None,
     ):
         self.total = total
         self.errors = errors

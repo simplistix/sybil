@@ -1,5 +1,5 @@
 import re
-from typing import Dict
+from typing import Optional, Dict
 
 from sybil.parsers.abstract.lexers import BlockLexer
 
@@ -26,7 +26,7 @@ class FencedCodeBlockLexer(BlockLexer):
 
     """
 
-    def __init__(self, language: str, mapping: Dict[str, str] = None):
+    def __init__(self, language: str, mapping: Optional[Dict[str, str]] = None):
         super().__init__(
             start_pattern=re.compile(CODEBLOCK_START_TEMPLATE.format(language=language)),
             end_pattern_template=CODEBLOCK_END_TEMPLATE,
@@ -77,7 +77,7 @@ class DirectiveLexer(BlockLexer):
 
     """
 
-    def __init__(self, directive: str, arguments: str = '', mapping: Dict[str, str] = None):
+    def __init__(self, directive: str, arguments: str = '', mapping: Optional[Dict[str, str]] = None):
         super().__init__(
             start_pattern=re.compile(
                 DIRECTIVE_START_TEMPLATE.format(directive=directive, arguments=arguments),
@@ -122,7 +122,7 @@ class DirectiveInPercentCommentLexer(BlockLexer):
         Only mapped lexemes will be returned in any :class:`~sybil.LexedRegion` objects.
     """
 
-    def __init__(self, directive: str, arguments: str = '', mapping: Dict[str, str] = None):
+    def __init__(self, directive: str, arguments: str = '', mapping: Optional[Dict[str, str]] = None):
         super().__init__(
             start_pattern=re.compile(
                 DIRECTIVE_IN_PERCENT_COMMENT_START.format(directive=directive, arguments=arguments),
@@ -169,7 +169,7 @@ class DirectiveInHTMLCommentLexer(BlockLexer):
         Only mapped lexemes will be returned in any :class:`~sybil.LexedRegion` objects.
     """
 
-    def __init__(self, directive: str, arguments: str = '', mapping: Dict[str, str] = None):
+    def __init__(self, directive: str, arguments: str = '', mapping: Optional[Dict[str, str]] = None):
         super().__init__(
             start_pattern=re.compile(
                 DIRECTIVE_IN_HTML_COMMENT_START.format(directive=directive, arguments=arguments),
