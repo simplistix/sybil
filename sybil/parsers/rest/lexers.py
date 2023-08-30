@@ -1,5 +1,5 @@
 import re
-from typing import Dict
+from typing import Optional, Dict
 
 from sybil.parsers.abstract.lexers import BlockLexer
 
@@ -36,7 +36,7 @@ class DirectiveLexer(BlockLexer):
 
     delimiter = '::'
 
-    def __init__(self, directive: str, arguments: str = '', mapping: Dict[str, str] = None):
+    def __init__(self, directive: str, arguments: str = '', mapping: Optional[Dict[str, str]] = None):
         """
         A lexer for ReST directives.
         Both ``directive`` and ``arguments`` are regex patterns.

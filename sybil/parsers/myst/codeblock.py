@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Optional, Iterable
 
 from sybil.evaluators.python import PythonEvaluator
 from sybil.parsers.abstract import AbstractCodeBlockParser, DocTestStringParser
@@ -23,7 +23,7 @@ class CodeBlockParser(AbstractCodeBlockParser):
         You can also override the :meth:`evaluate` method below.
     """
 
-    def __init__(self, language: str = None, evaluator: Evaluator = None):
+    def __init__(self, language: Optional[str] = None, evaluator: Optional[Evaluator] = None):
         super().__init__(
             [
                 FencedCodeBlockLexer(

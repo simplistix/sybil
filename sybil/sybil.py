@@ -79,17 +79,17 @@ class Sybil:
     def __init__(
         self,
         parsers: Sequence[Parser],
-        pattern: str = None,
+        pattern: Optional[str] = None,
         patterns: Sequence[str] = (),
-        exclude: str = None,
+        exclude: Optional[str] = None,
         excludes: Sequence[str] = (),
         filenames: Collection[str] = (),
         path: str = '.',
-        setup: Callable[[dict], None] = None,
-        teardown: Callable[[dict], None] = None,
+        setup: Optional[Callable[[dict], None]] = None,
+        teardown: Optional[Callable[[dict], None]] = None,
         fixtures: Sequence[str] = (),
         encoding: str = 'utf-8',
-        document_types: Mapping[Optional[str], Type[Document]] = None
+        document_types: Optional[Mapping[Optional[str], Type[Document]]] = None
     ):
 
         self.parsers: Sequence[Parser] = parsers

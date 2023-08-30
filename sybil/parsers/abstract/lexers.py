@@ -1,6 +1,6 @@
 import re
 import textwrap
-from typing import Dict, Iterable, Pattern
+from typing import Optional, Dict, Iterable, Pattern
 
 from sybil import Document
 from sybil.region import LexedRegion, Lexeme
@@ -40,7 +40,7 @@ class BlockLexer:
             self,
             start_pattern: Pattern,
             end_pattern_template: str,
-            mapping: Dict[str, str] = None,
+            mapping: Optional[Dict[str, str]] = None,
     ):
         self.start_pattern = start_pattern
         self.end_pattern_template = end_pattern_template
