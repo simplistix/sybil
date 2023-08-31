@@ -4,7 +4,7 @@ from ast import AsyncFunctionDef, FunctionDef, ClassDef, Module, Expr, Constant
 from bisect import bisect
 from io import open
 from pathlib import Path
-from typing import List, Iterable, Pattern, Tuple, Match, Optional, Sequence
+from typing import List, Iterator, Pattern, Tuple, Match, Optional, Sequence
 
 from .example import Example
 from .python import import_path
@@ -101,7 +101,7 @@ class Document:
                 self.raise_overlap(region, next)
         self.regions.insert(index, entry)
 
-    def __iter__(self) -> Iterable[Example]:
+    def __iter__(self) -> Iterator[Example]:
         line = 1
         place = 0
         for _, region in self.regions:

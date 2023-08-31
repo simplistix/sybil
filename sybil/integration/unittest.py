@@ -1,22 +1,28 @@
-from typing import TYPE_CHECKING
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, Callable, Optional
 from unittest import TestCase as BaseTestCase, TestSuite
 
 if TYPE_CHECKING:
+    from unittest.loader import TestLoader
+
     from ..sybil import Sybil
+    from sybil.example import Example
 
 
 class TestCase(BaseTestCase):
 
-    sybil = namespace = None
+    sybil: Sybil
+    namespace: dict[str, Any]
 
-    def __init__(self, example) -> None:
+    def __init__(self, example: Example) -> None:
         BaseTestCase.__init__(self)
         self.example = example
 
     def runTest(self) -> None:
         self.example.evaluate()
 
-    def id(self):
+    def id(self) -> str:
         return '{},line:{},column:{}'.format(
             self.example.path, self.example.line, self.example.column
         )
@@ -34,9 +40,15 @@ class TestCase(BaseTestCase):
             cls.sybil.teardown(cls.namespace)
 
 
-def unittest_integration(*sybils: 'Sybil'):
+def unittest_integration(
+    *sybils: 'Sybil',
+) -> Callable[[Optional[TestLoader], Optional[TestSuite], Optional[str]], TestSuite]:
 
-    def load_tests(loader=None, tests=None, pattern=None):
+    def load_tests(
+        loader: Optional[TestLoader] = None,
+        tests: Optional[TestSuite] = None,
+        pattern: Optional[str] = None,
+    ) -> TestSuite:
         suite = TestSuite()
         for sybil in sybils:
             for path in sorted(sybil.path.glob('**/*')):
