@@ -1,21 +1,19 @@
-from __future__ import annotations
-
-from typing import TYPE_CHECKING, Any, Callable, Optional
+from typing import TYPE_CHECKING, Any, Callable, Dict, Optional
 from unittest import TestCase as BaseTestCase, TestSuite
+from unittest.loader import TestLoader
+
+from sybil.example import Example
 
 if TYPE_CHECKING:
-    from unittest.loader import TestLoader
-
     from ..sybil import Sybil
-    from sybil.example import Example
 
 
 class TestCase(BaseTestCase):
 
-    sybil: Sybil
-    namespace: dict[str, Any]
+    sybil: 'Sybil'
+    namespace: Dict[str, Any]
 
-    def __init__(self, example: Example) -> None:
+    def __init__(self, example: 'Example') -> None:
         BaseTestCase.__init__(self)
         self.example = example
 
