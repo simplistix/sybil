@@ -10,7 +10,7 @@ from sybil.document import PythonDocStringDocument
 from .helpers import ast_docstrings, skip_if_37_or_older
 
 
-@skip_if_37_or_older()
+@skip_if_37_or_older
 def test_extract_docstring() -> None:
     """
     This is a function docstring.
@@ -22,7 +22,7 @@ def test_extract_docstring() -> None:
     compare(expected, actual=[python_source_code[s:e] for s, e, _ in actual], show_whitespace=True)
 
 
-@skip_if_37_or_older()
+@skip_if_37_or_older
 def test_all_docstrings_extracted_correctly(python_file) -> None:
     problems = []
     path, source = python_file

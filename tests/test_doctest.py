@@ -131,7 +131,7 @@ UNPARSEABLE = {
 MINIMUM_EXPECTED_DOCTESTS = 9
 
 
-@skip_if_37_or_older()
+@skip_if_37_or_older
 def test_sybil_example_count(all_python_files) -> None:
     parser = DocTestStringParser()
 
@@ -149,7 +149,7 @@ def test_sybil_example_count(all_python_files) -> None:
 
 
 def check_sybil_against_doctest(path, text):
-    skip_if_37_or_older()
+    skip_if_37_or_older
     problems = []
     name = str(path)
     regions = list(DocTestStringParser()(text, path))
@@ -177,7 +177,7 @@ def test_all_docstest_examples_extracted_from_source_correctly(python_file) -> N
     check_sybil_against_doctest(path, source)
 
 
-@skip_if_37_or_older()
+@skip_if_37_or_older
 def test_all_docstest_examples_extracted_from_docstrings_correctly(python_file) -> None:
     path, source = python_file
     for start, end, docstring in PythonDocStringDocument.extract_docstrings(source):
