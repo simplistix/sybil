@@ -16,7 +16,7 @@ from .helpers import sample_path, write_doctest
 
 
 @pytest.fixture()
-def document():
+def document() -> Document:
     return Document('ABCDEFGH', '/the/path')
 
 

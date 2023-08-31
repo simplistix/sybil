@@ -34,11 +34,11 @@ def _find_python_files() -> List[Tuple[Path, str]]:
 
 
 @pytest.fixture
-def all_python_files():
+def all_python_files() -> List[Tuple[Path, str]]:
     return _find_python_files()
 
 
-def pytest_generate_tests(metafunc):
+def pytest_generate_tests(metafunc) -> None:
     files = _find_python_files()
     ids = [str(f[0]) for f in files]
     if "python_file" in metafunc.fixturenames:

@@ -4,7 +4,7 @@ def r_prefixed_docstring() -> None:
     """
 
 
-def function_with_codeblock_in_middle(text):
+def function_with_codeblock_in_middle(text: str) -> None:
     """
     My comment
 
@@ -16,7 +16,7 @@ def function_with_codeblock_in_middle(text):
     assert text == 'Hello World'
 
 
-def function_with_single_line_codeblock_at_end(text):
+def function_with_single_line_codeblock_at_end(text: str) -> None:
     """
     My comment
 

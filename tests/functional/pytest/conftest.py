@@ -1,6 +1,7 @@
 from __future__ import print_function
 from functools import partial
 import re
+from typing import Generator
 
 import pytest
 
@@ -9,34 +10,34 @@ from sybil.parsers.rest import PythonCodeBlockParser
 
 
 @pytest.fixture(scope="function")
-def function_fixture():
+def function_fixture() -> Generator[str, None, None]:
     print('function_fixture setup')
     yield 'f'
     print(' function_fixture teardown')
 
 
 @pytest.fixture(scope="class")
-def class_fixture():
+def class_fixture() -> Generator[str, None, None]:
     print('class_fixture setup')
     yield 'c'
     print('class_fixture teardown')
 
 
 @pytest.fixture(scope="module")
-def module_fixture():
+def module_fixture() -> Generator[str, None, None]:
     print('module_fixture setup')
     yield 'm'
     print('module_fixture teardown')
 
 
 @pytest.fixture(scope="session")
-def session_fixture():
+def session_fixture() -> Generator[str, None, None]:
     print('session_fixture setup')
     yield 's'
     print('session_fixture teardown')
 
 
-def check(letter, example):
+def check(letter, example) -> str:
     namespace = example.namespace
     for name in (
         'x', 'session_fixture', 'module_fixture',
@@ -63,12 +64,12 @@ def parse_for(letter, document):
                      partial(check, letter))
 
 
-def sybil_setup(namespace):
+def sybil_setup(namespace) -> None:
     print('sybil setup', end=' ')
     namespace['x'] = 0
 
 
-def sybil_teardown(namespace):
+def sybil_teardown(namespace) -> None:
     print('sybil teardown', namespace['x'])
 
 

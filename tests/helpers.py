@@ -109,19 +109,19 @@ class Finder:
         self.text = text
         self.index = 0
 
-    def then_find(self, substring):
+    def then_find(self, substring: str) -> None:
         assert substring in self.text[self.index:], self.text[self.index:]
         self.index = self.text.index(substring, self.index)
 
-    def assert_present(self, text):
+    def assert_present(self, text: str) -> None:
         assert text in self.text, f'{self.text}\n{self.text!r}'
 
-    def assert_not_present(self, text):
+    def assert_not_present(self, text: str) -> None:
         index = self.text.find(text)
         if index > -1:
             raise AssertionError('\n'+self.text[index-500:index+500])
 
-    def assert_has_run(self, integration: str, file: str, *, line: int = 1, column: int = 1):
+    def assert_has_run(self, integration: str, file: str, *, line: int = 1, column: int = 1) -> None:
         self.assert_present(TEST_OUTPUT_TEMPLATES[integration].format(
             file=file, line=line, column=column
         ))

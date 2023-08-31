@@ -148,7 +148,7 @@ def test_sybil_example_count(all_python_files) -> None:
     assert seen_examples_from_docstrings == seen_examples_from_source
 
 
-def check_sybil_against_doctest(path, text):
+def check_sybil_against_doctest(path: Path, text: str) -> None:
     skip_if_37_or_older()
     problems = []
     name = str(path)

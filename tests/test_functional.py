@@ -1,4 +1,5 @@
 import sys
+from typing import Generator
 
 import pytest
 from py.path import local
@@ -14,7 +15,7 @@ from .helpers import (
 
 
 @pytest.fixture(autouse=True)
-def cleanup_imports():
+def cleanup_imports() -> Generator[None, None, None]:
     with import_cleanup():
         yield
 

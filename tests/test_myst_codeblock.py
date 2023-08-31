@@ -45,7 +45,7 @@ def test_doctest_at_end_of_fenced_codeblock() -> None:
 
 def test_other_language_composition_pass() -> None:
 
-    def oh_hai(example):
+    def oh_hai(example: Example) -> None:
         assert isinstance(example, Example)
         assert 'HAI' in example.parsed
 
@@ -56,7 +56,7 @@ def test_other_language_composition_pass() -> None:
 
 
 def test_other_language_composition_fail() -> None:
-    def oh_noez(example):
+    def oh_noez(example: Example) -> None:
         if 'KTHXBYE' in example.parsed:
             raise ValueError('oh noez')
 
@@ -76,7 +76,7 @@ class LolCodeCodeBlockParser(CodeBlockParser):
 
     language = 'lolcode'
 
-    def evaluate(self, example: Example):
+    def evaluate(self, example: Example) -> None:
         if example.parsed != 'HAI\n':
             raise ValueError(repr(example.parsed))
 
