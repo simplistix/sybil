@@ -41,8 +41,7 @@ class TestExample:
         region = Region(0, 1, 'the data', evaluator)
         namespace = {}
         example = Example(document, 1, 2, region, namespace)
-        result = example.evaluate()
-        assert result is None
+        example.evaluate()
         assert namespace == {'parsed': 'the data'}
 
     def test_evaluate_not_okay(self, document) -> None:

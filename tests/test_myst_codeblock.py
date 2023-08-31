@@ -12,7 +12,7 @@ from .helpers import check_excinfo, parse
 def test_basic() -> None:
     examples, namespace = parse('myst-codeblock.md', PythonCodeBlockParser(), expected=7)
     namespace['y'] = namespace['z'] = 0
-    assert examples[0].evaluate() is None
+    examples[0].evaluate()
     assert namespace['y'] == 1
     assert namespace['z'] == 0
     with pytest.raises(Exception) as excinfo:
@@ -20,17 +20,17 @@ def test_basic() -> None:
     compare(examples[1].parsed, expected="raise Exception('boom!')\n", show_whitespace=True)
     assert examples[1].line == 10
     check_excinfo(examples[1], excinfo, 'boom!', lineno=11)
-    assert examples[2].evaluate() is None
+    examples[2].evaluate()
     assert namespace['y'] == 1
     assert namespace['z'] == 1
-    assert examples[3].evaluate() is None
+    examples[3].evaluate()
     assert namespace['bin'] == b'x'
     assert namespace['uni'] == u'x'
-    assert examples[4].evaluate() is None
+    examples[4].evaluate()
     assert 'NoVars' in namespace
-    assert examples[5].evaluate() is None
+    examples[5].evaluate()
     assert namespace['define_this'] == 1
-    assert examples[6].evaluate() is None
+    examples[6].evaluate()
     assert 'YesVars' in namespace
     assert '__builtins__' not in namespace
 
@@ -38,8 +38,8 @@ def test_basic() -> None:
 def test_doctest_at_end_of_fenced_codeblock() -> None:
     examples, namespace = parse('myst-codeblock-doctests-end-of-fenced-codeblocks.md',
                                 PythonCodeBlockParser(), expected=2)
-    assert examples[0].evaluate() is None
-    assert examples[1].evaluate() is None
+    examples[0].evaluate()
+    examples[1].evaluate()
     assert namespace['b'] == 2
 
 
@@ -51,7 +51,12 @@ def test_other_language_composition_pass() -> None:
 
     parser = CodeBlockParser(language='lolcode', evaluator=oh_hai)
     examples, namespace = parse('myst-codeblock.md', parser, expected=1)
-    assert examples[0].evaluate() is None
+    # We call evaluate() here to make sure that it does not raise an exception.
+    # Though `mypy` authors consider it unnecessary to use the return value of
+    # a method which is typed to return only `None`, we do it here once to have
+    # some safety: https://github.com/python/mypy/issues/6549.
+    result = examples[0].evaluate()  # type: ignore[func-returns-value]
+    assert result is None
 
 
 
