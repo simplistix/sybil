@@ -1,11 +1,14 @@
 import importlib
 import sys
 from contextlib import contextmanager
+from types import ModuleType
+from typing import Iterator
+
 from pathlib import Path
 
 
 @contextmanager
-def import_cleanup():
+def import_cleanup() -> Iterator[None]:
     """
     Clean up the results of importing modules, including the modification
     of :attr:`sys.path` necessary to do so.
@@ -22,7 +25,7 @@ def import_cleanup():
 INIT_FILE = '__init__.py'
 
 
-def import_path(path: Path):
+def import_path(path: Path) -> ModuleType:
     container = path
     while True:
         container = container.parent
