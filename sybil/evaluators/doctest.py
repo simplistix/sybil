@@ -1,14 +1,24 @@
 from doctest import (
     DocTest as BaseDocTest,
     DocTestRunner as BaseDocTestRunner,
+    Example as BaseDocTestExample,
     set_unittest_reportflags,
 )
+from typing import Any, Dict, List, Optional
 
 from sybil import Example
 
 
 class DocTest(BaseDocTest):
-    def __init__(self, examples, globs, name, filename, lineno, docstring) -> None:
+    def __init__(
+            self,
+            examples: List[BaseDocTestExample],
+            globs: Dict[str, Any],
+            name: str,
+            filename: Optional[str],
+            lineno: Optional[int],
+            docstring: Optional[str],
+        ) -> None:
         # do everything like regular doctests, but don't make a copy of globs
         BaseDocTest.__init__(self, examples, globs, name, filename, lineno, docstring)
         self.globs = globs
@@ -16,7 +26,7 @@ class DocTest(BaseDocTest):
 
 class DocTestRunner(BaseDocTestRunner):
 
-    def __init__(self, optionflags) -> None:
+    def __init__(self, optionflags: int) -> None:
         _unittest_reportflags = set_unittest_reportflags(0)
         set_unittest_reportflags(_unittest_reportflags)
         optionflags |= _unittest_reportflags
@@ -27,7 +37,7 @@ class DocTestRunner(BaseDocTestRunner):
             optionflags=optionflags,
         )
 
-    def _failure_header(self, test, example):
+    def _failure_header(self, test: DocTest, example: BaseDocTestExample) -> str:
         return ''
 
 
@@ -42,13 +52,13 @@ class DocTestEvaluator:
         when evaluating examples.
     """
 
-    def __init__(self, optionflags=0) -> None:
+    def __init__(self, optionflags: int = 0) -> None:
         self.runner = DocTestRunner(optionflags)
 
     def __call__(self, sybil_example: Example) -> str:
         example = sybil_example.parsed
         namespace = sybil_example.namespace
-        output = []
+        output: List[str] = []
         remove_name = False
         try:
             if '__name__' not in namespace:
