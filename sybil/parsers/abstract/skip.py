@@ -13,7 +13,7 @@ class AbstractSkipParser:
     #: Must return :class:`matches<typing.Match>` that contain two groups;
     #: group 1 containing an action of ``'next'``, ``'start'`` or ``'end'`` and group 2
     #: which should contain the source for an optional parenthesis-surrounded Python expression.
-    pattern: Pattern
+    pattern: Pattern[str]
 
     def __call__(self, document: Document) -> Iterable[Region]:
         for match in re.finditer(self.pattern, document.text):

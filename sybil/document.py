@@ -114,7 +114,7 @@ class Document:
 
     def find_region_sources(
         self, start_pattern: Pattern[str], end_pattern: Pattern[str]
-    ) -> Tuple[Match, Match, str]:
+    ) -> Iterator[Tuple[Match[str], Match[str], str]]:
         """
         This helper method can be used to extract source text
         for regions based on the two :ref:`regular expressions <re-objects>`

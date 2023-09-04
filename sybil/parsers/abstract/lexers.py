@@ -38,7 +38,7 @@ class BlockLexer:
 
     def __init__(
             self,
-            start_pattern: Pattern,
+            start_pattern: Pattern[str],
             end_pattern_template: str,
             mapping: Optional[Dict[str, str]] = None,
     ) -> None:
