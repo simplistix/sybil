@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Dict
 
 from .region import Region
 
@@ -26,7 +26,7 @@ class Example:
     """
 
     def __init__(
-        self, document: 'Document', line: int, column: int, region: Region, namespace: dict
+        self, document: 'Document', line: int, column: int, region: Region, namespace: Dict[str, Any]
     ) -> None:
         #: The :class:`~sybil.document.Document` from which this example came.
         self.document: 'Document' = document
@@ -51,7 +51,7 @@ class Example:
         self.parsed: Any = region.parsed
         #: The :attr:`~sybil.Document.namespace` of the document from
         #: which this example came.
-        self.namespace: dict = namespace
+        self.namespace: Dict[str, Any] = namespace
 
     def __repr__(self) -> str:
         return '<Example path={} line={} column={} using {!r}>'.format(
@@ -59,7 +59,7 @@ class Example:
         )
 
     def evaluate(self) -> None:
-        evaluator = self.document.evaluator or self.region.evaluator
+        evaluator = self.document.evaluator if self.document.evaluator is not None else self.region.evaluator
         result = evaluator(self)
         if result:
             raise SybilFailure(self, result)
