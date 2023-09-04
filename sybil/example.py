@@ -59,7 +59,7 @@ class Example:
         )
 
     def evaluate(self) -> None:
-        evaluator = self.document.evaluator if self.document.evaluator is not None else self.region.evaluator
+        evaluator = self.document.evaluator or self.region.evaluator
         result = evaluator(self)
         if result:
             raise SybilFailure(self, result)
