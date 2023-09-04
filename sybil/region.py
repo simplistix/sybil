@@ -77,7 +77,7 @@ class Region:
             self.start, self.end, self.evaluator
         )
 
-    def __lt__(self, other: Any) -> bool:
+    def __lt__(self, other: 'Region') -> bool:
         assert isinstance(other, type(self)), f"{type(other)} not supported for <"
         assert self.start == other.start  # This is where this may happen, if not something weird
         return True
