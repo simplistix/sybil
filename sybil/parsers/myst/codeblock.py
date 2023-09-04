@@ -63,7 +63,7 @@ class PythonCodeBlockParser(CodeBlockParser):
 
     language = 'python'
 
-    def __init__(self, future_imports=(), doctest_optionflags=0) -> None:
+    def __init__(self, future_imports=(), doctest_optionflags: int = 0) -> None:
         super().__init__(evaluator=PythonEvaluator(future_imports))
         self.doctest_parser = DocTestStringParser(DocTestEvaluator(doctest_optionflags))
 

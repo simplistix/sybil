@@ -15,7 +15,7 @@ class DocTestParser:
         when evaluating the examples found by this parser.
 
     """
-    def __init__(self, optionflags=0) -> None:
+    def __init__(self, optionflags: int = 0) -> None:
         self.string_parser = DocTestStringParser(DocTestEvaluator(optionflags))
 
     def __call__(self, document: Document) -> Iterable[Region]:
@@ -32,7 +32,7 @@ class DocTestDirectiveParser:
 
     """
 
-    def __init__(self, optionflags=0) -> None:
+    def __init__(self, optionflags: int = 0) -> None:
         self.lexer = DirectiveLexer(directive='doctest')
         self.string_parser = DocTestStringParser(DocTestEvaluator(optionflags))
 
