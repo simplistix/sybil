@@ -1,7 +1,7 @@
 from doctest import (
     DocTest as BaseDocTest,
     DocTestRunner as BaseDocTestRunner,
-    _unittest_reportflags,
+    set_unittest_reportflags,
 )
 
 from sybil import Example
@@ -17,8 +17,11 @@ class DocTest(BaseDocTest):
 class DocTestRunner(BaseDocTestRunner):
 
     def __init__(self, optionflags) -> None:
+        _unittest_reportflags = set_unittest_reportflags(0)
+        set_unittest_reportflags(_unittest_reportflags)
         optionflags |= _unittest_reportflags
         BaseDocTestRunner.__init__(
+
             self,
             verbose=False,
             optionflags=optionflags,
