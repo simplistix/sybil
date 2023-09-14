@@ -42,7 +42,7 @@ class Document:
         self.regions: List[Tuple[int, Region]] = []
         #: This dictionary is the namespace in which all examples parsed from
         #: this document will be evaluated.
-        self.namespace: dict = {}
+        self.namespace: Dict[str, Any] = {}
 
     @classmethod
     def parse(cls, path: str, *parsers: Parser, encoding: str = 'utf-8') -> 'Document':
@@ -164,7 +164,7 @@ class PythonDocStringDocument(PythonDocument):
     """
 
     @staticmethod
-    def extract_docstrings(python_source_code: str) -> Sequence[Tuple[int, int, str]]:
+    def extract_docstrings(python_source_code: str) -> Iterator[Tuple[int, int, str]]:
         line_offsets = LineNumberOffsets(python_source_code)
         for node in ast.walk(ast.parse(python_source_code)):
             if not isinstance(node, (AsyncFunctionDef, FunctionDef, ClassDef, Module)):

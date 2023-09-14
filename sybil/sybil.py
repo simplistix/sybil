@@ -1,10 +1,18 @@
 import inspect
 import sys
 from pathlib import Path
-from typing import Sequence, Callable, Collection, Mapping, Optional, Type, List
+from typing import Sequence, Callable, Collection, Mapping, Optional, Type, Dict, Any, List, TYPE_CHECKING
+from unittest import TestSuite
+from unittest.loader import TestLoader
 
 from .document import Document, PythonDocStringDocument, PythonDocument
 from .typing import Parser
+from .integration.pytest import SybilFile
+
+if TYPE_CHECKING:
+  # pytest is a tests-only requirement, so we cannot have it as an import outside
+  # of the type checking block.
+  from _pytest.nodes import Collector
 
 PY37_AND_EARLIER = sys.version_info[:2] <= (3, 7)
 
@@ -85,8 +93,8 @@ class Sybil:
         excludes: Sequence[str] = (),
         filenames: Collection[str] = (),
         path: str = '.',
-        setup: Optional[Callable[[dict], None]] = None,
-        teardown: Optional[Callable[[dict], None]] = None,
+        setup: Optional[Callable[[Dict[str, Any]], None]] = None,
+        teardown: Optional[Callable[[Dict[str, Any]], None]] = None,
         fixtures: Sequence[str] = (),
         encoding: str = 'utf-8',
         document_types: Optional[Mapping[Optional[str], Type[Document]]] = None
@@ -105,8 +113,8 @@ class Sybil:
         if exclude:
             self.excludes.append(exclude)
         self.filenames = filenames
-        self.setup: Callable[[dict], None] = setup
-        self.teardown: Callable[[dict], None] = teardown
+        self.setup: Optional[Callable[[Dict[str, Any]], None]] = setup
+        self.teardown: Optional[Callable[[Dict[str, Any]], None]] = teardown
         self.fixtures: Sequence[str] = fixtures
         self.encoding: str = encoding
         self.document_types = DEFAULT_DOCUMENT_TYPES.copy()
@@ -114,7 +122,7 @@ class Sybil:
             self.document_types.update(document_types)
         self.default_document_type: Type[Document] = self.document_types[None]
 
-    def __add__(self, other: 'Sybil'):
+    def __add__(self, other: 'Sybil') -> 'SybilCollection':
         """
         :class:`Sybil` instances can be concatenated into a :class:`~sybil.sybil.SybilCollection`.
         """
@@ -143,14 +151,14 @@ class Sybil:
         type_ = self.document_types.get(path.suffix, self.default_document_type)
         return type_.parse(str(path), *self.parsers, encoding=self.encoding)
 
-    def pytest(self):
+    def pytest(self) -> Callable[[Path, 'Collector'], Optional[SybilFile]]:
         """
         The helper method for when you use :ref:`pytest_integration`.
         """
         from .integration.pytest import pytest_integration
         return pytest_integration(self)
 
-    def unittest(self):
+    def unittest(self) -> Callable[[Optional[TestLoader], Optional[TestSuite], Optional[str]], TestSuite]:
         """
         The helper method for when you use :ref:`unitttest_integration`.
         """
@@ -158,7 +166,7 @@ class Sybil:
         return unittest_integration(self)
 
 
-class SybilCollection(list):
+class SybilCollection(List[Sybil]):
     """
     When :class:`Sybil` instances are concatenated, the collection returned can
     be used in the same way as a single :class:`Sybil`.
@@ -166,14 +174,14 @@ class SybilCollection(list):
     This allows multiple configurations to be used in a single test run.
     """
 
-    def pytest(self):
+    def pytest(self) -> Callable[[Path, 'Collector'], Optional[SybilFile]]:
         """
         The helper method for when you use :ref:`pytest_integration`.
         """
         from .integration.pytest import pytest_integration
         return pytest_integration(*self)
 
-    def unittest(self):
+    def unittest(self) -> Callable[[Optional[TestLoader], Optional[TestSuite], Optional[str]], TestSuite]:
         """
         The helper method for when you use :ref:`unitttest_integration`.
         """
