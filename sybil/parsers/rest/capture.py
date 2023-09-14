@@ -1,6 +1,6 @@
 import re
 import string
-from typing import Iterable
+from typing import Iterable, List, Tuple
 from textwrap import dedent
 
 from sybil import Region, Document
@@ -28,14 +28,15 @@ def indent_matches(line, indent):
     return False
 
 
-class DocumentReverseIterator(list):
+class DocumentReversedLines(List[str]):
 
     def __init__(self, document) -> None:
+        super().__init__()
         self[:] = document.text.splitlines(keepends=True)
         self.current_line = len(self)
         self.current_line_end_position = len(document.text)
 
-    def __iter__(self):
+    def iterate_with_line_number(self) -> Iterable[Tuple[int, str]]:
         while self.current_line > 0:
             self.current_line -= 1
             line = self[self.current_line]
@@ -48,9 +49,9 @@ class CaptureParser:
     A :any:`Parser` for :ref:`captures <capture-parser>`.
     """
     def __call__(self, document: Document) -> Iterable[Region]:
-        lines = DocumentReverseIterator(document)
+        lines = DocumentReversedLines(document)
 
-        for end_index, line in lines:
+        for end_index, line in lines.iterate_with_line_number():
 
             directive = CAPTURE_DIRECTIVE.match(line)
             if directive:
@@ -58,7 +59,7 @@ class CaptureParser:
                 region_end = lines.current_line_end_position
 
                 indent = directive.group('indent')
-                for start_index, line in lines:
+                for start_index, line in lines.iterate_with_line_number():
                     if indent_matches(line, indent):
                         # don't include the preceding line in the capture
                         start_index += 1
