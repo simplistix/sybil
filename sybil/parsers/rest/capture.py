@@ -11,7 +11,7 @@ CAPTURE_DIRECTIVE = re.compile(
 )
 
 
-def indent_matches(line, indent):
+def indent_matches(line: str, indent: str) -> bool:
     # Is the indentation of a line match what we're looking for?
 
     if not line.strip():
@@ -30,7 +30,7 @@ def indent_matches(line, indent):
 
 class DocumentReversedLines(List[str]):
 
-    def __init__(self, document) -> None:
+    def __init__(self, document: Document) -> None:
         super().__init__()
         self[:] = document.text.splitlines(keepends=True)
         self.current_line = len(self)
