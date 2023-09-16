@@ -1,18 +1,21 @@
 import inspect
 import sys
 from pathlib import Path
-from typing import Sequence, Callable, Collection, Mapping, Optional, Type, Dict, Any, List, TYPE_CHECKING
-from unittest import TestSuite
-from unittest.loader import TestLoader
+from typing import Sequence, Callable, Collection, Mapping, Optional, Type, Dict, Any, List
+from unittest import TestSuite, TestLoader
 
 from .document import Document, PythonDocStringDocument, PythonDocument
 from .typing import Parser
-from .integration.pytest import SybilFile
 
-if TYPE_CHECKING:
-  # pytest is a tests-only requirement, so we cannot have it as an import outside
-  # of the type checking block.
-  from _pytest.nodes import Collector
+# Some of the types in this file are `_pytest.nodes.Collector` and
+# `.integration.pytest.SybilFile` types.
+# `.integration.pytest.SybilFile` depends on a `pytest` type.
+#
+# We do not want to require pytest as a runtime dependency for this file.
+# The ReadTheDocs build is done using the regular build dependencies.
+# Therefore, we need to use `Any` as the type for the pytest collector.
+_PytestNodesCollectorType = Any
+_IntegrationPytestSybilFileType = Any
 
 PY37_AND_EARLIER = sys.version_info[:2] <= (3, 7)
 
@@ -151,7 +154,7 @@ class Sybil:
         type_ = self.document_types.get(path.suffix, self.default_document_type)
         return type_.parse(str(path), *self.parsers, encoding=self.encoding)
 
-    def pytest(self) -> Callable[[Path, 'Collector'], Optional[SybilFile]]:
+    def pytest(self) -> Callable[[Path, _PytestNodesCollectorType], Optional[_IntegrationPytestSybilFileType]]:
         """
         The helper method for when you use :ref:`pytest_integration`.
         """
@@ -174,7 +177,7 @@ class SybilCollection(List[Sybil]):
     This allows multiple configurations to be used in a single test run.
     """
 
-    def pytest(self) -> Callable[[Path, 'Collector'], Optional[SybilFile]]:
+    def pytest(self) -> Callable[[Path, _PytestNodesCollectorType], Optional[_IntegrationPytestSybilFileType]]:
         """
         The helper method for when you use :ref:`pytest_integration`.
         """

@@ -39,6 +39,11 @@ latex_documents = [
 autodoc_member_order = 'bysource'
 nitpicky = True
 nitpick_ignore = [
-    ('py:class', 'Evaluator')  # https://github.com/sphinx-doc/sphinx/issues/10785
+    ('py:class', 'Evaluator'),  # https://github.com/sphinx-doc/sphinx/issues/10785
+
+    # The Python documentation has unittest.loader.* and unittest.suite.* classes
+    # documented, but directly under "unittest".
+    ('py:class', 'unittest.loader.TestLoader'),
+    ('py:class', 'unittest.suite.TestSuite'),
 ]
 toc_object_entries = False
