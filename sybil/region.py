@@ -16,6 +16,11 @@ class Lexeme(str):
     def __init__(self, text: str, offset: int, line_offset: int) -> None:
         self.text, self.offset, self.line_offset = text, offset, line_offset
 
+    def strip_leading_newlines(self) -> 'Lexeme':
+        stripped = self.lstrip('\n')
+        removed = len(self) - len(stripped)
+        return Lexeme(stripped, self.offset + removed, self.line_offset + removed)
+
 
 class LexedRegion:
     """
