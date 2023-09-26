@@ -22,6 +22,9 @@ class Lexeme(str):
         return Lexeme(stripped, self.offset + removed, self.line_offset + removed)
 
 
+LexemeMapping = Dict[str, Union[str, Lexeme, Dict[str, str], None]]
+
+
 class LexedRegion:
     """
     A region that has been lexed from a source language but not yet
@@ -34,7 +37,7 @@ class LexedRegion:
         #: The end of this lexed region within the document's :attr:`~sybil.Document.text`.
         self.end: int = end
         #: The lexemes extracted from the region.
-        self.lexemes: Dict[str, Union[str, Lexeme]] = lexemes
+        self.lexemes: LexemeMapping = lexemes
 
     def __repr__(self) -> str:
         lexemes_for_repr = {}
