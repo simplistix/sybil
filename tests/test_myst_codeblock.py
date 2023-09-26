@@ -118,7 +118,6 @@ def test_multiple_future_imports() -> None:
     future_import_checks('barry_as_FLUFL', 'print_function')
 
 
-@pytest.mark.skipif(sys.version_info < (3, 7), reason="requires python3.7 or higher")
 def test_functional_future_imports() -> None:
     foo = future_import_checks('annotations')
     # This will keep working but not be an effective test once PEP 563 finally lands:
