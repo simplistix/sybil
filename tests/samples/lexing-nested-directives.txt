@@ -1,0 +1,32 @@
+This one has arguments a a "title" and then the body:
+
+.. note:: This is a note admonition.
+   This is the second line of the first paragraph.
+
+      .. admonition:: And, by the way...
+
+         You can make up your own admonition too.
+
+An image with no body followed by one that has params and a body:
+
+.. image:: picture.png
+
+    .. image:: picture.jpeg
+       :height: 100px
+       :width: 200 px
+       :scale: 50 %
+       :alt: alternate text
+       :align: right
+
+    .. figure:: picture.png
+       :scale: 50 %
+       :alt: map to buried treasure
+
+       This is the caption of the figure (a simple paragraph).
+
+
+        .. topic:: Topic Title
+
+            Subsequent indented lines comprise
+            the body of the topic, and are
+            interpreted as body elements.

@@ -17,3 +17,10 @@ Should not run:
 .. skip: end
 
 >>> result.append('good 2')
+
+
+Here's a really extreme example of computing the reason from stuff in the namespace:
+
+.. skip:  next   if    (True, 'good reason' if result[-1] == 'good 2' else 'bad reason'  )
+
+>>> result.append('bad 4')
