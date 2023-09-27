@@ -1,6 +1,5 @@
-import re
-
-from sybil.parsers.abstract import AbstractSkipParser
+from ..abstract import AbstractSkipParser
+from .lexers import DirectiveInCommentLexer
 
 
 class SkipParser(AbstractSkipParser):
@@ -8,4 +7,5 @@ class SkipParser(AbstractSkipParser):
     A :any:`Parser` for :ref:`skip <skip-parser>` instructions.
     """
 
-    pattern = re.compile(r'^[ \t]*\.\.\s*skip:\s*(\w+)(?:\s+if(.+)$)?', re.MULTILINE)
+    def __init__(self):
+        super().__init__([DirectiveInCommentLexer('skip')])
