@@ -35,7 +35,7 @@ def test_conditional_edge_cases() -> None:
 
 
 def test_conditional_full() -> None:
-    examples, namespace = parse('skip-conditional.txt', DocTestParser(), SkipParser(), expected=9)
+    examples, namespace = parse('skip-conditional.txt', DocTestParser(), SkipParser(), expected=11)
     namespace['result'] = result = []
     for example in examples:
         try:
@@ -49,6 +49,7 @@ def test_conditional_full() -> None:
         'skip:foo',
         'skip:foo',
         'good 2',
+        'skip:good reason',
     ]
 
 

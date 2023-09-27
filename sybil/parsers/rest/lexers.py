@@ -1,17 +1,18 @@
 import re
-from typing import Optional, Dict
+from typing import Optional, Dict, Iterable
 
+from sybil import Document, LexedRegion
 from sybil.parsers.abstract.lexers import BlockLexer
 
 START_PATTERN_TEMPLATE =(
     r'^(?P<prefix>[ \t]*)\.\.\s*(?P<directive>{directive})'
-    r'({delimiter}\s*'
-    r'(?P<arguments>[\w-]+\b)?'
-    r'(?:\s*\:[\w-]+\:.*\n)*'
-    r'(?:\s*\n)*\n)?'
+    r'{delimiter}[ \t]*'
+    r'(?P<arguments>[^\n]+)?\n'
+    r'(?P<options>(?:\1[ \t]+:[\w-]*:[^\n]*\n)+)?'
 )
 
-END_PATTERN_TEMPLATE = r'(\n\Z|\n[ \t]{{0,{len_prefix}}}(?=\S|\Z))'
+OPTIONS_PATTERN = re.compile(r'[^:]+:(?P<name>[^:]+):[ \t]*(?P<value>[^\n]+)\n')
+END_PATTERN_TEMPLATE = r'(\n?\Z|\n[ \t]{{0,{len_prefix}}}(?=\S|\Z))'
 
 
 class DirectiveLexer(BlockLexer):
@@ -36,7 +37,12 @@ class DirectiveLexer(BlockLexer):
 
     delimiter = '::'
 
-    def __init__(self, directive: str, arguments: str = '', mapping: Optional[Dict[str, str]] = None) -> None:
+    def __init__(
+            self,
+            directive: str,
+            arguments: str = '',
+            mapping: Optional[Dict[str, str]] = None,
+    ) -> None:
         """
         A lexer for ReST directives.
         Both ``directive`` and ``arguments`` are regex patterns.
@@ -53,6 +59,17 @@ class DirectiveLexer(BlockLexer):
             end_pattern_template=END_PATTERN_TEMPLATE,
             mapping=mapping,
         )
+
+    def __call__(self, document: Document) -> Iterable[LexedRegion]:
+        for lexed in super().__call__(document):
+            lexemes = lexed.lexemes
+            raw_options = lexemes.pop('options')
+            options = lexemes['options'] = {}
+            if raw_options:
+                for match in OPTIONS_PATTERN.finditer(raw_options):
+                    options[match['name']] = match['value']
+            lexemes['source'] = lexemes['source'].strip_leading_newlines()
+            yield lexed
 
 
 class DirectiveInCommentLexer(DirectiveLexer):
@@ -84,4 +101,4 @@ class DirectiveInCommentLexer(DirectiveLexer):
     """
 
     # This is the pattern used for invisible code blocks and the like.
-    delimiter = ':'
+    delimiter = ':?'
