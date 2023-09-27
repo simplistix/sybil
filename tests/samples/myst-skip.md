@@ -5,7 +5,7 @@
 
 Let's skips some stuff:
 
-; skip: next
+% skip: next
 
 After this text is a code block that goes boom, it should be skipped:
 
@@ -21,7 +21,7 @@ This one should run:
   run.append(2)
 ```
 
-; skip: start
+% skip: start
 
 These should not:
 
@@ -37,7 +37,7 @@ Nor this one:
   run.append(4)
 ```
 
-; skip: end
+% skip: end
 
 But this one should:
 

@@ -60,7 +60,7 @@ Parsing
     :members: __call__, evaluator
 
 .. autoclass:: sybil.parsers.abstract.skip.AbstractSkipParser
-    :members: pattern
+    :members:
 
 .. autoclass:: sybil.parsers.abstract.clear.AbstractClearNamespaceParser
 
