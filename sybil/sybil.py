@@ -2,7 +2,6 @@ import inspect
 import sys
 from pathlib import Path
 from typing import Sequence, Callable, Collection, Mapping, Optional, Type, Any, List
-from unittest import TestSuite, TestLoader
 
 from .document import Document, PythonDocStringDocument, PythonDocument
 from .typing import Parser
@@ -151,7 +150,7 @@ class Sybil:
         from .integration.pytest import pytest_integration
         return pytest_integration(self)
 
-    def unittest(self) -> Callable[[Optional[TestLoader], Optional[TestSuite], Optional[str]], TestSuite]:
+    def unittest(self) -> Callable[[Any, Any, Optional[str]], Any]:
         """
         The helper method for when you use :ref:`unitttest_integration`.
         """
@@ -174,7 +173,7 @@ class SybilCollection(List[Sybil]):
         from .integration.pytest import pytest_integration
         return pytest_integration(*self)
 
-    def unittest(self) -> Callable[[Optional[TestLoader], Optional[TestSuite], Optional[str]], TestSuite]:
+    def unittest(self) -> Callable[[Any, Any, Optional[str]], Any]:
         """
         The helper method for when you use :ref:`unitttest_integration`.
         """
