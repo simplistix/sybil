@@ -1,4 +1,4 @@
-from typing import Optional, Iterable
+from typing import Optional, Iterable, Sequence
 
 from sybil.evaluators.python import PythonEvaluator
 from sybil.parsers.abstract import AbstractCodeBlockParser, DocTestStringParser
@@ -63,7 +63,7 @@ class PythonCodeBlockParser(CodeBlockParser):
 
     language = 'python'
 
-    def __init__(self, future_imports=(), doctest_optionflags: int = 0) -> None:
+    def __init__(self, future_imports: Sequence[str] = (), doctest_optionflags: int = 0) -> None:
         super().__init__(evaluator=PythonEvaluator(future_imports))
         self.doctest_parser = DocTestStringParser(DocTestEvaluator(doctest_optionflags))
 
