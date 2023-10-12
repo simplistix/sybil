@@ -3,6 +3,7 @@ import sys
 import pytest
 from py.path import local
 from pytest import CaptureFixture
+from testfixtures import compare
 
 from sybil import Sybil
 from sybil.parsers.rest import PythonCodeBlockParser, DocTestParser
@@ -304,15 +305,20 @@ def test_modules(tmpdir: local, capsys: CaptureFixture[str], runner: str) -> Non
 def test_modules_not_importable_pytest(tmpdir: local, capsys: CaptureFixture[str]) -> None:
     # NB: no append to sys.path
     results = clone_and_run_modules_tests(tmpdir, capsys, PYTEST)
-    assert results.total == 5, results.out.text
-    assert results.failures == 5, results.out.text
-    assert results.errors == 0, results.out.text
+    compare(results.total, expected=5, suffix=results.out.text)
+    compare(results.errors, expected=0, suffix=results.out.text)
+    compare(results.failures, expected=5, suffix=results.out.text)
     out = results.out
     out.then_find('a.py line=3 column=1')
     out.then_find(f"ImportError: 'a' not importable from {tmpdir/'modules'/'a.py'} as:")
     out.then_find("ModuleNotFoundError: No module named 'a'")
-    out.then_find('b.py line=7 column=1')
+    out.then_find('a.py line=7 column=1')
+    out.then_find("ModuleNotFoundError: No module named 'a'")
+    out.then_find('b.py line=2 column=1')
     out.then_find(f"ImportError: 'b' not importable from {tmpdir/'modules'/'b.py'} as:")
+    out.then_find('b.py line=7 column=1')
+    out.then_find("ModuleNotFoundError: No module named 'b'")
+    out.then_find('b.py line=11 column=1')
     out.then_find("ModuleNotFoundError: No module named 'b'")
 
 
