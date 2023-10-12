@@ -1,9 +1,10 @@
 from __future__ import absolute_import
 
+import os
 from inspect import getsourcefile
 from os.path import abspath
 from pathlib import Path
-from typing import Union, TYPE_CHECKING
+from typing import Union, TYPE_CHECKING, Tuple, Optional
 
 from _pytest._code.code import TerminalRepr, Traceback, ExceptionInfo
 from _pytest import fixtures
@@ -11,7 +12,6 @@ from _pytest.fixtures import FuncFixtureInfo
 from _pytest.main import Session
 from _pytest.nodes import Collector
 from _pytest.python import Module
-import py.path
 import pytest
 
 from ..example import SybilFailure
@@ -42,7 +42,7 @@ class SybilFailureRepr(TerminalRepr):
 
 class SybilItem(pytest.Item):
 
-    def __init__(self, parent, sybil, example) -> None:
+    def __init__(self, parent, sybil, example: example.Example) -> None:
         name = 'line:{},column:{}'.format(example.line, example.column)
         super(SybilItem, self).__init__(name, parent)
         self.example = example
@@ -58,11 +58,11 @@ class SybilItem(pytest.Item):
         self.funcargs = {}
         self._request = fixtures.FixtureRequest(self, _ispytest=True)
 
-    def reportinfo(self):
+    def reportinfo(self) -> Tuple[Union["os.PathLike[str]", str], Optional[int], str]:
         info = '%s line=%i column=%i' % (
             self.fspath.basename, self.example.line, self.example.column
         )
-        return py.path.local(self.example.path), self.example.line, info
+        return self.example.path, self.example.line, info
 
     def getparent(self, cls):
         if cls is Module:
@@ -128,11 +128,9 @@ class SybilFile(pytest.File):
 
 def pytest_integration(*sybils: 'Sybil'):
 
-    def pytest_collect_file(path: py.path.local, parent: Collector):
-        fspath = path
-        path = Path(fspath.strpath)
+    def pytest_collect_file(file_path: Path, parent: Collector):
         for sybil in sybils:
-            if sybil.should_parse(path):
-                return SybilFile.from_parent(parent, path=path, sybil=sybil)
+            if sybil.should_parse(file_path):
+                return SybilFile.from_parent(parent, path=file_path, sybil=sybil)
 
     return pytest_collect_file
