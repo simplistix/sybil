@@ -1,7 +1,7 @@
 import inspect
 import sys
 from pathlib import Path
-from typing import Any, Dict, Sequence, Callable, Collection, Mapping, Optional, Type
+from typing import Any, Dict, Sequence, Callable, Collection, Mapping, Optional, Type, List
 
 from .document import Document, PythonDocStringDocument, PythonDocument
 from .typing import Parser
@@ -114,7 +114,7 @@ class Sybil:
             self.document_types.update(document_types)
         self.default_document_type: Type[Document] = self.document_types[None]
 
-    def __add__(self, other: 'Sybil'):
+    def __add__(self, other: 'Sybil') -> 'SybilCollection':
         """
         :class:`Sybil` instances can be concatenated into a :class:`~sybil.sybil.SybilCollection`.
         """
@@ -143,14 +143,14 @@ class Sybil:
         type_ = self.document_types.get(path.suffix, self.default_document_type)
         return type_.parse(str(path), *self.parsers, encoding=self.encoding)
 
-    def pytest(self):
+    def pytest(self) -> Callable[[Path, Any], Any]:
         """
         The helper method for when you use :ref:`pytest_integration`.
         """
         from .integration.pytest import pytest_integration
         return pytest_integration(self)
 
-    def unittest(self):
+    def unittest(self) -> Callable[[Any, Any, Optional[str]], Any]:
         """
         The helper method for when you use :ref:`unitttest_integration`.
         """
@@ -158,7 +158,7 @@ class Sybil:
         return unittest_integration(self)
 
 
-class SybilCollection(list):
+class SybilCollection(List[Sybil]):
     """
     When :class:`Sybil` instances are concatenated, the collection returned can
     be used in the same way as a single :class:`Sybil`.
@@ -166,14 +166,14 @@ class SybilCollection(list):
     This allows multiple configurations to be used in a single test run.
     """
 
-    def pytest(self):
+    def pytest(self) -> Callable[[Path, Any], Any]:
         """
         The helper method for when you use :ref:`pytest_integration`.
         """
         from .integration.pytest import pytest_integration
         return pytest_integration(*self)
 
-    def unittest(self):
+    def unittest(self) -> Callable[[Any, Any, Optional[str]], Any]:
         """
         The helper method for when you use :ref:`unitttest_integration`.
         """
