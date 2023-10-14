@@ -116,6 +116,8 @@ Evaluation
 .. automodule:: sybil
   :members: Example
 
+.. autoclass:: sybil.example.NotEvaluated
+
 .. autoclass:: sybil.typing.Evaluator
 
 .. autoclass:: sybil.evaluators.doctest.DocTestEvaluator
