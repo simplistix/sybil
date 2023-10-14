@@ -17,6 +17,16 @@ class SybilFailure(AssertionError):
         self.result = result
 
 
+class NotEvaluated(Exception):
+    """
+    An exception that can be raised by an :any:`Evaluator` previously
+    :meth:`pushed <sybil.Document.push_evaluator>` onto the document to indicate that
+    it is not evaluating the current example and that a previously pushed evaluator, or the
+    :any:`Region` evaluator if no others have been pushed, should be used to evaluate the
+    :any:`Example` instead.
+    """
+
+
 class Example:
     """
     This represents a particular example from a documentation source file.
@@ -59,7 +69,4 @@ class Example:
         )
 
     def evaluate(self) -> None:
-        evaluator = self.document.evaluator or self.region.evaluator
-        result = evaluator(self)
-        if result:
-            raise SybilFailure(self, result)
+        self.document.evaluate(self, self.region.evaluator)

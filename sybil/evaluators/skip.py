@@ -18,7 +18,6 @@ class If:
 
 @dataclass
 class SkipState:
-    original_evaluator: Optional[Evaluator]
     remove: bool = False
     exception: Optional[Exception] = None
     last_action: str = None
@@ -32,7 +31,7 @@ class Skipper:
     def state_for(self, example: Example) -> SkipState:
         document = example.document
         if document not in self.document_state:
-            self.document_state[document] = SkipState(document.evaluator)
+            self.document_state[document] = SkipState()
         return self.document_state[example.document]
 
     def maybe_install(self, example: Example, state: SkipState, condition: Optional[str]) -> None:
@@ -46,13 +45,13 @@ class Skipper:
                 state.exception = SkipTest(reason)
             else:
                 install = False
-        if install and document.evaluator is not self:
-            document.evaluator = self
+        if install:
+            document.push_evaluator(self)
 
     def remove(self, example: Example) -> None:
         document = example.document
         state = self.state_for(example)
-        document.evaluator = state.original_evaluator
+        document.pop_evaluator(self)
         del self.document_state[document]
 
     def evaluate_skip_example(self, example: Example):

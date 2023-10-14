@@ -144,7 +144,8 @@ and should return a :ref:`false value <truth>` if the example is as expected. Ot
 either raise an exception or return a textual description in the
 event of the example not being as expected. Evaluators may also
 modify the document's :attr:`~sybil.Document.namespace`
-or :attr:`~sybil.Document.evaluator`.
+or :any:`push <sybil.Document.push_evaluator>` and
+:any:`pop <sybil.Document.pop_evaluator>` evaluators.
 
 :class:`~sybil.Example` instances are used to wrap up
 all the attributes you're likely to need when writing an evaluator and all

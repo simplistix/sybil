@@ -3,10 +3,12 @@ import re
 from ast import AsyncFunctionDef, FunctionDef, ClassDef, Module, Expr, Constant
 from bisect import bisect
 from io import open
+from itertools import chain
 from pathlib import Path
-from typing import Any, Dict, List, Iterator, Pattern, Tuple, Match, Optional
+from typing import Any, Dict
+from typing import List, Iterator, Pattern, Tuple, Match
 
-from .example import Example
+from .example import Example, SybilFailure, NotEvaluated
 from .python import import_path
 from .region import Region
 from .text import LineNumberOffsets
@@ -19,19 +21,10 @@ class Document:
     It will be instantiated by Sybil and provided to each parser in turn.
 
     Different types of document can be handled by subclassing to provide the
-    required :any:`evaluation <evaluator>`. The required file extensions, such as ``'.py'``,
+    required :any:`evaluation <push_evaluator>`. The required file extensions, such as ``'.py'``,
     can then be mapped to these subclasses using :class:`Sybil's <Sybil>`
     ``document_types`` parameter.
     """
-
-    #: This can be set by :any:`evaluators <Evaluator>` or
-    #: :class:`subclasses <sybil.document.PythonDocument>` to affect the evaluation
-    #: of future examples. It can be set to a callable that takes an
-    #: :class:`~sybil.example.Example`. This callable can then do whatever it needs to do,
-    #: including not executing the example at all, modifying the :class:`~sybil.example.Example`
-    #: or the :class:`~sybil.document.Document`, or calling the original evaluator on the example.
-    #: This last case should always take the form of ``example.region.evaluator(example)``.
-    evaluator: Optional[Evaluator] = None
 
     def __init__(self, text: str, path: str) -> None:
         #: This is the text of the documentation source file.
@@ -43,6 +36,7 @@ class Document:
         #: This dictionary is the namespace in which all examples parsed from
         #: this document will be evaluated.
         self.namespace: Dict[str, Any] = {}
+        self.evaluators: list[Evaluator] = []
 
     @classmethod
     def parse(cls, path: str, *parsers: Parser, encoding: str = 'utf-8') -> 'Document':
@@ -134,6 +128,46 @@ class Document:
             source = self.text[source_start:source_end]
             yield start_match, end_match, source
 
+    def push_evaluator(self, evaluator: Evaluator) -> None:
+        """
+        Push an :any:`Evaluator` onto this document's stack of evaluators
+        if it is not already in that stack.
+
+        When evaluating an :any:`Example`, any evaluators in the stack will be tried in order,
+        starting with the most recently pushed. If an evaluator raises a :any:`NotEvaluated`
+        exception, then the next evaluator in the stack will be attempted.
+
+        If the stack is empty or all evaluators present raise :any:`NotEvaluated`, then the
+        example's evaluator will be used. This is the most common case!
+        """
+        if evaluator not in self.evaluators:
+            self.evaluators.append(evaluator)
+
+    def pop_evaluator(self, evaluator: Evaluator) -> None:
+        """
+        Pop an :any:`Evaluator` off this document's stack of evaluators.
+        If it is not present in that stack, the method does nothing.
+        """
+        if evaluator in self.evaluators:
+            self.evaluators.remove(evaluator)
+
+    def evaluate(self, example: Example, evaluator: Evaluator) -> None:
+
+        __tracebackhide__ = True
+
+        for current_evaluator in chain(reversed(self.evaluators), (evaluator,)):
+            try:
+                result = current_evaluator(example)
+            except NotEvaluated:
+                continue
+            else:
+                if result:
+                    raise SybilFailure(example, result if isinstance(result, str) else repr(result))
+                else:
+                    break
+        else:
+            raise SybilFailure(example, f'{evaluator!r} should not raise NotEvaluated()')
+
 
 DOCSTRING_PUNCTUATION = re.compile('[rf]?(["\']{3}|["\'])')
 
@@ -145,16 +179,19 @@ class PythonDocument(Document):
     :attr:`~sybil.Document.namespace`.
     """
 
-    def evaluator(self, example: Example) -> Optional[str]:
+    def __init__(self, text: str, path: str) -> None:
+        super().__init__(text, path)
+        self.push_evaluator(self.import_document)
+
+    def import_document(self, example: Example) -> None:
         """
         Imports the document's source file as a Python module when the first
         :class:`~sybil.example.Example` from it is evaluated.
         """
         module = import_path(Path(self.path))
         self.namespace.update(module.__dict__)
-        result = example.region.evaluator(example)
-        self.evaluator = None
-        return result
+        self.pop_evaluator(self.import_document)
+        raise NotEvaluated()
 
 
 class PythonDocStringDocument(PythonDocument):
