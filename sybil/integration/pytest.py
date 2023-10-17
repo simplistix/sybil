@@ -14,7 +14,7 @@ from _pytest.nodes import Collector
 from _pytest.python import Module
 import pytest
 
-from ..example import SybilFailure
+from ..example import Example, SybilFailure
 from .. import example
 
 if TYPE_CHECKING:
@@ -42,7 +42,7 @@ class SybilFailureRepr(TerminalRepr):
 
 class SybilItem(pytest.Item):
 
-    def __init__(self, parent, sybil, example: example.Example) -> None:
+    def __init__(self, parent, sybil, example: Example) -> None:
         name = 'line:{},column:{}'.format(example.line, example.column)
         super(SybilItem, self).__init__(name, parent)
         self.example = example
