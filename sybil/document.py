@@ -130,6 +130,7 @@ class Document:
         for start_match in re.finditer(start_pattern, self.text):
             source_start = start_match.end()
             end_match = end_pattern.search(self.text, source_start)
+            assert end_match is not None
             source_end = end_match.start()
             source = self.text[source_start:source_end]
             yield start_match, end_match, source
@@ -177,8 +178,11 @@ class PythonDocStringDocument(PythonDocument):
             ):
                 continue
             node_start = line_offsets.get(docstring.lineno-1, docstring.col_offset)
+            assert docstring.end_lineno is not None
+            assert docstring.end_col_offset is not None
             node_end = line_offsets.get(docstring.end_lineno-1, docstring.end_col_offset)
             punc = DOCSTRING_PUNCTUATION.match(python_source_code, node_start, node_end)
+            assert punc is not None
             punc_size = len(punc.group(1))
             start = punc.end()
             end = node_end - punc_size

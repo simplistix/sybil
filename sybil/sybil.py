@@ -94,7 +94,9 @@ class Sybil:
 
         self.parsers: Sequence[Parser] = parsers
         current_frame = inspect.currentframe()
+        assert current_frame is not None
         calling_frame = current_frame.f_back
+        assert calling_frame is not None
         calling_filename = inspect.getframeinfo(calling_frame).filename
         start_path = Path(calling_filename).parent / path
         self.path: Path = start_path.absolute()
