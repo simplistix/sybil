@@ -8,7 +8,7 @@ from tempfile import NamedTemporaryFile
 from textwrap import dedent
 from traceback import TracebackException
 from typing import Optional, Tuple, List, Sequence
-from unittest import TextTestRunner, main as unittest_main
+from unittest import TextTestRunner, main as unittest_main, SkipTest
 
 import pytest
 from _pytest._code import ExceptionInfo
@@ -59,12 +59,17 @@ def check_excinfo(example: Example, excinfo: ExceptionInfo, text: str, *, lineno
     assert details.lineno == lineno, f'{details.lineno} != {lineno}'
 
 
-def check_path(path: str, sybil: Sybil, *, expected: int):
+def check_path(path: str, sybil: Sybil, *, expected: int, expected_skips: Sequence[str] = ()):
     document = sybil.parse(DOCS / path)
     examples = list(document)
+    actual_skips = []
     for example in examples:
-        example.evaluate()
-    assert len(examples) == expected, len(examples)
+        try:
+            example.evaluate()
+        except SkipTest as e:
+            actual_skips.append(str(e))
+    compare(expected, actual=len(examples))
+    compare(expected=expected_skips, actual=actual_skips)
 
 
 def check_text(text: str, sybil: Sybil):

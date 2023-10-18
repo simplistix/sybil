@@ -270,7 +270,7 @@ The JSON source can now be used as follows:
 Skipping examples
 -----------------
 
-:func:`sybil.parsers.rest.SkipParser` takes advantage of Sphinx `comment`__ syntax to introduce
+:class:`sybil.parsers.rest.SkipParser` takes advantage of Sphinx `comment`__ syntax to introduce
 special comments that allow other examples in the document to be skipped.
 This can be useful if they include pseudo code or examples that can only be
 evaluated on a particular version of Python.
@@ -293,12 +293,30 @@ You can also add conditions to either ``next`` or ``start`` as shown below:
 
 .. literalinclude:: examples/rest/skip.rst
   :language: rest
-  :lines: 17-
+  :lines: 17-24
 
 As you can see, any names used in the expression passed to ``if`` must be
 present in the document's :attr:`~sybil.Document.namespace`.
 :ref:`invisible code blocks <codeblock-parser>`, :class:`setup <sybil.Sybil>`
 methods or :ref:`fixtures <pytest_integration>` are good ways to provide these.
+
+When a condition is used to skip one or more following example, it will be reported as a
+skipped test in your test runner.
+
+If you wish to have unconditional skips show up as skipped tests, this can be done as follows:
+
+
+.. literalinclude:: examples/rest/skip.rst
+  :language: rest
+  :lines: 26-31
+
+This can also be done when skipping collections of examples:
+
+
+.. literalinclude:: examples/rest/skip.rst
+  :language: rest
+  :lines: 33-40
+
 
 The above examples could be checked with the following configuration:
 
@@ -311,7 +329,12 @@ The above examples could be checked with the following configuration:
 .. invisible-code-block: python
 
   from tests.helpers import check_path
-  check_path('examples/rest/skip.rst', sybil, expected=9)
+  check_path(
+      'examples/rest/skip.rst',
+      sybil,
+      expected=15,
+      expected_skips=('not yet working', 'Fix in v5', 'Fix in v5'),
+  )
 
 .. _clear-namespace:
 

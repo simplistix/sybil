@@ -36,3 +36,24 @@ This will only work on Python 3:
 >>> repr(b'foo')
 "b'foo'"
 ```
+
+This example is not yet working, but I wanted to be reminded:
+
+% skip: next "not yet working"
+
+```python
+>>> 1.1 == 1.11
+True
+```
+
+And here we can see some pseudo-code that will work in a future release:
+
+% skip: start "Fix in v5"
+
+```python
+>>> helper = Framework().make_helper()
+>>> helper.describe(...)
+```
+
+% skip: end
+

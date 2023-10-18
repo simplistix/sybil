@@ -1,0 +1,7 @@
+.. skip: next if(False)
+
+>>> result.append(1)
+
+.. skip: next
+
+>>> result.append(2)
