@@ -6,23 +6,24 @@ from os.path import abspath
 from pathlib import Path
 from typing import Union, TYPE_CHECKING, Tuple, Optional
 
-from _pytest._code.code import TerminalRepr, Traceback, ExceptionInfo
+import pytest
 from _pytest import fixtures
+from _pytest._code.code import TerminalRepr, Traceback, ExceptionInfo
 from _pytest.fixtures import FuncFixtureInfo
 from _pytest.main import Session
 from _pytest.nodes import Collector
 from _pytest.python import Module
-import pytest
 
-from ..example import Example, SybilFailure
-from .. import example
+from .. import example as example_module
+from ..example import Example
+from ..example import SybilFailure
 
 if TYPE_CHECKING:
     from ..sybil import Sybil
 
 PYTEST_VERSION = tuple(int(i) for i in pytest.__version__.split('.'))
 
-example_module_path = abspath(getsourcefile(example))
+example_module_path = abspath(getsourcefile(example_module))
 
 
 class SybilFailureRepr(TerminalRepr):
