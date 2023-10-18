@@ -15,14 +15,14 @@ import py.path
 import pytest
 
 from ..example import SybilFailure
-from .. import example
+from .. import example as example_module
 
 if TYPE_CHECKING:
     from ..sybil import Sybil
 
 PYTEST_VERSION = tuple(int(i) for i in pytest.__version__.split('.'))
 
-example_module_path = abspath(getsourcefile(example))
+example_module_path = abspath(getsourcefile(example_module))
 
 
 class SybilFailureRepr(TerminalRepr):
