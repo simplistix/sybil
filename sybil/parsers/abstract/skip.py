@@ -6,7 +6,7 @@ from sybil import Document, Region
 from sybil.evaluators.skip import Skipper
 from sybil.typing import Lexer
 
-SKIP_ARGUMENTS_PATTERN = re.compile(r'(\w+)(?:\s+if(.+)$)?')
+SKIP_ARGUMENTS_PATTERN = re.compile(r'(\w+)(?:\s+(.+)$)?')
 
 
 class AbstractSkipParser:

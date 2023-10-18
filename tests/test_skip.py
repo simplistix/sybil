@@ -1,9 +1,11 @@
 import sys
+from typing import Iterable
 from unittest import SkipTest
 
 import pytest
 from testfixtures import ShouldRaise
 
+from sybil import Example, Document, Region
 from sybil.parsers.rest import PythonCodeBlockParser, DocTestParser, SkipParser
 from .helpers import parse
 
@@ -18,8 +20,8 @@ def test_basic() -> None:
 def test_conditional_edge_cases() -> None:
     examples, namespace = parse(
         'skip-conditional-edges.txt',
-        DocTestParser(), PythonCodeBlockParser(), SkipParser(),
-        expected=10
+        DocTestParser(), SkipParser(),
+        expected=8
     )
     namespace['sys'] = sys
     namespace['run'] = []
@@ -29,9 +31,9 @@ def test_conditional_edge_cases() -> None:
             example.evaluate()
         except SkipTest as e:
             skipped.append(str(e))
-    assert namespace['run'] == [1, 2, 3]
+    assert namespace['run'] == [1, 2, 3, 4]
     # we should always have one and only one skip from this document.
-    assert skipped == ['only true on python 2']
+    assert skipped == ['skip 1']
 
 
 def test_conditional_full() -> None:
@@ -97,3 +99,11 @@ def test_end_no_start() -> None:
     with ShouldRaise(ValueError("'skip: end' must follow 'skip: start'")):
         examples[1].evaluate()
     assert result == ['good']
+
+
+def test_next_follows_next() -> None:
+    examples, namespace = parse('skip-next-next.txt', DocTestParser(), SkipParser(), expected=4)
+    namespace['result'] = result = []
+    for example in examples:
+        example.evaluate()
+    assert result == [1]

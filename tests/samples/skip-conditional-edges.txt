@@ -1,33 +1,20 @@
-This will only work on Python 2:
+.. skip: next if(True, reason="skip 1")
 
-.. skip: next if(sys.version_info >= (3, 0), reason="only true on python 2")
-
->>> repr(u'foo')
-"u'foo'"
-
-This should run:
+>>> raise Exception('should not run!')
 
 >>> run.append(1)
 
-This will only parse on Python 3:
+.. skip: start if(False, reason="skip 2")
 
-.. skip: start if(sys.version_info < (3, 0), reason="only true on python 3")
-
-.. code-block:: python
-
-    def myfunc(*, keyword_only):
-         return keyword_only
-
->>> myfunc(keyword_only='hello')
-'hello'
-
->>> def myfunc2(*, keyword_only): pass
+These should both run:
 
 >>> run.append(2)
+
+>>> run.append(3)
 
 .. skip: end
 
 This should also run:
 
->>> run.append(3)
+>>> run.append(4)
 

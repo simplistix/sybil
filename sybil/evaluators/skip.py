@@ -3,6 +3,7 @@ from typing import Optional, Dict
 from unittest import SkipTest
 
 from sybil import Example, Document
+from sybil.example import NotEvaluated
 from sybil.typing import Evaluator
 
 
@@ -18,6 +19,7 @@ class If:
 
 @dataclass
 class SkipState:
+    active: bool = True
     remove: bool = False
     exception: Optional[Exception] = None
     last_action: str = None
@@ -34,54 +36,56 @@ class Skipper:
             self.document_state[document] = SkipState()
         return self.document_state[example.document]
 
-    def maybe_install(self, example: Example, state: SkipState, condition: Optional[str]) -> None:
+    def install(self, example: Example, state: SkipState, reason: Optional[str]) -> None:
         document = example.document
-        install = True
-        if condition:
+        document.push_evaluator(self)
+        if reason:
             namespace = document.namespace.copy()
-            namespace['if_'] = If(condition)
-            reason = eval('if_'+condition, namespace)
+            reason = reason.lstrip()
+            if reason.startswith('if'):
+                condition = reason[2:]
+                reason = 'if_' + condition
+                namespace['if_'] = If(condition)
+            reason = eval(reason, namespace)
             if reason:
                 state.exception = SkipTest(reason)
             else:
-                install = False
-        if install:
-            document.push_evaluator(self)
+                state.active = False
 
     def remove(self, example: Example) -> None:
         document = example.document
-        state = self.state_for(example)
         document.pop_evaluator(self)
         del self.document_state[document]
 
     def evaluate_skip_example(self, example: Example):
         state = self.state_for(example)
-        action, condition = example.parsed
+        action, reason = example.parsed
 
         if action not in ('start', 'next', 'end'):
             raise ValueError('Bad skip action: ' + action)
         if state.last_action is None and action not in ('start', 'next'):
             raise ValueError(f"'skip: {action}' must follow 'skip: start'")
-        elif state.last_action and action !='end':
+        elif state.last_action and action != 'end':
             raise ValueError(f"'skip: {action}' cannot follow 'skip: {state.last_action}'")
 
         state.last_action = action
 
         if action == 'start':
-            self.maybe_install(example, state, condition)
+            self.install(example, state, reason)
         elif action == 'next':
-            self.maybe_install(example, state, condition)
+            self.install(example, state, reason)
             state.remove = True
         elif action == 'end':
             self.remove(example)
-            if condition:
+            if reason:
                 raise ValueError("Cannot have condition on 'skip: end'")
 
     def evaluate_other_example(self, example: Example) -> None:
         state = self.state_for(example)
         if state.remove:
             self.remove(example)
-            state.remove = False
+        if not state.active:
+            raise NotEvaluated()
         if state.exception is not None:
             raise state.exception
 

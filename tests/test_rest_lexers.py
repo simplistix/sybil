@@ -149,19 +149,19 @@ def test_skip_lexing_bad():
 def test_arguments_without_body():
     lexer = DirectiveInCommentLexer(directive='skip')
     compare(lex('skip-conditional-edges.txt', lexer), expected=[
-        LexedRegion(34, 111, {
+        LexedRegion(0, 40, {
             'directive': 'skip',
-            'arguments': 'next if(sys.version_info >= (3, 0), reason="only true on python 2")',
+            'arguments': 'next if(True, reason="skip 1")',
             'options': {},
             'source': ''
         }),
-        LexedRegion(211, 288, {
+        LexedRegion(100, 142, {
             'directive': 'skip',
-            'arguments': 'start if(sys.version_info < (3, 0), reason="only true on python 3")',
+            'arguments': 'start if(False, reason="skip 2")',
             'options': {},
             'source': ''
         }),
-        LexedRegion(477, 490, {
+        LexedRegion(205, 218, {
             'directive': 'skip',
             'arguments': 'end',
             'options': {},
