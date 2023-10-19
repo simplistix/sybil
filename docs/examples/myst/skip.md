@@ -57,3 +57,12 @@ And here we can see some pseudo-code that will work in a future release:
 
 % skip: end
 
+<!-- skip: next -->
+
+This would still be wrong:
+
+```python
+>>> 1 == 1
+True
+```
+

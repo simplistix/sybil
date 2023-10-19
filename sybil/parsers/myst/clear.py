@@ -1,7 +1,7 @@
 import re
 
 from sybil.parsers.abstract import AbstractClearNamespaceParser
-from .lexers import DirectiveInPercentCommentLexer
+from .lexers import DirectiveInPercentCommentLexer, DirectiveInHTMLCommentLexer
 
 
 class ClearNamespaceParser(AbstractClearNamespaceParser):
@@ -10,4 +10,7 @@ class ClearNamespaceParser(AbstractClearNamespaceParser):
     """
 
     def __init__(self) -> None:
-        super().__init__(DirectiveInPercentCommentLexer('clear-namespace'))
+        super().__init__([
+            DirectiveInPercentCommentLexer('clear-namespace'),
+            DirectiveInHTMLCommentLexer('clear-namespace'),
+        ])

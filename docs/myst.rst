@@ -227,6 +227,14 @@ For example:
   :language: markdown
   :lines: 1-8
 
+You can also use HTML-style comments:
+
+
+.. literalinclude:: examples/myst/skip.md
+  :language: markdown
+  :lines: 60-67
+
+
 If you need to skip a collection of examples, this can be done as follows:
 
 .. literalinclude:: examples/myst/skip.md
@@ -275,7 +283,7 @@ The above examples could be checked with the following configuration:
   check_path(
       'examples/myst/skip.md',
       sybil,
-      expected=15,
+      expected=17,
       expected_skips=('not yet working', 'Fix in v5', 'Fix in v5'),
   )
 
@@ -302,3 +310,13 @@ The following configuration is required:
 
   from tests.helpers import check_path
   check_path('examples/myst/clear.md', sybil, expected=4)
+
+You can also used HTML-style comments as follows:
+
+.. literalinclude:: examples/myst/clear-html-comment.md
+  :language: rest
+
+.. invisible-code-block: python
+
+  from tests.helpers import check_path
+  check_path('examples/myst/clear-html-comment.md', sybil, expected=4)

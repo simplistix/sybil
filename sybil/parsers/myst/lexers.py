@@ -138,9 +138,11 @@ class DirectiveInPercentCommentLexer(BlockLexer):
 
 
 DIRECTIVE_IN_HTML_COMMENT_START = (
-    r"^(?P<prefix>[ \t]*)<!---[ \t]*(?P<directive>{directive}):[ \t]*(?P<arguments>{arguments})$\n"
+    r"^(?P<prefix>[ \t]*)<!--+\s*(?:;\s*)?(?P<directive>{directive}):?[ \t]"
+    r"*(?P<arguments>{arguments})[ \t]*"
+    r"(?:$\n|(?=--+>))"
 )
-DIRECTIVE_IN_HTML_COMMENT_END = '(?<=\n){prefix}--->'
+DIRECTIVE_IN_HTML_COMMENT_END = '(?:(?<=\n){prefix})?--+>'
 
 
 class DirectiveInHTMLCommentLexer(BlockLexer):
@@ -174,7 +176,7 @@ class DirectiveInHTMLCommentLexer(BlockLexer):
     """
 
     def __init__(
-            self, directive: str, arguments: str = '.*', mapping: Optional[Dict[str, str]] = None
+            self, directive: str, arguments: str = '.*?', mapping: Optional[Dict[str, str]] = None
     ) -> None:
         super().__init__(
             start_pattern=re.compile(
