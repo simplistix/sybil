@@ -77,7 +77,7 @@ This is an <!-- inline comment -->.
   assert 1 + 1 == 2
   ```
 
-- Parsing from bullets is the pragmatic reason meantioned above ;-)
+- Here's one indented because it's in a bullet list:
 
     <!---  invisible-code: py
     
@@ -95,3 +95,26 @@ This is an <!-- inline comment -->.
   ---
   This, too, is a directive content
   ```
+
+
+<!-- skip: next -->
+
+<!-- skip: start if("some stuff here", reason='Something') -->
+
+<!-- 
+skip: and 
+-->
+
+<!-- 
+; skip: end 
+
+
+
+Other stuff here just gets ignored
+
+-->
+
+<!--  ; skip: also  -->
+
+
+<!-- clear-namespace -->
