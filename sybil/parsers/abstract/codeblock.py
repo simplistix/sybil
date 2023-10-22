@@ -32,14 +32,15 @@ class AbstractCodeBlockParser:
         if language is not None:
             self.language = language
         assert self.language, 'language must be specified!'
-        if evaluator is not None:
-            self.evaluate = evaluator
+        self._evaluator = evaluator
 
     def evaluate(self, example: Example) -> Optional[str]:
         """
         The :any:`Evaluator` used for regions yields by this parser can be provided by
         implementing this method.
         """
+        if self._evaluator is not None:
+            return self._evaluator(example)
         raise NotImplementedError
 
     def __call__(self, document: Document) -> Iterable[Region]:
