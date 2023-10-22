@@ -1,20 +1,20 @@
 from dataclasses import dataclass
-from typing import Optional, Dict
+from typing import Any, Optional, Dict
 from unittest import SkipTest
 
 from sybil import Example, Document
 from sybil.example import NotEvaluated
-from sybil.typing import Evaluator
 
 
 class If:
 
-    def __init__(self, default_reason) -> None:
+    def __init__(self, default_reason: str) -> None:
         self.default_reason = default_reason
 
-    def __call__(self, condition, reason=None):
+    def __call__(self, condition: Any, reason: Optional[str] = None) -> Optional[str]:
         if condition:
             return reason or self.default_reason
+        return None
 
 
 @dataclass
@@ -22,7 +22,7 @@ class SkipState:
     active: bool = True
     remove: bool = False
     exception: Optional[Exception] = None
-    last_action: str = None
+    last_action: Optional[str] = None
 
 
 class Skipper:
@@ -57,7 +57,7 @@ class Skipper:
         document.pop_evaluator(self)
         del self.document_state[document]
 
-    def evaluate_skip_example(self, example: Example):
+    def evaluate_skip_example(self, example: Example) -> None:
         state = self.state_for(example)
         action, reason = example.parsed
 
