@@ -9,6 +9,7 @@ from typing import Union, TYPE_CHECKING, Tuple, Optional
 import pytest
 from _pytest import fixtures
 from _pytest._code.code import TerminalRepr, Traceback, ExceptionInfo
+from _pytest._io import TerminalWriter
 from _pytest.fixtures import FuncFixtureInfo
 from _pytest.main import Session
 from _pytest.nodes import Collector
@@ -28,11 +29,11 @@ example_module_path = abspath(getsourcefile(example_module))
 
 class SybilFailureRepr(TerminalRepr):
 
-    def __init__(self, item, message) -> None:
+    def __init__(self, item: 'SybilItem', message: str) -> None:
         self.item = item
         self.message = message
 
-    def toterminal(self, tw):
+    def toterminal(self, tw: TerminalWriter) -> None:
         tw.line()
         for line in self.message.splitlines():
             tw.line(line)
