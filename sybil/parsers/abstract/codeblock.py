@@ -27,13 +27,17 @@ class AbstractCodeBlockParser:
 
     language: str
 
-    def __init__(self, lexers: Sequence[Lexer], language: Optional[str] = None, evaluator: Optional[Evaluator] = None) -> None:
+    def __init__(
+            self,
+            lexers: Sequence[Lexer],
+            language: Optional[str] = None,
+            evaluator: Optional[Evaluator] = None,
+    ) -> None:
         self.lexers = lexers
         if language is not None:
             self.language = language
         assert self.language, 'language must be specified!'
-        if evaluator is not None:
-            self.evaluate = evaluator
+        self._evaluator: Optional[Evaluator] = evaluator
 
     def evaluate(self, example: Example) -> Optional[str]:
         """
@@ -45,4 +49,5 @@ class AbstractCodeBlockParser:
     def __call__(self, document: Document) -> Iterable[Region]:
         for lexed in chain(*(lexer(document) for lexer in self.lexers)):
             if lexed.lexemes['arguments'] == self.language:
-                yield Region(lexed.start, lexed.end, lexed.lexemes['source'], self.evaluate)
+                evaluator = self._evaluator or self.evaluate
+                yield Region(lexed.start, lexed.end, lexed.lexemes['source'], evaluator)
