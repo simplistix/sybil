@@ -1,8 +1,11 @@
 from itertools import chain
-from typing import Iterable, Sequence, Optional
+from typing import Iterable, Sequence, Optional, Callable
 
 from sybil import Region, Document, Example
-from sybil.typing import Evaluator, Lexer
+from sybil.typing import Evaluator, Lexer, Parser
+from .doctest import DocTestStringParser
+from ...evaluators.doctest import DocTestEvaluator
+from ...evaluators.python import PythonEvaluator
 
 
 class AbstractCodeBlockParser:
@@ -51,3 +54,26 @@ class AbstractCodeBlockParser:
             if lexed.lexemes['arguments'] == self.language:
                 evaluator = self._evaluator or self.evaluate
                 yield Region(lexed.start, lexed.end, lexed.lexemes['source'], evaluator)
+
+
+class PythonDocTestOrCodeBlockParser:
+
+    codeblock_parser_class: Callable[[str, Evaluator], Parser]
+
+    def __init__(self, future_imports: Sequence[str] = (), doctest_optionflags: int = 0) -> None:
+        self.doctest_parser = DocTestStringParser(
+            DocTestEvaluator(doctest_optionflags)
+        )
+        self.codeblock_parser = self.codeblock_parser_class(
+            'python', PythonEvaluator(future_imports)
+        )
+
+    def __call__(self, document: Document) -> Iterable[Region]:
+        for region in self.codeblock_parser(document):
+            source = region.parsed
+            if region.parsed.startswith('>>>'):
+                for doctest_region in self.doctest_parser(source, document.path):
+                    doctest_region.adjust(region, source)
+                    yield doctest_region
+            else:
+                yield region

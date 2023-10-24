@@ -1,14 +1,12 @@
-from typing import Optional, Iterable, Sequence
+from typing import Optional
 
-from sybil.evaluators.python import PythonEvaluator
-from sybil.parsers.abstract import AbstractCodeBlockParser, DocTestStringParser
+from sybil.parsers.abstract import AbstractCodeBlockParser
 from sybil.typing import Evaluator
 from .lexers import (
     DirectiveLexer, FencedCodeBlockLexer, DirectiveInPercentCommentLexer,
     DirectiveInHTMLCommentLexer
 )
-from ... import Document, Region
-from ...evaluators.doctest import DocTestEvaluator
+from ..abstract.codeblock import PythonDocTestOrCodeBlockParser
 
 
 class CodeBlockParser(AbstractCodeBlockParser):
@@ -23,7 +21,9 @@ class CodeBlockParser(AbstractCodeBlockParser):
         You can also override the :meth:`evaluate` method below.
     """
 
-    def __init__(self, language: Optional[str] = None, evaluator: Optional[Evaluator] = None) -> None:
+    def __init__(
+            self, language: Optional[str] = None, evaluator: Optional[Evaluator] = None
+    ) -> None:
         super().__init__(
             [
                 FencedCodeBlockLexer(
@@ -47,7 +47,7 @@ class CodeBlockParser(AbstractCodeBlockParser):
         )
 
 
-class PythonCodeBlockParser(CodeBlockParser):
+class PythonCodeBlockParser(PythonDocTestOrCodeBlockParser):
     """
     A :any:`Parser` for Python :ref:`myst-codeblock-parser` examples.
 
@@ -61,18 +61,4 @@ class PythonCodeBlockParser(CodeBlockParser):
         when evaluating the doctest examples found by this parser.
     """
 
-    language = 'python'
-
-    def __init__(self, future_imports: Sequence[str] = (), doctest_optionflags: int = 0) -> None:
-        super().__init__(evaluator=PythonEvaluator(future_imports))
-        self.doctest_parser = DocTestStringParser(DocTestEvaluator(doctest_optionflags))
-
-    def __call__(self, document: Document) -> Iterable[Region]:
-        for region in super().__call__(document):
-            source = region.parsed
-            if region.parsed.startswith('>>>'):
-                for doctest_region in self.doctest_parser(source, document.path):
-                    doctest_region.adjust(region, source)
-                    yield doctest_region
-            else:
-                yield region
+    codeblock_parser_class = CodeBlockParser
