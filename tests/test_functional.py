@@ -438,6 +438,36 @@ def test_myst(capsys: CaptureFixture[str], runner: str) -> None:
     if runner == PYTEST:
         out.then_find("Exception: boom!")
 
+
+@pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
+def test_markdown(capsys: CaptureFixture[str], runner: str) -> None:
+    results = run(capsys, runner, functional_sample('markdown'))
+    out = results.out
+
+    # Check all the tests are found:
+    out.assert_has_run(runner, '/doctest.md', line=7)
+    out.assert_has_run(runner, '/python.md', line=5)
+    out.assert_has_run(runner, '/python.md', line=11)
+    out.assert_has_run(runner, '/python.md', line=26)
+    out.assert_has_run(runner, '/python.md', line=32)
+    out.assert_has_run(runner, '/python.md', line=34)
+
+    # unittest treats exceptions as errors rather than failures,
+    # and they appear at the top of the output, hence the conditionals below.
+
+    # Check counts:
+    assert results.total == 1+5, results.out.text
+    if runner == PYTEST:
+        assert results.failures == 0 + 1, results.out.text
+        assert results.errors == 0, results.out.text
+    else:
+        assert results.failures == 0 + 0, results.out.text
+        assert results.errors == 1, results.out.text
+
+    # Check error text:
+    out.then_find("Exception: boom!")
+
+
 @skip_if_37_or_older()
 def test_codeblock_with_protocol_then_doctest() -> None:
     sybil = Sybil([PythonCodeBlockParser(), DocTestParser()])
