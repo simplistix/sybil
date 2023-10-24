@@ -1,9 +1,10 @@
 from testfixtures import compare
 
 from sybil.parsers.myst.lexers import (
-    FencedCodeBlockLexer, DirectiveLexer,
-    DirectiveInPercentCommentLexer, DirectiveInHTMLCommentLexer
+    DirectiveLexer,
+    DirectiveInPercentCommentLexer
 )
+from sybil.parsers.markdown.lexers import FencedCodeBlockLexer, DirectiveInHTMLCommentLexer
 from sybil.region import LexedRegion
 from .helpers import lex
 

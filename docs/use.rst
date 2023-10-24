@@ -101,15 +101,16 @@ The ``fixtures`` parameter is ignored.
 Parsers
 -------
 
-Sybil parsers are what extracts examples from source files
+Sybil parsers are what extract examples from source files
 and turns them into parsed examples with evaluators that can check if they are correct.
 The parsers available depend on the source language of the files containing the examples you wish
 to check:
 
 - For ReStructured Text, typically ``.rst`` or ``.txt`` files, see :doc:`ReST Parsers <rest>`.
 
-- For Markdown, typically ``.md`` files, :external+myst:doc:`MyST <index>` is supported.
-  See :doc:`myst`.
+- For Markdown, typically ``.md`` files, :doc:`CommonMark <markdown>`,
+  :doc:`GitHub Flavored Markdown <markdown>`
+  and :doc:`MyST <myst>`, along with other flavours, are supported.
 
 - For Python source code, typically ``.py`` files, it depends on the markup used in
   the docstrings; both the :doc:`ReST parsers <rest>` and :doc:`MyST parsers <myst>` will work.

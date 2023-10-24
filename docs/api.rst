@@ -88,16 +88,28 @@ ReST Parsing and Lexing
 
 .. autoclass:: sybil.parsers.rest.ClearNamespaceParser
 
+Markdown Parsing and Lexing
+---------------------------
+
+.. autoclass:: sybil.parsers.markdown.lexers.FencedCodeBlockLexer
+
+.. autoclass:: sybil.parsers.markdown.lexers.DirectiveInHTMLCommentLexer
+
+.. autoclass:: sybil.parsers.markdown.CodeBlockParser
+    :inherited-members:
+
+.. autoclass:: sybil.parsers.markdown.PythonCodeBlockParser
+
+.. autoclass:: sybil.parsers.markdown.SkipParser
+
+.. autoclass:: sybil.parsers.markdown.ClearNamespaceParser
+
 MyST Parsing and Lexing
 -----------------------
-
-.. autoclass:: sybil.parsers.myst.lexers.FencedCodeBlockLexer
 
 .. autoclass:: sybil.parsers.myst.lexers.DirectiveLexer
 
 .. autoclass:: sybil.parsers.myst.lexers.DirectiveInPercentCommentLexer
-
-.. autoclass:: sybil.parsers.myst.lexers.DirectiveInHTMLCommentLexer
 
 .. autoclass:: sybil.parsers.myst.CodeBlockParser
     :inherited-members:

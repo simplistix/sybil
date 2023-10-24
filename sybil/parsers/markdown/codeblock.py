@@ -2,16 +2,13 @@ from typing import Optional
 
 from sybil.parsers.abstract import AbstractCodeBlockParser
 from sybil.typing import Evaluator
-from .lexers import (
-    DirectiveLexer, DirectiveInPercentCommentLexer
-)
-from ..markdown.lexers import FencedCodeBlockLexer, DirectiveInHTMLCommentLexer
 from ..abstract.codeblock import PythonDocTestOrCodeBlockParser
+from ..markdown.lexers import FencedCodeBlockLexer, DirectiveInHTMLCommentLexer
 
 
 class CodeBlockParser(AbstractCodeBlockParser):
     """
-    A :any:`Parser` for :ref:`myst-codeblock-parser` examples.
+    A :any:`Parser` for :ref:`markdown-codeblock-parser` examples.
 
     :param language:
         The language that this parser should look for.
@@ -30,14 +27,6 @@ class CodeBlockParser(AbstractCodeBlockParser):
                     language=r'.+',
                     mapping={'language': 'arguments', 'source': 'source'},
                 ),
-                DirectiveLexer(
-                    directive='code-block',
-                    arguments='.+',
-                ),
-                DirectiveInPercentCommentLexer(
-                    directive=r'(invisible-)?code(-block)?',
-                    arguments='.+',
-                ),
                 DirectiveInHTMLCommentLexer(
                     directive=r'(invisible-)?code(-block)?',
                     arguments='.+',
@@ -49,7 +38,7 @@ class CodeBlockParser(AbstractCodeBlockParser):
 
 class PythonCodeBlockParser(PythonDocTestOrCodeBlockParser):
     """
-    A :any:`Parser` for Python :ref:`myst-codeblock-parser` examples.
+    A :any:`Parser` for Python :ref:`markdown-codeblock-parser` examples.
 
     :param future_imports:
         An optional list of strings that will be turned into
