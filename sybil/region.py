@@ -22,7 +22,7 @@ class Lexeme(str):
         return Lexeme(stripped, self.offset + removed, self.line_offset + removed)
 
 
-LexemeMapping = Dict[str, Union[str, Lexeme, Dict[str, str], None]]
+LexemeMapping = Dict[str, Union[str, Lexeme, None]]
 
 
 class LexedRegion:
@@ -31,7 +31,7 @@ class LexedRegion:
     parsed or assigned an :any:`Evaluator`.
     """
 
-    def __init__(self, start: int, end: int, lexemes: Dict[str, Union[str, Lexeme]]) -> None:
+    def __init__(self, start: int, end: int, lexemes: LexemeMapping) -> None:
         #: The start of this lexed region within the document's :attr:`~sybil.Document.text`.
         self.start: int = start
         #: The end of this lexed region within the document's :attr:`~sybil.Document.text`.
