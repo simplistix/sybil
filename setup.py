@@ -25,6 +25,7 @@ setup(
     python_requires=">=3.7",
     extras_require=dict(
         test=[
+            'mypy',
             'myst_parser',
             'pytest>=7.1.0',
             'pytest-cov',
