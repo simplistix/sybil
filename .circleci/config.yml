@@ -18,6 +18,9 @@ common: &common
               - "'pytest>=7.1,<7.4'"
               - "'pytest>=7.4'"
 
+    - python/typing:
+        packages: sybil
+
     - python/coverage:
         name: coverage
         requires:
