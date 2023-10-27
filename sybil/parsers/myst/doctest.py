@@ -6,7 +6,7 @@ from sybil.parsers.abstract import DocTestStringParser
 from .lexers import DirectiveLexer
 
 
-class DocTestDirectiveParser(DirectiveLexer):
+class DocTestDirectiveParser:
     """
     A :any:`Parser` for :ref:`doctest directive <myst-doctest-parser>` examples.
 
@@ -16,11 +16,11 @@ class DocTestDirectiveParser(DirectiveLexer):
 
     """
     def __init__(self, optionflags: int = 0) -> None:
-        super().__init__('doctest')
+        self.lexer = DirectiveLexer('doctest')
         self.string_parser = DocTestStringParser(DocTestEvaluator(optionflags))
 
     def __call__(self, document: Document) -> Iterable[Region]:
-        for lexed_region in super().__call__(document):
+        for lexed_region in self.lexer(document):
             source = lexed_region.lexemes['source']
             for region in self.string_parser(source, document.path):
                 region.adjust(lexed_region, source)
