@@ -1,7 +1,7 @@
 import re
 
 import pytest
-from testfixtures import ShouldRaise, compare, ShouldAssert
+from testfixtures import ShouldRaise, compare
 from testfixtures.comparison import compare_text, compare_dict
 
 from sybil import LexedRegion, Lexeme
@@ -19,9 +19,18 @@ def test_examples_from_parsing_tests() -> None:
 
 def test_repr() -> None:
     compare(
-        str(LexedRegion(36, 56, {'language': 'python', 'foo': None, 'source': 'X'*1000})),
+        str(LexedRegion(36, 56, {
+            'language': 'python',
+            'foo': None,
+            'source': 'X'*1000,
+            'bar': {},
+            'baz': {f'a{i}': 'b' for i in range(11)},
+        })),
         expected="<LexedRegion start=36 end=56 "
-                 "{'language': 'python', 'foo': None, 'source': 'XXXXXXXXXX...'}>"
+                 "{'language': 'python', 'foo': None, 'source': 'XXXXXXXXXX...', "
+                 "'bar': {}, 'baz': {'a0': 'b', 'a1': 'b', 'a2': 'b', 'a3': 'b', "
+                 "'a4': 'b', 'a5': 'b', 'a6': 'b', 'a7': 'b', 'a8': 'b', 'a9': 'b', "
+                 "'a10': 'b'}}>"
     )
 
 

@@ -42,7 +42,7 @@ class LexedRegion:
     def __repr__(self) -> str:
         lexemes_for_repr = {}
         for name, lexeme in self.lexemes.items():
-            if lexeme and len(lexeme) > 10:
+            if isinstance(lexeme, str) and len(lexeme) > 10:
                 lexeme = lexeme[:10]+'...'
             lexemes_for_repr[name] = lexeme
         return f'<LexedRegion start={self.start} end={self.end} {lexemes_for_repr}>'
