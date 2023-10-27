@@ -5,7 +5,7 @@ from bisect import bisect
 from io import open
 from itertools import chain
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, cast
 from typing import List, Iterator, Pattern, Tuple, Match
 
 from .example import Example, SybilFailure, NotEvaluated
@@ -220,7 +220,9 @@ class PythonDocStringDocument(PythonDocument):
             ):
                 continue
             node_start = line_offsets.get(docstring.lineno-1, docstring.col_offset)
-            node_end = line_offsets.get(docstring.end_lineno-1, docstring.end_col_offset)
+            end_lineno = docstring.end_lineno or 1
+            end_col_offset = docstring.end_col_offset or 0
+            node_end = line_offsets.get(end_lineno-1, end_col_offset)
             punc = DOCSTRING_PUNCTUATION.match(python_source_code, node_start, node_end)
             punc_size = len(punc.group(1))
             start = punc.end()
