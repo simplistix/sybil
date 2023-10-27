@@ -22,7 +22,8 @@ class Lexeme(str):
         return Lexeme(stripped, self.offset + removed, self.line_offset + removed)
 
 
-LexemeMapping = Dict[str, Union[str, Lexeme, None]]
+# In the future, this could likely be a TypedDict when Python 3.8 is the minimum supported version
+LexemeMapping = Dict[str, Any]
 
 
 class LexedRegion:
