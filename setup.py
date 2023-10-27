@@ -22,6 +22,7 @@ setup(
         'Programming Language :: Python :: 3',
     ],
     packages=find_packages(exclude=['tests', 'functional_tests']),
+    package_data={"sybil": ["py.typed"]},
     python_requires=">=3.7",
     extras_require=dict(
         test=[
