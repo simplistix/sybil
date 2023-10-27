@@ -29,14 +29,14 @@ class DocTestStringParser(BaseDocTestParser):
         # a cut down version of doctest.DocTestParser.parse:
         charno, lineno = 0, 0
         # Find all doctest examples in the string:
-        for m in self._EXAMPLE_RE.finditer(string):  # type: ignore
+        for m in self._EXAMPLE_RE.finditer(string):  # type: ignore[attr-defined]
             # Update lineno (lines before this example)
             lineno += string.count('\n', charno, m.start())
             # Extract info from the regexp match.
-            source, options, want, exc_msg = self._parse_example(m, name, lineno)  # type: ignore
+            source, options, want, exc_msg = self._parse_example(m, name, lineno)  # type: ignore[attr-defined]
 
             # Create an Example, and add it to the list.
-            if not self._IS_BLANK_OR_COMMENT(source):  # type: ignore
+            if not self._IS_BLANK_OR_COMMENT(source):  # type: ignore[attr-defined]
                 yield Region(
                     m.start(),
                     m.end(),
