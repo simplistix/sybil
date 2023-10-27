@@ -1,7 +1,7 @@
 import inspect
 import sys
 from pathlib import Path
-from typing import Any, Dict, Sequence, Callable, Collection, Mapping, Optional, Type, List
+from typing import Any, Dict, Sequence, Callable, Collection, Mapping, Optional, Type, List, Tuple
 
 from .document import Document, PythonDocStringDocument, PythonDocument
 from .typing import Parser
@@ -95,6 +95,7 @@ class Sybil:
         self.parsers: Sequence[Parser] = parsers
         current_frame = inspect.currentframe()
         calling_frame = current_frame.f_back
+        assert calling_frame is not None, 'Cannot find previous frame, which is weird...'
         calling_filename = inspect.getframeinfo(calling_frame).filename
         start_path = Path(calling_filename).parent / path
         self.path: Path = start_path.absolute()
@@ -107,7 +108,7 @@ class Sybil:
         self.filenames = filenames
         self.setup: Optional[Callable[[Dict[str, Any]], None]] = setup
         self.teardown: Optional[Callable[[Dict[str, Any]], None]] = teardown
-        self.fixtures: Sequence[str] = fixtures
+        self.fixtures: Tuple[str, ...] = tuple(fixtures)
         self.encoding: str = encoding
         self.document_types = DEFAULT_DOCUMENT_TYPES.copy()
         if document_types:
