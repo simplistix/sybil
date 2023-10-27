@@ -9,6 +9,7 @@ from typing import Any, Dict
 from typing import List, Iterator, Pattern, Tuple, Match
 
 from .example import Example, SybilFailure, NotEvaluated
+from .exceptions import LexingException
 from .python import import_path
 from .region import Region
 from .text import LineNumberOffsets
@@ -124,6 +125,11 @@ class Document:
         for start_match in re.finditer(start_pattern, self.text):
             source_start = start_match.end()
             end_match = end_pattern.search(self.text, source_start)
+            if end_match is None:
+                raise LexingException(
+                    f'Could not match {end_pattern.pattern!r} in {self.path}:\n'
+                    f'{self.text[source_start:]!r}'
+                )
             source_end = end_match.start()
             source = self.text[source_start:source_end]
             yield start_match, end_match, source

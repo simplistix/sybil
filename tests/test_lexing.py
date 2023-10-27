@@ -5,7 +5,8 @@ from testfixtures import ShouldRaise, compare, ShouldAssert
 from testfixtures.comparison import compare_text, compare_dict
 
 from sybil import LexedRegion, Lexeme
-from sybil.parsers.abstract.lexers import BlockLexer, LexingException
+from sybil.parsers.abstract.lexers import BlockLexer
+from sybil.exceptions import LexingException
 from .helpers import lex, sample_path
 
 

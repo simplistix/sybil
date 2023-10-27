@@ -7,12 +7,12 @@ from pathlib import Path
 from typing import Iterable
 
 from testfixtures import compare, ShouldRaise
-from testfixtures.mock import Mock
 
 from sybil import Region, Example
 from sybil.document import PythonDocStringDocument, Document
 from sybil.example import NotEvaluated, SybilFailure
-from .helpers import ast_docstrings, skip_if_37_or_older, parse
+from sybil.exceptions import LexingException
+from .helpers import ast_docstrings, skip_if_37_or_older, parse, sample_path
 
 
 @skip_if_37_or_older()
@@ -149,3 +149,12 @@ def test_nested_evaluators_not_evaluated_from_region():
     examples, namespace = parse('sample1.txt', parser, expected=1)
     with ShouldRaise(SybilFailure(examples[0], f'{evaluator!r} should not raise NotEvaluated()')):
         examples[0].evaluate()
+
+
+def test_find_region_sources_bad_end_match():
+    path = sample_path('lexing-fail.txt')
+    document = Document(Path(path).read_text(), path)
+    with ShouldRaise(LexingException(f"Could not match 'END' in {path}:\n'\\nEDN\\n'")):
+        tuple(document.find_region_sources(
+            start_pattern=re.compile('START'), end_pattern=re.compile('END'),
+        ))

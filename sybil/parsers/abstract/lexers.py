@@ -3,10 +3,8 @@ import textwrap
 from typing import Optional, Dict, Iterable, Pattern
 
 from sybil import Document
+from sybil.exceptions import LexingException
 from sybil.region import LexedRegion, Lexeme
-
-class LexingException(Exception):
-    pass
 
 
 class BlockLexer:
