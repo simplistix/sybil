@@ -28,19 +28,27 @@ def test_myst_directives() -> None:
     lexer = DirectiveLexer(directive='[^}]+')
     compare(lex('myst-lexers.md', lexer), expected=[
         LexedRegion(110, 145, {
-            'directive': 'code-block', 'arguments': 'python',
+            'directive': 'code-block',
+            'arguments': 'python',
+            'options': {},
             'source': '>>> 1 + 1\n3\n',
         }),
         LexedRegion(188, 273, {
-            'directive': 'directivename', 'arguments': 'arguments',
+            'directive': 'directivename',
+            'arguments': 'arguments',
+            'options': {'key1': 'val1', 'key2': 'val2'},
             'source': 'This is\ndirective content\n',
         }),
         LexedRegion(330, 378, {
-            'directive': 'eval-rst', 'arguments': '',
+            'directive': 'eval-rst',
+            'arguments': '',
+            'options': {},
             'source': '.. doctest::\n\n    >>> 1 + 1\n    4\n',
         }),
         LexedRegion(1398, 1474, {
-            'directive': 'foo', 'arguments': 'bar',
+            'directive': 'foo',
+            'arguments': 'bar',
+            'options': {'key1': 'val1'},
             'source': 'This, too, is a directive content\n',
         }),
     ])
@@ -50,11 +58,15 @@ def test_examples_from_parsing_tests() -> None:
     lexer = DirectiveLexer(directive='code-block', arguments='python')
     compare(lex('myst-codeblock.md', lexer), expected=[
         LexedRegion(99, 151, {
-            'directive': 'code-block', 'arguments': 'python',
+            'directive': 'code-block',
+            'arguments': 'python',
+            'options': {},
             'source': "raise Exception('boom!')\n",
         }),
         LexedRegion(701, 748, {
-            'directive': 'code-block', 'arguments': 'python',
+            'directive': 'code-block',
+            'arguments': 'python',
+            'options': {},
             'source': 'define_this = 1\n',
         }),
     ])
@@ -63,7 +75,7 @@ def test_examples_from_parsing_tests() -> None:
 def test_myst_directives_with_mapping() -> None:
     lexer = DirectiveLexer(directive='directivename', arguments='.*', mapping={'arguments': 'foo'})
     compare(lex('myst-lexers.md', lexer), expected=[
-        LexedRegion(188, 273, {'foo': 'arguments'}),
+        LexedRegion(188, 273, {'foo': 'arguments', 'options': {}}),
     ])
 
 
@@ -167,5 +179,120 @@ def test_myst_html_comment_invisible_clear_directive() -> None:
             'directive': 'clear-namespace',
             'arguments': '',
             'source': '',
+        }),
+    ])
+
+
+def test_lexing_directives():
+    lexer = DirectiveLexer('[^}]+')
+    compare(lex('myst-lexing-directives.md', lexer), expected=[
+        LexedRegion(55, 233, {
+            'directive': 'note',
+            'arguments': 'This is a note admonition.',
+            'options': {},
+            'source': ('This is the second line of the first paragraph.\n'
+                       '\n'
+                       '- The note contains all indented body elements\n'
+                       '  following.\n'
+                       '- It includes this bullet list.\n'),
+        }),
+        LexedRegion(238, 317, {
+            'directive': 'admonition',
+            'arguments': 'And, by the way...',
+            'options': {},
+            'source': 'You can make up your own admonition too.\n',
+        }),
+        LexedRegion(322, 383, {
+            'directive': 'sample',
+            'arguments': '',
+            'options': {},
+            'source': 'This directive has no arguments, just a body.\n',
+        }),
+        LexedRegion(455, 478, {
+            'directive': 'image',
+            'arguments': 'picture.png',
+            'options': {},
+            'source': '',
+        }),
+        LexedRegion(483, 592, {
+            'directive': 'image',
+            'arguments': 'picture.jpeg',
+            'options': {
+                'height': '100px',
+                'width': '200 px',
+                'scale': '50 %',
+                'alt': 'alternate text',
+                'align': 'right',
+            },
+            'source': '',
+        }),
+        LexedRegion(597, 1311, {
+            'directive': 'figure',
+            'arguments': 'picture.png',
+            'options': {
+                'alt': 'map to buried treasure',
+                'scale': '50 %',
+            },
+            'source': ('This is the caption of the figure (a simple paragraph).\n'
+                       '\n'
+                       'The legend consists of all elements after the caption.  In this\n'
+                       'case, the legend consists of this paragraph and the following\n'
+                       'table:\n'
+                       '\n'
+                       '+-----------------------+-----------------------+\n'
+                       '| Symbol                | Meaning               |\n'
+                       '+=======================+=======================+\n'
+                       '| .. image:: tent.png   | Campground            |\n'
+                       '+-----------------------+-----------------------+\n'
+                       '| .. image:: waves.png  | Lake                  |\n'
+                       '+-----------------------+-----------------------+\n'
+                       '| .. image:: peak.png   | Mountain              |\n'
+                       '+-----------------------+-----------------------+\n'
+                       '\n')
+        }),
+        LexedRegion(1317, 1449, {
+            'directive': 'topic',
+            'arguments': 'Topic Title',
+            'options': {},
+            'source': ('Subsequent indented lines comprise\n'
+                       'the body of the topic, and are\n'
+                       'interpreted as body elements.\n')
+        }),
+        LexedRegion(1506, 1589, {
+            'directive': 'topic',
+            'arguments': 'example.cfg',
+            'options': {'class': 'read-file'},
+            'source': '::\n\n  [A Section]\n  dir = frob\n'
+        }),
+        LexedRegion(1612, 1801, {
+            'directive': 'sidebar',
+            'arguments': 'Optional Sidebar Title',
+            'options': {'subtitle': 'Optional Sidebar Subtitle'},
+            'source': ('Subsequent indented lines comprise\n'
+                       'the body of the sidebar, and are\n'
+                       'interpreted as body elements.\n')
+        }),
+        LexedRegion(1807, 2003, {
+            'directive': 'code-block',
+            'arguments': 'python',
+            'options': {'lineno-start': 10, 'emphasize-lines': '1, 3',
+                        'caption': 'This is my\nmulti-line caption. It is *pretty nifty* ;-)\n'},
+            'source': "a = 2\nprint('my 1st line')\nprint(f'my {a}nd line')\n",
+        }),
+        LexedRegion(2008, 2210, {
+            'directive': 'eval-rst',
+            'arguments': '',
+            'options': {},
+            'source': (
+                '.. figure:: img/fun-fish.png\n'
+                '  :width: 100px\n'
+                '  :name: rst-fun-fish\n'
+                '\n'
+                '  Party time!\n'
+                '\n'
+                'A reference from inside: :ref:`rst-fun-fish`\n'
+                '\n'
+                'A reference from outside: :ref:`syntax/directives/parsing`\n'
+            )
         }),
     ])

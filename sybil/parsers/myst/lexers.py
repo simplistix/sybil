@@ -1,13 +1,26 @@
 import re
-from typing import Optional, Dict
+from typing import Optional, Dict, Iterable
 
+from sybil import Document, LexedRegion
 from sybil.parsers.abstract.lexers import BlockLexer
 from sybil.parsers.markdown.lexers import CODEBLOCK_END_TEMPLATE
+from sybil.parsers.rest.lexers import parse_options_and_source
 
 DIRECTIVE_START_TEMPLATE = (
     r"^(?P<prefix>[ \t]*)```\{{(?P<directive>{directive})}} ?(?P<arguments>{arguments})$\n"
-    r"(\1---\n(.+\n)*\1---\n)?"
+    r'(?P<options>(?:\1[ \t]+:[\w-]*:[^\n]*\n)+)?'
+    r"(\1---\n(?P<yaml_options>(?:.+\n)*)\1---\n)?"
 )
+
+
+def parse_yaml_options(lexed: LexedRegion) -> None:
+    lexemes = lexed.lexemes
+    yaml_options = lexemes.pop('yaml_options', None)
+    if yaml_options is not None:
+        # import here to avoid a dependency on PyYAML except where it's really needed:
+        from yaml import safe_load
+        options = safe_load(yaml_options)
+        lexemes['options'].update(options)
 
 
 class DirectiveLexer(BlockLexer):
@@ -54,6 +67,12 @@ class DirectiveLexer(BlockLexer):
             end_pattern_template=CODEBLOCK_END_TEMPLATE,
             mapping=mapping,
         )
+
+    def __call__(self, document: Document) -> Iterable[LexedRegion]:
+        for lexed in super().__call__(document):
+            parse_options_and_source(lexed)
+            parse_yaml_options(lexed)
+            yield lexed
 
 
 DIRECTIVE_IN_PERCENT_COMMENT_START = (

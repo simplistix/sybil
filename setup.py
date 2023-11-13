@@ -32,6 +32,7 @@ setup(
             'pytest-cov',
             'seedir',
             'testfixtures',
+            'types-PyYAML',
             ],
         build=[
             'furo',

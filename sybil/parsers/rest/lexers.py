@@ -15,6 +15,18 @@ OPTIONS_PATTERN = re.compile(r'[^:]+:(?P<name>[^:]+):[ \t]*(?P<value>[^\n]+)\n')
 END_PATTERN_TEMPLATE = r'(\n?\Z|\n[ \t]{{0,{len_prefix}}}(?=\S|\Z))'
 
 
+def parse_options_and_source(lexed: LexedRegion) -> None:
+    lexemes = lexed.lexemes
+    raw_options = lexemes.pop('options', None)
+    options = lexemes['options'] = {}
+    if raw_options:
+        for match in OPTIONS_PATTERN.finditer(raw_options):
+            options[match['name']] = match['value']
+    source = lexemes.get('source')
+    if source:
+        lexemes['source'] = source.strip_leading_newlines()
+
+
 class DirectiveLexer(BlockLexer):
     """
     A :class:`~sybil.parsers.abstract.lexers.BlockLexer` for ReST directives that extracts the
@@ -62,13 +74,7 @@ class DirectiveLexer(BlockLexer):
 
     def __call__(self, document: Document) -> Iterable[LexedRegion]:
         for lexed in super().__call__(document):
-            lexemes = lexed.lexemes
-            raw_options = lexemes.pop('options')
-            options = lexemes['options'] = {}
-            if raw_options:
-                for match in OPTIONS_PATTERN.finditer(raw_options):
-                    options[match['name']] = match['value']
-            lexemes['source'] = lexemes['source'].strip_leading_newlines()
+            parse_options_and_source(lexed)
             yield lexed
 
 
