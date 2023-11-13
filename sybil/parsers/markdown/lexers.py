@@ -4,7 +4,7 @@ from typing import Optional, Dict
 from sybil.parsers.abstract.lexers import BlockLexer
 
 CODEBLOCK_START_TEMPLATE = r"^(?P<prefix>[ \t]*)```(?P<language>{language})$\n"
-CODEBLOCK_END_TEMPLATE = r"(?<=\n){prefix}```\n"
+CODEBLOCK_END_TEMPLATE = r"(?<=\n){prefix}```(:?\n|\Z)"
 
 
 class FencedCodeBlockLexer(BlockLexer):

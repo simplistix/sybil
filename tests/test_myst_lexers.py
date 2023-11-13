@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from testfixtures import compare
 
 from sybil.parsers.myst.lexers import (
@@ -6,7 +8,7 @@ from sybil.parsers.myst.lexers import (
 )
 from sybil.parsers.markdown.lexers import FencedCodeBlockLexer, DirectiveInHTMLCommentLexer
 from sybil.region import LexedRegion
-from .helpers import lex
+from .helpers import lex, sample_path, lex_text
 
 
 def test_fenced_code_block() -> None:
@@ -294,5 +296,18 @@ def test_lexing_directives():
                 '\n'
                 'A reference from outside: :ref:`syntax/directives/parsing`\n'
             )
+        }),
+    ])
+
+
+def test_directive_no_trailing_newline() -> None:
+    lexer = DirectiveLexer(directive='toctree')
+    text = Path(sample_path('myst-directive-no-trailing-newline.md')).read_text().rstrip('\n')
+    compare(lex_text(text, lexer), expected=[
+        LexedRegion(16, 65, {
+            'directive': 'toctree',
+            'arguments': '',
+            'options': {'maxdepth': '1'},
+            'source': 'flask\npyramid\ncustom\n',
         }),
     ])
