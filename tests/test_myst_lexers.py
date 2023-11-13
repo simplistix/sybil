@@ -304,7 +304,7 @@ def test_directive_no_trailing_newline() -> None:
     lexer = DirectiveLexer(directive='toctree')
     text = Path(sample_path('myst-directive-no-trailing-newline.md')).read_text().rstrip('\n')
     compare(lex_text(text, lexer), expected=[
-        LexedRegion(16, 65, {
+        LexedRegion(16, 64, {
             'directive': 'toctree',
             'arguments': '',
             'options': {'maxdepth': '1'},

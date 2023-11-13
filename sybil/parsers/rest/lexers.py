@@ -11,7 +11,7 @@ START_PATTERN_TEMPLATE =(
     r'(?P<options>(?:\1[ \t]+:[\w-]*:[^\n]*\n)+)?'
 )
 
-OPTIONS_PATTERN = re.compile(r'[^:]+:(?P<name>[^:]+):[ \t]*(?P<value>[^\n]+)\n')
+OPTIONS_PATTERN = re.compile(r'[^:]*:(?P<name>[^:]+):[ \t]*(?P<value>[^\n]+)\n')
 END_PATTERN_TEMPLATE = r'(\n?\Z|\n[ \t]{{0,{len_prefix}}}(?=\S|\Z))'
 
 

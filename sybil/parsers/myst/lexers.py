@@ -8,7 +8,7 @@ from sybil.parsers.rest.lexers import parse_options_and_source
 
 DIRECTIVE_START_TEMPLATE = (
     r"^(?P<prefix>[ \t]*)```\{{(?P<directive>{directive})}} ?(?P<arguments>{arguments})$\n"
-    r'(?P<options>(?:\1[ \t]+:[\w-]*:[^\n]*\n)+)?'
+    r'(?P<options>(?:\1[ \t]*:[\w-]*:[^\n]*\n)+)?'
     r"(\1---\n(?P<yaml_options>(?:.+\n)*)\1---\n)?"
 )
 
