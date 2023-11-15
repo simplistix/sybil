@@ -1,10 +1,18 @@
 import re
 import textwrap
-from typing import Optional, Dict, Iterable, Pattern
+from itertools import chain
+from typing import Optional, Dict, Iterable, Pattern, List
 
 from sybil import Document
 from sybil.exceptions import LexingException
 from sybil.region import LexedRegion, Lexeme
+from sybil.typing import Lexer
+
+
+class LexerCollection(List[Lexer]):
+
+    def __call__(self, document: Document) -> Iterable[LexedRegion]:
+        return chain(*(lexer(document) for lexer in self))
 
 
 class BlockLexer:

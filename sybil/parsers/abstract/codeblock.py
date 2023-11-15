@@ -1,9 +1,9 @@
-from itertools import chain
 from typing import Iterable, Sequence, Optional, Callable
 
 from sybil import Region, Document, Example
 from sybil.typing import Evaluator, Lexer, Parser
 from .doctest import DocTestStringParser
+from .lexers import LexerCollection
 from ...evaluators.doctest import DocTestEvaluator
 from ...evaluators.python import PythonEvaluator
 
@@ -36,7 +36,7 @@ class AbstractCodeBlockParser:
             language: Optional[str] = None,
             evaluator: Optional[Evaluator] = None,
     ) -> None:
-        self.lexers = lexers
+        self.lexers = LexerCollection(lexers)
         if language is not None:
             self.language = language
         assert self.language, 'language must be specified!'
@@ -50,7 +50,7 @@ class AbstractCodeBlockParser:
         raise NotImplementedError
 
     def __call__(self, document: Document) -> Iterable[Region]:
-        for lexed in chain(*(lexer(document) for lexer in self.lexers)):
+        for lexed in self.lexers(document):
             if lexed.lexemes['arguments'] == self.language:
                 evaluator = self._evaluator or self.evaluate
                 yield Region(lexed.start, lexed.end, lexed.lexemes['source'], evaluator)
