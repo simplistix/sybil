@@ -1,4 +1,4 @@
-from typing import Dict, Any, Union
+from typing import Dict, Any, Union, Optional
 
 from sybil.typing import Evaluator
 
@@ -70,7 +70,7 @@ class Region:
         as it should be.
     """
 
-    def __init__(self, start: int, end: int, parsed: Any, evaluator: Evaluator) -> None:
+    def __init__(self, start: int, end: int, parsed: Any, evaluator: Optional[Evaluator]) -> None:
         #: The start of this region within the document's :attr:`~sybil.Document.text`.
         self.start: int = start
         #: The end of this region within the document's :attr:`~sybil.Document.text`.
@@ -79,7 +79,7 @@ class Region:
         #: the :attr:`evaluator`.
         self.parsed: Any = parsed
         #: The :any:`Evaluator` for this region.
-        self.evaluator: Evaluator = evaluator
+        self.evaluator: Optional[Evaluator] = evaluator
 
     def __repr__(self) -> str:
         return '<Region start={} end={} {!r}>'.format(

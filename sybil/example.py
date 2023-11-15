@@ -69,4 +69,5 @@ class Example:
         )
 
     def evaluate(self) -> None:
-        self.document.evaluate(self, self.region.evaluator)
+        if self.region.evaluator is not None:
+            self.document.evaluate(self, self.region.evaluator)

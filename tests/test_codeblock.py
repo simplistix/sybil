@@ -86,18 +86,20 @@ class IgnoringPythonCodeBlockParser(PythonCodeBlockParser):
 
     def __call__(self, document):
         for lexed in self.lexers(document):
+            evaluator = self._evaluator
             options = lexed.lexemes.get('options')
             if options and 'ignore' in options:
-                continue
+                evaluator = None
             if lexed.lexemes['arguments'] == self.language:
-                yield Region(lexed.start, lexed.end, lexed.lexemes['source'], self._evaluator)
+                yield Region(lexed.start, lexed.end, lexed.lexemes['source'], evaluator)
 
 
 def test_other_functionality_inheritance():
     examples, namespace = parse(
-        'codeblock-subclassing.txt', IgnoringPythonCodeBlockParser(), expected=1
+        'codeblock-subclassing.txt', IgnoringPythonCodeBlockParser(), expected=2
     )
     examples[0].evaluate()
+    examples[1].evaluate()
 
 
 def future_import_checks(*future_imports):
