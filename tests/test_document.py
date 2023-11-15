@@ -16,7 +16,7 @@ from .helpers import ast_docstrings, skip_if_37_or_older, parse, sample_path
 
 
 @skip_if_37_or_older()
-def test_extract_docstring() -> None:
+def test_extract_docstring():
     """
     This is a function docstring.
     """
@@ -28,7 +28,7 @@ def test_extract_docstring() -> None:
 
 
 @skip_if_37_or_older()
-def test_all_docstrings_extracted_correctly(python_file) -> None:
+def test_all_docstrings_extracted_correctly(python_file):
     problems = []
     path, source = python_file
     expected = list(ast_docstrings(source))
@@ -61,11 +61,11 @@ def test_evaluator_returns_non_string():
 
 def test_nested_evaluators():
 
-    def record(example: Example, evaluator_name) -> None:
+    def record(example: Example, evaluator_name):
         (instruction, id_, param) = example.parsed
         example.namespace['results'].append((instruction, id_, param, evaluator_name))
 
-    def normal_evaluator(example: Example) -> None:
+    def normal_evaluator(example: Example):
         record(example, 'normal')
 
     class InstructionEvaluator:
@@ -140,7 +140,7 @@ def test_nested_evaluators():
 
 def test_nested_evaluators_not_evaluated_from_region():
 
-    def evaluator(example: Example) -> None:
+    def evaluator(example: Example):
         raise NotEvaluated()
 
     def parser(document: Document) -> Iterable[Region]:

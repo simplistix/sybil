@@ -11,7 +11,7 @@ from sybil.region import LexedRegion
 from .helpers import lex, sample_path, lex_text
 
 
-def test_fenced_code_block() -> None:
+def test_fenced_code_block():
     lexer = FencedCodeBlockLexer('py?thon')
     compare(lex('myst-lexers.md', lexer), expected=[
         LexedRegion(36, 56, {'language': 'python', 'source': '>>> 1+1\n2\n'}),
@@ -19,14 +19,14 @@ def test_fenced_code_block() -> None:
     ])
 
 
-def test_fenced_code_block_with_mapping() -> None:
+def test_fenced_code_block_with_mapping():
     lexer = FencedCodeBlockLexer('python', mapping={'source': 'body'})
     compare(lex('myst-lexers.md', lexer), expected=[
         LexedRegion(36, 56, {'body': '>>> 1+1\n2\n'})
     ])
 
 
-def test_myst_directives() -> None:
+def test_myst_directives():
     lexer = DirectiveLexer(directive='[^}]+')
     compare(lex('myst-lexers.md', lexer), expected=[
         LexedRegion(110, 145, {
@@ -56,7 +56,7 @@ def test_myst_directives() -> None:
     ])
 
 
-def test_examples_from_parsing_tests() -> None:
+def test_examples_from_parsing_tests():
     lexer = DirectiveLexer(directive='code-block', arguments='python')
     compare(lex('myst-codeblock.md', lexer), expected=[
         LexedRegion(99, 151, {
@@ -74,14 +74,14 @@ def test_examples_from_parsing_tests() -> None:
     ])
 
 
-def test_myst_directives_with_mapping() -> None:
+def test_myst_directives_with_mapping():
     lexer = DirectiveLexer(directive='directivename', arguments='.*', mapping={'arguments': 'foo'})
     compare(lex('myst-lexers.md', lexer), expected=[
         LexedRegion(188, 273, {'foo': 'arguments', 'options': {}}),
     ])
 
 
-def test_myst_percent_comment_invisible_directive() -> None:
+def test_myst_percent_comment_invisible_directive():
     lexer = DirectiveInPercentCommentLexer(
         directive='(invisible-)?code(-block)?'
     )
@@ -97,7 +97,7 @@ def test_myst_percent_comment_invisible_directive() -> None:
     ])
 
 
-def test_myst_percent_comment_invisible_directive_mapping() -> None:
+def test_myst_percent_comment_invisible_directive_mapping():
     lexer = DirectiveInPercentCommentLexer(
         directive='inv[^:]+', arguments='python', mapping={'arguments': 'language'}
     )
@@ -106,7 +106,7 @@ def test_myst_percent_comment_invisible_directive_mapping() -> None:
     ])
 
 
-def test_myst_html_comment_invisible_directive() -> None:
+def test_myst_html_comment_invisible_directive():
     lexer = DirectiveInHTMLCommentLexer(
         directive='(invisible-)?code(-block)?'
     )
@@ -143,7 +143,7 @@ def test_myst_html_comment_invisible_directive() -> None:
     ])
 
 
-def test_myst_html_comment_invisible_skip_directive() -> None:
+def test_myst_html_comment_invisible_skip_directive():
     lexer = DirectiveInHTMLCommentLexer(directive='skip')
     compare(lex('myst-lexers.md', lexer), show_whitespace=True, expected=[
         LexedRegion(1482, 1498, {
@@ -174,7 +174,7 @@ def test_myst_html_comment_invisible_skip_directive() -> None:
     ])
 
 
-def test_myst_html_comment_invisible_clear_directive() -> None:
+def test_myst_html_comment_invisible_clear_directive():
     lexer = DirectiveInHTMLCommentLexer('clear-namespace')
     compare(lex('myst-lexers.md', lexer), show_whitespace=True, expected=[
         LexedRegion(1678, 1699, {
@@ -300,7 +300,7 @@ def test_lexing_directives():
     ])
 
 
-def test_directive_no_trailing_newline() -> None:
+def test_directive_no_trailing_newline():
     lexer = DirectiveLexer(directive='toctree')
     text = Path(sample_path('myst-directive-no-trailing-newline.md')).read_text().rstrip('\n')
     compare(lex_text(text, lexer), expected=[

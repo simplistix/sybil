@@ -9,7 +9,7 @@ from sybil.parsers.myst import PythonCodeBlockParser, CodeBlockParser
 from .helpers import check_excinfo, parse
 
 
-def test_basic() -> None:
+def test_basic():
     examples, namespace = parse('myst-codeblock.md', PythonCodeBlockParser(), expected=7)
     namespace['y'] = namespace['z'] = 0
     assert examples[0].evaluate() is None
@@ -35,7 +35,7 @@ def test_basic() -> None:
     assert '__builtins__' not in namespace
 
 
-def test_doctest_at_end_of_fenced_codeblock() -> None:
+def test_doctest_at_end_of_fenced_codeblock():
     examples, namespace = parse('myst-codeblock-doctests-end-of-fenced-codeblocks.md',
                                 PythonCodeBlockParser(), expected=2)
     assert examples[0].evaluate() is None
@@ -43,7 +43,7 @@ def test_doctest_at_end_of_fenced_codeblock() -> None:
     assert namespace['b'] == 2
 
 
-def test_other_language_composition_pass() -> None:
+def test_other_language_composition_pass():
 
     def oh_hai(example):
         assert isinstance(example, Example)
@@ -55,7 +55,7 @@ def test_other_language_composition_pass() -> None:
 
 
 
-def test_other_language_composition_fail() -> None:
+def test_other_language_composition_fail():
     def oh_noez(example):
         if 'KTHXBYE' in example.parsed:
             raise ValueError('oh noez')
@@ -66,7 +66,7 @@ def test_other_language_composition_fail() -> None:
         examples[0].evaluate()
 
 
-def test_other_language_no_evaluator() -> None:
+def test_other_language_no_evaluator():
     parser = CodeBlockParser('foo')
     with pytest.raises(NotImplementedError):
         parser.evaluate(...)
@@ -81,7 +81,7 @@ class LolCodeCodeBlockParser(CodeBlockParser):
             raise ValueError(repr(example.parsed))
 
 
-def test_other_language_inheritance() -> None:
+def test_other_language_inheritance():
     examples, namespace = parse('myst-codeblock-lolcode.md', LolCodeCodeBlockParser(), expected=2)
     examples[0].evaluate()
     with pytest.raises(ValueError) as excinfo:
@@ -106,19 +106,19 @@ def future_import_checks(*future_imports):
     return namespace['foo']
 
 
-def test_no_future_imports() -> None:
+def test_no_future_imports():
     future_import_checks()
 
 
-def test_single_future_import() -> None:
+def test_single_future_import():
     future_import_checks('barry_as_FLUFL')
 
 
-def test_multiple_future_imports() -> None:
+def test_multiple_future_imports():
     future_import_checks('barry_as_FLUFL', 'print_function')
 
 
-def test_functional_future_imports() -> None:
+def test_functional_future_imports():
     foo = future_import_checks('annotations')
     # This will keep working but not be an effective test once PEP 563 finally lands:
     assert foo.__code__.co_flags & __future__.annotations.compiler_flag

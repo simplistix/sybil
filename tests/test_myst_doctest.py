@@ -10,7 +10,7 @@ from sybil.parsers.myst import DocTestDirectiveParser, PythonCodeBlockParser
 from tests.helpers import parse, sample_path
 
 
-def test_use_existing_doctest_parser() -> None:
+def test_use_existing_doctest_parser():
     path = sample_path('myst-doctest-use-rest.md')
     examples, namespace = parse('myst-doctest-use-rest.md', ReSTDocTestParser(), expected=6)
     examples[0].evaluate()
@@ -32,7 +32,7 @@ def test_use_existing_doctest_parser() -> None:
     examples[5].evaluate()
 
 
-def test_use_python_codeblock_parser() -> None:
+def test_use_python_codeblock_parser():
     examples, namespace = parse('myst-doctest.md', PythonCodeBlockParser(), expected=3)
     examples[0].evaluate()
     examples[1].evaluate()
@@ -41,7 +41,7 @@ def test_use_python_codeblock_parser() -> None:
     assert namespace['x'] == 3
 
 
-def test_fail_with_options_using_python_codeblock_parser() -> None:
+def test_fail_with_options_using_python_codeblock_parser():
     parser = PythonCodeBlockParser(doctest_optionflags=REPORT_NDIFF|ELLIPSIS)
     examples, namespace = parse('myst-doctest-fail.md', parser, expected=1)
     with pytest.raises(SybilFailure) as excinfo:
@@ -53,7 +53,7 @@ def test_fail_with_options_using_python_codeblock_parser() -> None:
     )
 
 
-def test_use_doctest_role_parser() -> None:
+def test_use_doctest_role_parser():
     path = sample_path('myst-doctest.md')
     examples, namespace = parse('myst-doctest.md', DocTestDirectiveParser(), expected=4)
     examples[0].evaluate()
@@ -71,7 +71,7 @@ def test_use_doctest_role_parser() -> None:
     ))
 
 
-def test_fail_with_options_using_doctest_role_parser() -> None:
+def test_fail_with_options_using_doctest_role_parser():
     parser = DocTestDirectiveParser(optionflags=REPORT_NDIFF|ELLIPSIS)
     examples, namespace = parse('myst-doctest-fail.md', parser, expected=1)
     with pytest.raises(SybilFailure) as excinfo:

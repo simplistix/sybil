@@ -110,7 +110,7 @@ TEST_OUTPUT_TEMPLATES = {
 
 class Finder:
 
-    def __init__(self, text) -> None:
+    def __init__(self, text):
         self.text = text
         self.index = 0
 
@@ -137,7 +137,7 @@ class Results:
     def __init__(
         self, capsys: CaptureFixture[str], total: int, errors: int = 0, failures: int = 0,
         return_code: Optional[int] = None,
-    ) -> None:
+    ):
         self.total = total
         self.errors = errors
         self.failures = failures
@@ -219,7 +219,7 @@ CONFIG_ASSIGNED_NAME = {
 }
 
 
-def write_config(tmpdir: local, integration: str, template=CONFIG_TEMPLATE, **params: str) -> None:
+def write_config(tmpdir: local, integration: str, template=CONFIG_TEMPLATE, **params: str):
     import sys
     sys.modules.pop('test_docs', None)
     params_ = {'parsers': '[DocTestParser()]'}

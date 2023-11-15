@@ -10,14 +10,14 @@ from sybil.parsers.rest import PythonCodeBlockParser, DocTestParser, SkipParser
 from .helpers import parse
 
 
-def test_basic() -> None:
+def test_basic():
     examples, namespace = parse('skip.txt', PythonCodeBlockParser(), SkipParser(), expected=9)
     for example in examples:
         example.evaluate()
     assert namespace['run'] == [2, 5]
 
 
-def test_conditional_edge_cases() -> None:
+def test_conditional_edge_cases():
     examples, namespace = parse(
         'skip-conditional-edges.txt',
         DocTestParser(), SkipParser(),
@@ -36,7 +36,7 @@ def test_conditional_edge_cases() -> None:
     assert skipped == ['skip 1']
 
 
-def test_conditional_full() -> None:
+def test_conditional_full():
     examples, namespace = parse('skip-conditional.txt', DocTestParser(), SkipParser(), expected=11)
     namespace['result'] = result = []
     for example in examples:
@@ -55,7 +55,7 @@ def test_conditional_full() -> None:
     ]
 
 
-def test_bad() -> None:
+def test_bad():
     examples, namespace = parse('skip-conditional-bad.txt', SkipParser(), expected=4)
 
     with pytest.raises(ValueError) as excinfo:
@@ -72,7 +72,7 @@ def test_bad() -> None:
         examples[3].evaluate()
 
 
-def test_start_follows_start() -> None:
+def test_start_follows_start():
     examples, namespace = parse('skip-start-start.txt', DocTestParser(), SkipParser(), expected=7)
     namespace['result'] = result = []
     for example in examples[:2]:
@@ -82,7 +82,7 @@ def test_start_follows_start() -> None:
     assert result == []
 
 
-def test_next_follows_start() -> None:
+def test_next_follows_start():
     examples, namespace = parse('skip-start-next.txt', DocTestParser(), SkipParser(), expected=7)
     namespace['result'] = result = []
     for example in examples[:2]:
@@ -92,7 +92,7 @@ def test_next_follows_start() -> None:
     assert result == []
 
 
-def test_end_no_start() -> None:
+def test_end_no_start():
     examples, namespace = parse('skip-just-end.txt', DocTestParser(), SkipParser(), expected=3)
     namespace['result'] = result = []
     examples[0].evaluate()
@@ -101,7 +101,7 @@ def test_end_no_start() -> None:
     assert result == ['good']
 
 
-def test_next_follows_next() -> None:
+def test_next_follows_next():
     examples, namespace = parse('skip-next-next.txt', DocTestParser(), SkipParser(), expected=4)
     namespace['result'] = result = []
     for example in examples:

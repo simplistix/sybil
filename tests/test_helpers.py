@@ -8,21 +8,21 @@ from sybil.python import import_cleanup
 from .helpers import Finder, ast_docstrings
 
 
-def test_finder_present_but_is_not_present() -> None:
+def test_finder_present_but_is_not_present():
     finder = Finder('foo\nbaz\n')
     with pytest.raises(AssertionError) as info:
         finder.assert_present('bob')
     assert str(info.value) == "foo\nbaz\n\n'foo\\nbaz\\n'"
 
 
-def test_finder_not_present_but_is_present() -> None:
+def test_finder_not_present_but_is_present():
     finder = Finder('foo baz bar')
     with pytest.raises(AssertionError) as info:
         finder.assert_not_present('baz')
     assert str(info.value) == '\nfoo baz bar'
 
 
-def test_import_cleanup(tmpdir: local) -> None:
+def test_import_cleanup(tmpdir: local):
     (tmpdir / 'some_module.py').write('import unittest\nfoo = 1')
     (tmpdir / 'other_module.py').write('import other_module\nfoo = 1')
 
@@ -38,12 +38,12 @@ def test_import_cleanup(tmpdir: local) -> None:
     assert sys.path == initial_path
 
 
-def test_all_python_files(all_python_files) -> None:
+def test_all_python_files(all_python_files):
     count = len(all_python_files)
     assert count > 50, count
 
 
-def test_ast_docstrings(all_python_files) -> None:
+def test_ast_docstrings(all_python_files):
     seen_docstrings = 0
     for _, source in all_python_files:
         seen_docstrings += len(tuple(ast_docstrings(source)))

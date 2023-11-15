@@ -12,7 +12,7 @@ from sybil.parsers.rest import DocTestParser, DocTestDirectiveParser
 from .helpers import sample_path, parse, FUNCTIONAL_TEST_DIR, skip_if_37_or_older
 
 
-def test_pass() -> None:
+def test_pass():
     examples, namespace = parse('doctest.txt', DocTestParser(), expected=5)
     examples[0].evaluate()
     assert namespace['y'] == 1
@@ -26,7 +26,7 @@ def test_pass() -> None:
     assert namespace['y'] == 2
 
 
-def test_fail() -> None:
+def test_fail():
     path = sample_path('doctest_fail.txt')
     examples, namespace = parse('doctest_fail.txt', DocTestParser(), expected=2)
     with pytest.raises(SybilFailure) as excinfo:
@@ -48,7 +48,7 @@ def test_fail() -> None:
     assert actual.endswith('Exception: boom!\n')
 
 
-def test_fail_with_options() -> None:
+def test_fail_with_options():
     parser = DocTestParser(optionflags=REPORT_NDIFF|ELLIPSIS)
     examples, namespace = parse('doctest_fail.txt', parser, expected=2)
     with pytest.raises(SybilFailure) as excinfo:
@@ -60,36 +60,36 @@ def test_fail_with_options() -> None:
     )
 
 
-def test_literals() -> None:
+def test_literals():
     parser = DocTestParser()
     examples, _ = parse('doctest_literals.txt', parser, expected=5)
     for example in examples:
         example.evaluate()
 
 
-def test_min_indent() -> None:
+def test_min_indent():
     examples, _ = parse('doctest_min_indent.txt', DocTestParser(), expected=1)
     examples[0].evaluate()
 
 
-def test_tabs() -> None:
+def test_tabs():
     path = sample_path('doctest_tabs.txt')
     parser = DocTestParser()
     with pytest.raises(ValueError):
         Document.parse(path, parser)
 
 
-def test_irrelevant_tabs() -> None:
+def test_irrelevant_tabs():
     examples, _ = parse('doctest_irrelevant_tabs.txt', DocTestParser(), expected=1)
     examples[0].evaluate()
 
 
-def test_unicode() -> None:
+def test_unicode():
     examples, _ = parse('doctest_unicode.txt', DocTestParser(), expected=1)
     examples[0].evaluate()
 
 
-def test_directive() -> None:
+def test_directive():
     path = sample_path('doctest_directive.txt')
     examples, _ = parse('doctest_directive.txt', DocTestDirectiveParser(), expected=3)
     examples[0].evaluate()
@@ -109,7 +109,7 @@ def test_directive() -> None:
     assert actual.endswith('Exception: boom!\n')
 
 
-def test_directive_with_options() -> None:
+def test_directive_with_options():
     path = sample_path('doctest_directive.txt')
     parser = DocTestDirectiveParser(optionflags=REPORT_NDIFF|ELLIPSIS)
     examples, namespace = parse('doctest_directive.txt', parser, expected=3)
@@ -132,7 +132,7 @@ MINIMUM_EXPECTED_DOCTESTS = 9
 
 
 @skip_if_37_or_older()
-def test_sybil_example_count(all_python_files) -> None:
+def test_sybil_example_count(all_python_files):
     parser = DocTestStringParser()
 
     seen_examples_from_source = 0
@@ -170,7 +170,7 @@ def check_sybil_against_doctest(path, text):
         raise AssertionError('doctests not correctly extracted:\n\n'+'\n\n'.join(problems))
 
 
-def test_all_docstest_examples_extracted_from_source_correctly(python_file) -> None:
+def test_all_docstest_examples_extracted_from_source_correctly(python_file):
     path, source = python_file
     if path in UNPARSEABLE:
         return
@@ -178,7 +178,7 @@ def test_all_docstest_examples_extracted_from_source_correctly(python_file) -> N
 
 
 @skip_if_37_or_older()
-def test_all_docstest_examples_extracted_from_docstrings_correctly(python_file) -> None:
+def test_all_docstest_examples_extracted_from_docstrings_correctly(python_file):
     path, source = python_file
     for start, end, docstring in PythonDocStringDocument.extract_docstrings(source):
         check_sybil_against_doctest(path, docstring)

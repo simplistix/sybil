@@ -26,13 +26,13 @@ def pytest_in(*path: str):
 
 class TestIntegrationExamples:
 
-    def test_pytest(self) -> None:
+    def test_pytest(self):
         session = pytest_in('integration', 'docs')
         assert session.exitstatus == 0
         assert session.testsfailed == 0
         assert session.testscollected == 3
 
-    def test_unittest(self) -> None:
+    def test_unittest(self):
         runner = TextTestRunner(verbosity=2, stream=sys.stdout)
         path = str(DOC_EXAMPLES / 'integration' / 'unittest')
         main = unittest_main(
@@ -44,14 +44,14 @@ class TestIntegrationExamples:
         assert len(main.result.errors) == 0
 
 
-def test_quickstart() -> None:
+def test_quickstart():
     session = pytest_in('quickstart')
     assert session.exitstatus == 0
     assert session.testsfailed == 0
     assert session.testscollected == 4
 
 
-def test_rest_text_rest_src() -> None:
+def test_rest_text_rest_src():
     directory = 'rest_text_rest_src'
     with add_to_python_path(DOC_EXAMPLES / directory / 'src'):
         session = pytest_in(directory)
@@ -59,7 +59,7 @@ def test_rest_text_rest_src() -> None:
     assert session.testscollected == 5
 
 
-def test_myst_text_rest_src() -> None:
+def test_myst_text_rest_src():
     directory = 'myst_text_rest_src'
     with add_to_python_path(DOC_EXAMPLES / directory / 'src'):
         session = pytest_in(directory)
