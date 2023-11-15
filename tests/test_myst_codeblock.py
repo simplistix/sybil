@@ -1,10 +1,10 @@
 import __future__
-import sys
 
 import pytest
 from testfixtures import compare
 
-from sybil import Example
+from sybil import Example, Region
+from sybil.evaluators.python import PythonEvaluator
 from sybil.parsers.myst import PythonCodeBlockParser, CodeBlockParser
 from .helpers import check_excinfo, parse
 
@@ -87,6 +87,30 @@ def test_other_language_inheritance():
     with pytest.raises(ValueError) as excinfo:
         examples[1].evaluate()
     assert str(excinfo.value) == "'KTHXBYE\\n'"
+
+
+class IgnoringPythonCodeBlockParser(CodeBlockParser):
+
+    def __call__(self, document):
+        for lexed in self.lexers(document):
+            options = lexed.lexemes.get('options')
+            if options and 'ignore' in options:
+                continue
+            if lexed.lexemes['arguments'] == self.language:
+                yield Region(lexed.start, lexed.end, lexed.lexemes['source'], self._evaluator)
+
+
+class IgnoringCodeBlockParser(PythonCodeBlockParser):
+
+    codeblock_parser_class = IgnoringPythonCodeBlockParser
+
+
+def test_other_functionality_inheritance():
+    examples, namespace = parse(
+        'myst-codeblock-subclassing.md', IgnoringCodeBlockParser(), expected=2
+    )
+    examples[0].evaluate()
+    examples[1].evaluate()
 
 
 def future_import_checks(*future_imports):

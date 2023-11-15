@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 from testfixtures import compare
 
-from sybil import Example, Sybil
+from sybil import Example, Sybil, Region
 from sybil.document import Document
 from sybil.parsers.codeblock import PythonCodeBlockParser, CodeBlockParser
 from .helpers import check_excinfo, parse, sample_path, check_path, SAMPLE_PATH, add_to_python_path
@@ -80,6 +80,24 @@ def test_other_language_inheritance():
     with pytest.raises(ValueError) as excinfo:
         examples[1].evaluate()
     assert str(excinfo.value) == "'KTHXBYE'"
+
+
+class IgnoringPythonCodeBlockParser(PythonCodeBlockParser):
+
+    def __call__(self, document):
+        for lexed in self.lexers(document):
+            options = lexed.lexemes.get('options')
+            if options and 'ignore' in options:
+                continue
+            if lexed.lexemes['arguments'] == self.language:
+                yield Region(lexed.start, lexed.end, lexed.lexemes['source'], self._evaluator)
+
+
+def test_other_functionality_inheritance():
+    examples, namespace = parse(
+        'codeblock-subclassing.txt', IgnoringPythonCodeBlockParser(), expected=1
+    )
+    examples[0].evaluate()
 
 
 def future_import_checks(*future_imports):
