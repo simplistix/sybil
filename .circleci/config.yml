@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  python: cjw296/python-ci@3
+  python: cjw296/python-ci@4
 
 common: &common
   jobs:
@@ -14,6 +14,7 @@ common: &common
               - cimg/python:3.8
               - cimg/python:3.9
               - cimg/python:3.11
+              - cimg/python:3.12
             extra_packages:
               - "'pytest>=7.1,<7.4'"
               - "'pytest>=7.4'"
