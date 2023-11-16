@@ -2,20 +2,20 @@ from testfixtures import compare
 
 from sybil.parsers.rest.lexers import DirectiveInCommentLexer
 from sybil.parsers.rest.lexers import DirectiveLexer
-from sybil.region import LexedRegion
+from sybil.region import Region
 from .helpers import lex, lex_text
 
 
 def test_examples_from_parsing_tests():
     lexer = DirectiveLexer(directive='code-block', arguments='python')
     compare(lex('codeblock.txt', lexer)[:2], expected=[
-        LexedRegion(23, 56, {
+        Region(23, 56, lexemes={
             'directive': 'code-block',
             'arguments': 'python',
             'options': {},
             'source': 'y += 1\n',
         }),
-        LexedRegion(106, 157, {
+        Region(106, 157, lexemes={
             'directive': 'code-block',
             'arguments': 'python',
             'options': {},
@@ -27,19 +27,19 @@ def test_examples_from_parsing_tests():
 def test_examples_from_directive_tests():
     lexer = DirectiveLexer(directive='doctest')
     compare(lex('doctest_directive.txt', lexer), expected=[
-        LexedRegion(102, 136, {
+        Region(102, 136, lexemes={
             'directive': 'doctest',
             'arguments': None,
             'options': {},
             'source': '>>> 1 + 1\n2\n',
         }),
-        LexedRegion(205, 249, {
+        Region(205, 249, lexemes={
             'directive': 'doctest',
             'arguments': None,
             'options': {},
             'source': '>>> 1 + 1\nUnexpected!\n',
         }),
-        LexedRegion(307, 353, {
+        Region(307, 353, lexemes={
             'directive': 'doctest',
             'arguments': None,
             'options': {},
@@ -51,7 +51,7 @@ def test_examples_from_directive_tests():
 def test_directive_nested_in_md():
     lexer = DirectiveLexer(directive='doctest')
     compare(lex('doctest_rest_nested_in_md.md', lexer), expected=[
-        LexedRegion(14, 47, {
+        Region(14, 47, lexemes={
             'directive': 'doctest',
             'arguments': None,
             'options': {},
@@ -71,7 +71,7 @@ def test_directive_with_single_line_body_at_end_of_string():
     start = 25
     end = 95
     compare(lex_text(text, lexer), expected=[
-        LexedRegion(start, end, {
+        Region(start, end, lexemes={
             'directive': 'code-block',
             'arguments': 'python',
             'options': {},
@@ -96,7 +96,7 @@ def test_directive_with_multi_line_body_at_end_of_string():
     start = 21
     end = 119
     compare(lex_text(text, lexer), expected=[
-        LexedRegion(start, end, {
+        Region(start, end, lexemes={
             'directive': 'code-block',
             'arguments': 'python',
             'options': {},
@@ -113,13 +113,13 @@ def test_directive_with_multi_line_body_at_end_of_string():
 def test_skip_lexing():
     lexer = DirectiveInCommentLexer(directive='skip')
     compare(lex('skip.txt', lexer), expected=[
-        LexedRegion(70, 84, {
+        Region(70, 84, lexemes={
             'directive': 'skip', 'arguments': 'next', 'options': {}, 'source': ''
         }),
-        LexedRegion(269, 284, {
+        Region(269, 284, lexemes={
             'directive': 'skip', 'arguments': 'start', 'options': {}, 'source': ''
         }),
-        LexedRegion(401, 414, {
+        Region(401, 414, lexemes={
             'directive': 'skip', 'arguments': 'end', 'options': {}, 'source': ''
         }),
     ])
@@ -128,16 +128,16 @@ def test_skip_lexing():
 def test_skip_lexing_bad():
     lexer = DirectiveInCommentLexer(directive='skip')
     compare(lex('skip-conditional-bad.txt', lexer), expected=[
-        LexedRegion(13, 29, {
+        Region(13, 29, lexemes={
             'directive': 'skip', 'arguments': 'lolwut', 'options': {}, 'source': ''
         }),
-        LexedRegion(49, 64, {
+        Region(49, 64, lexemes={
             'directive': 'skip', 'arguments': 'start', 'options': {}, 'source': ''
         }),
-        LexedRegion(65, 88, {
+        Region(65, 88, lexemes={
             'directive': 'skip', 'arguments': 'end if(1 > 2)', 'options': {}, 'source': ''
         }),
-        LexedRegion(104, 179, {
+        Region(104, 179, lexemes={
             'directive': 'skip',
             'arguments': 'next if(sys.version_info < (3, 0), reason="only true on python 3"',
             'options': {},
@@ -149,19 +149,19 @@ def test_skip_lexing_bad():
 def test_arguments_without_body():
     lexer = DirectiveInCommentLexer(directive='skip')
     compare(lex('skip-conditional-edges.txt', lexer), expected=[
-        LexedRegion(0, 40, {
+        Region(0, 40, lexemes={
             'directive': 'skip',
             'arguments': 'next if(True, reason="skip 1")',
             'options': {},
             'source': ''
         }),
-        LexedRegion(100, 142, {
+        Region(100, 142, lexemes={
             'directive': 'skip',
             'arguments': 'start if(False, reason="skip 2")',
             'options': {},
             'source': ''
         }),
-        LexedRegion(205, 218, {
+        Region(205, 218, lexemes={
             'directive': 'skip',
             'arguments': 'end',
             'options': {},
@@ -173,7 +173,7 @@ def test_arguments_without_body():
 def test_lexing_directives():
     lexer = DirectiveLexer('[^:]+')
     compare(lex('lexing-directives.txt', lexer), expected=[
-        LexedRegion(55, 245, {
+        Region(55, 245, lexemes={
             'directive': 'note',
             'arguments': 'This is a note admonition.',
             'options': {},
@@ -183,25 +183,25 @@ def test_lexing_directives():
                        '  following.\n'
                        '- It includes this bullet list.\n'),
         }),
-        LexedRegion(246, 326, {
+        Region(246, 326, lexemes={
             'directive': 'admonition',
             'arguments': 'And, by the way...',
             'options': {},
             'source': 'You can make up your own admonition too.\n',
         }),
-        LexedRegion(327, 389, {
+        Region(327, 389, lexemes={
             'directive': 'sample',
             'arguments': None,
             'options': {},
             'source': 'This directive has no arguments, just a body.\n',
         }),
-        LexedRegion(457, 480, {
+        Region(457, 480, lexemes={
             'directive': 'image',
             'arguments': 'picture.png',
             'options': {},
             'source': '',
         }),
-        LexedRegion(481, 598, {
+        Region(481, 598, lexemes={
             'directive': 'image',
             'arguments': 'picture.jpeg',
             'options': {
@@ -213,7 +213,7 @@ def test_lexing_directives():
             },
             'source': '',
         }),
-        LexedRegion(599, 1353, {
+        Region(599, 1353, lexemes={
             'directive': 'figure',
             'arguments': 'picture.png',
             'options': {
@@ -237,7 +237,7 @@ def test_lexing_directives():
                        '+-----------------------+-----------------------+\n'
                        '\n')
         }),
-        LexedRegion(1354, 1486, {
+        Region(1354, 1486, lexemes={
             'directive': 'topic',
             'arguments': 'Topic Title',
             'options': {},
@@ -245,13 +245,13 @@ def test_lexing_directives():
                        'the body of the topic, and are\n'
                        'interpreted as body elements.\n')
         }),
-        LexedRegion(1539, 1616, {
+        Region(1539, 1616, lexemes={
             'directive': 'topic',
             'arguments': 'example.cfg',
             'options': {'class': 'read-file'},
             'source': '::\n\n  [A Section]\n  dir = frob\n'
         }),
-        LexedRegion(1635, 1818, {
+        Region(1635, 1818, lexemes={
             'directive': 'sidebar',
             'arguments': 'Optional Sidebar Title',
             'options': {'subtitle': 'Optional Sidebar Subtitle'},
@@ -269,7 +269,7 @@ def test_lexing_nested_directives():
     lexer = DirectiveLexer('[^:]+')
     actual = lex('lexing-nested-directives.txt', lexer)
     compare(actual, expected=[
-        LexedRegion(55, 236, {
+        Region(55, 236, lexemes={
             'directive': 'note',
             'arguments': 'This is a note admonition.',
             'options': {},
@@ -279,13 +279,13 @@ def test_lexing_nested_directives():
                 '      You can make up your own admonition too.\n'
             ),
         }),
-        LexedRegion(144, 236, {
+        Region(144, 236, lexemes={
             'directive': 'admonition',
             'arguments': 'And, by the way...',
             'options': {},
             'source': 'You can make up your own admonition too.\n',
         }),
-        LexedRegion(304, 783, {
+        Region(304, 783, lexemes={
             'directive': 'image',
             'arguments': 'picture.png',
             'options': {},
@@ -311,7 +311,7 @@ def test_lexing_nested_directives():
                 '        interpreted as body elements.'
             ),
         }),
-        LexedRegion(328, 469, {
+        Region(328, 469, lexemes={
             'directive': 'image',
             'arguments': 'picture.jpeg',
             'options': {
@@ -323,7 +323,7 @@ def test_lexing_nested_directives():
             },
             'source': '',
         }),
-        LexedRegion(470, 783, {
+        Region(470, 783, lexemes={
             'directive': 'figure',
             'arguments': 'picture.png',
             'options': {
@@ -338,7 +338,7 @@ def test_lexing_nested_directives():
                 '     interpreted as body elements.'
             ),
         }),
-        LexedRegion(620, 783, {
+        Region(620, 783, lexemes={
             'directive': 'topic',
             'arguments': 'Topic Title',
             'options': {},
@@ -354,7 +354,7 @@ def test_lexing_nested_directives():
 def test_lexing_directive_in_comment_without_double_colon():
     lexer = DirectiveInCommentLexer('clear-namespace')
     compare(lex('clear.txt', lexer), expected=[
-        LexedRegion(48, 67, {
+        Region(48, 67, lexemes={
             'directive': 'clear-namespace', 'arguments': None, 'options': {}, 'source': ''
         }),
     ])

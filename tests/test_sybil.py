@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 from py.path import local
+from testfixtures import compare
 
 from sybil import Sybil, Region
 from sybil.document import Document, PythonDocument
@@ -22,9 +23,47 @@ def document():
 
 class TestRegion:
 
-    def test_repr(self):
-        region = Region(0, 1, 'parsed', 'evaluator')
-        assert repr(region) == "<Region start=0 end=1 'evaluator'>"
+    def test_repr_with_evaluator(self):
+        region = Region(0, 1, parsed='parsed', evaluator='evaluator')
+        compare(
+            repr(region),
+            expected=(
+                "<Region start=0 end=1 evaluator='evaluator'><Parsed>'parsed'</Parsed></Region>"
+            )
+        )
+
+    def test_repr_with_lexemes(self):
+        compare(
+            str(Region(36, 56, lexemes={
+                'language': 'python',
+                'foo': None,
+                'source': 'A'+'X'*1000+'Z',
+                'bar': {},
+                'baz': {f'a{i}': 'b' for i in range(11)},
+            })),
+            expected="<Region start=36 end=56>\n"
+                     "language: 'python'\n"
+                     "foo: None\n"
+                     "source: 'AXXXXXXXXXXXXXXXXXXXX...XXXXXXXXXXXXXXXXXXXXZ'\n"
+                     "bar: {}\n"
+                     "baz: {'a0': 'b', 'a1': 'b', 'a2': 'b', 'a3': 'b', "
+                     "'a4': 'b', 'a5': 'b', 'a6': 'b', 'a7': 'b', 'a8': 'b', 'a9': 'b', "
+                     "'a10': 'b'}\n"
+                     "</Region>"
+        )
+
+    def test_repr_with_parsed(self):
+        compare(
+            str(Region(36, 56, parsed={
+                'language': 'python',
+                'foo': None,
+                'source': 'X'*1000,
+                'bar': {},
+                'baz': {f'a{i}': 'b' for i in range(11)},
+            })),
+            expected="<Region start=36 end=56><Parsed>{'language': 'python'"
+                     "...9': 'b', 'a10': 'b'}}</Parsed></Region>"
+        )
 
 
 class TestExample:
@@ -104,7 +143,7 @@ class TestDocument:
         with pytest.raises(ValueError) as excinfo:
             document.add(region)
         assert str(excinfo.value) == (
-            '<Region start=-1 end=0 None> '
+            '<Region start=-1 end=0> '
             'from line 1, column 0 to line 1, column 1 '
             'is before start of document'
         )
@@ -114,7 +153,7 @@ class TestDocument:
         with pytest.raises(ValueError) as excinfo:
             document.add(region)
         assert str(excinfo.value) == (
-            '<Region start=8 end=9 None> '
+            '<Region start=8 end=9> '
             'from line 1, column 9 to line 1, column 10 '
             'goes beyond end of document'
         )
@@ -126,9 +165,9 @@ class TestDocument:
         with pytest.raises(ValueError) as excinfo:
             document.add(region2)
         assert str(excinfo.value) == (
-            '<Region start=0 end=2 None>'
+            '<Region start=0 end=2>'
             ' from line 1, column 1 to line 1, column 3 overlaps '
-            '<Region start=1 end=3 None>'
+            '<Region start=1 end=3>'
             ' from line 1, column 2 to line 1, column 4'
         )
 
@@ -139,9 +178,9 @@ class TestDocument:
         with pytest.raises(ValueError) as excinfo:
             document.add(region2)
         assert str(excinfo.value) == (
-            '<Region start=0 end=3 None>'
+            '<Region start=0 end=3>'
             ' from line 1, column 1 to line 1, column 4 overlaps '
-            '<Region start=0 end=2 None>'
+            '<Region start=0 end=2>'
             ' from line 1, column 1 to line 1, column 3'
         )
 
@@ -152,9 +191,9 @@ class TestDocument:
         with pytest.raises(ValueError) as excinfo:
             document.add(region2)
         assert str(excinfo.value) == (
-            '<Region start=0 end=2 None>'
+            '<Region start=0 end=2>'
             ' from line 1, column 1 to line 1, column 3 overlaps '
-            '<Region start=0 end=2 None>'
+            '<Region start=0 end=2>'
             ' from line 1, column 1 to line 1, column 3'
         )
 
@@ -167,9 +206,9 @@ class TestDocument:
         with pytest.raises(ValueError) as excinfo:
             document.add(region2)
         assert str(excinfo.value) == (
-            '<Region start=1 end=3 None> '
+            '<Region start=1 end=3> '
             'from line 1, column 2 to line 1, column 4 overlaps '
-            '<Region start=2 end=4 None> '
+            '<Region start=2 end=4> '
             'from line 1, column 3 to line 1, column 5'
         )
 

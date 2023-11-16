@@ -1,7 +1,7 @@
 import re
 from typing import Optional, Dict, Iterable
 
-from sybil import Document, LexedRegion
+from sybil import Document, Region
 from sybil.parsers.abstract.lexers import BlockLexer
 from sybil.parsers.markdown.lexers import CODEBLOCK_END_TEMPLATE
 from sybil.parsers.rest.lexers import parse_options_and_source
@@ -13,7 +13,7 @@ DIRECTIVE_START_TEMPLATE = (
 )
 
 
-def parse_yaml_options(lexed: LexedRegion) -> None:
+def parse_yaml_options(lexed: Region) -> None:
     lexemes = lexed.lexemes
     yaml_options = lexemes.pop('yaml_options', None)
     if yaml_options is not None:
@@ -52,7 +52,7 @@ class DirectiveLexer(BlockLexer):
 
     :param mapping:
         If provided, this is used to rename lexemes from the keys in the mapping to their
-        values. Only mapped lexemes will be returned in any :class:`~sybil.LexedRegion` objects.
+        values. Only mapped lexemes will be returned in any :class:`~sybil.Region` objects.
 
     """
 
@@ -68,7 +68,7 @@ class DirectiveLexer(BlockLexer):
             mapping=mapping,
         )
 
-    def __call__(self, document: Document) -> Iterable[LexedRegion]:
+    def __call__(self, document: Document) -> Iterable[Region]:
         for lexed in super().__call__(document):
             parse_options_and_source(lexed)
             parse_yaml_options(lexed)
@@ -106,7 +106,7 @@ class DirectiveInPercentCommentLexer(BlockLexer):
 
     :param mapping:
         If provided, this is used to rename lexemes from the keys in the mapping to their values.
-        Only mapped lexemes will be returned in any :class:`~sybil.LexedRegion` objects.
+        Only mapped lexemes will be returned in any :class:`~sybil.Region` objects.
     """
 
     def __init__(

@@ -22,7 +22,7 @@ class FencedCodeBlockLexer(BlockLexer):
 
     :param mapping:
         If provided, this is used to rename lexemes from the keys in the mapping to their
-        values. Only mapped lexemes will be returned in any :class:`~sybil.LexedRegion` objects.
+        values. Only mapped lexemes will be returned in any :class:`~sybil.Region` objects.
 
     """
 
@@ -73,7 +73,7 @@ class DirectiveInHTMLCommentLexer(BlockLexer):
 
     :param mapping:
         If provided, this is used to rename lexemes from the keys in the mapping to their values.
-        Only mapped lexemes will be returned in any :class:`~sybil.LexedRegion` objects.
+        Only mapped lexemes will be returned in any :class:`~sybil.Region` objects.
     """
 
     def __init__(

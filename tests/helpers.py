@@ -22,7 +22,7 @@ from sybil import Sybil
 from sybil.document import Document
 from sybil.example import Example
 from sybil.python import import_cleanup
-from sybil.region import LexedRegion
+from sybil.region import Region
 from sybil.typing import Parser, Lexer
 
 HERE = Path(__file__).parent
@@ -33,13 +33,13 @@ def sample_path(name) -> str:
     return str(SAMPLE_PATH / name)
 
 
-def lex(name: str, lexer: Lexer) -> List[LexedRegion]:
+def lex(name: str, lexer: Lexer) -> List[Region]:
     path = sample_path(name)
     document = Document(Path(path).read_text(), path)
     return list(lexer(document))
 
 
-def lex_text(text: str, lexer: Lexer) -> List[LexedRegion]:
+def lex_text(text: str, lexer: Lexer) -> List[Region]:
     document = Document(text, 'sample.txt')
     return list(lexer(document))
 

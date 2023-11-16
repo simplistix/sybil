@@ -1,6 +1,6 @@
-from typing import Dict, Any, Union, Optional
+from typing import Any, Union, Optional
 
-from sybil.typing import Evaluator
+from sybil.typing import Evaluator, LexemeMapping
 
 
 class Lexeme(str):
@@ -22,31 +22,8 @@ class Lexeme(str):
         return Lexeme(stripped, self.offset + removed, self.line_offset + removed)
 
 
-# In the future, this could likely be a TypedDict when Python 3.8 is the minimum supported version
-LexemeMapping = Dict[str, Any]
-
-
-class LexedRegion:
-    """
-    A region that has been lexed from a source language but not yet
-    parsed or assigned an :any:`Evaluator`.
-    """
-
-    def __init__(self, start: int, end: int, lexemes: LexemeMapping) -> None:
-        #: The start of this lexed region within the document's :attr:`~sybil.Document.text`.
-        self.start: int = start
-        #: The end of this lexed region within the document's :attr:`~sybil.Document.text`.
-        self.end: int = end
-        #: The lexemes extracted from the region.
-        self.lexemes: LexemeMapping = lexemes
-
-    def __repr__(self) -> str:
-        lexemes_for_repr = {}
-        for name, lexeme in self.lexemes.items():
-            if isinstance(lexeme, str) and len(lexeme) > 10:
-                lexeme = lexeme[:10]+'...'
-            lexemes_for_repr[name] = lexeme
-        return f'<LexedRegion start={self.start} end={self.end} {lexemes_for_repr}>'
+MAX_REPR_PART_LENGTH = 40
+CONTRACTED = '...'
 
 
 class Region:
@@ -70,7 +47,14 @@ class Region:
         as it should be.
     """
 
-    def __init__(self, start: int, end: int, parsed: Any, evaluator: Optional[Evaluator]) -> None:
+    def __init__(
+            self,
+            start: int,
+            end: int,
+            parsed: Any = None,
+            evaluator: Optional[Evaluator] = None,
+            lexemes: Optional[LexemeMapping] = None,
+    ) -> None:
         #: The start of this region within the document's :attr:`~sybil.Document.text`.
         self.start: int = start
         #: The end of this region within the document's :attr:`~sybil.Document.text`.
@@ -80,21 +64,41 @@ class Region:
         self.parsed: Any = parsed
         #: The :any:`Evaluator` for this region.
         self.evaluator: Optional[Evaluator] = evaluator
+        #: The lexemes extracted from the region.
+        self.lexemes: LexemeMapping = lexemes or {}
+
+    @staticmethod
+    def trim(text: str) -> str:
+        if len(text) > MAX_REPR_PART_LENGTH:
+            half = int((MAX_REPR_PART_LENGTH + len(CONTRACTED)) / 2)
+            text = text[:half] + CONTRACTED + text[-half:]
+        return text
 
     def __repr__(self) -> str:
-        return '<Region start={} end={} {!r}>'.format(
-            self.start, self.end, self.evaluator
-        )
+        evaluator_text = f' evaluator={self.evaluator!r}' if self.evaluator else ''
+        text = f'<Region start={self.start} end={self.end}{evaluator_text}>'
+        if self.lexemes:
+            text += '\n'
+        for name, lexeme in self.lexemes.items():
+            if isinstance(lexeme, str):
+                lexeme = self.trim(lexeme)
+            text += f'{name}: {lexeme!r}\n'
+        if self.parsed:
+            parsed_text = self.trim(repr(self.parsed))
+            text += f'<Parsed>{parsed_text}</Parsed>'
+        if self.parsed or self.lexemes:
+            text += '</Region>'
+        return text
 
     def __lt__(self, other: 'Region') -> bool:
         assert isinstance(other, type(self)), f"{type(other)} not supported for <"
         assert self.start == other.start  # This is where this may happen, if not something weird
         return True
 
-    def adjust(self, lexed: Union['Region', 'LexedRegion'], lexeme: Lexeme) -> None:
+    def adjust(self, lexed: Union['Region', 'Region'], lexeme: Lexeme) -> None:
         """
         Adjust the start and end of this region based on the provided :class:`Lexeme`
-        and :class:`LexedRegion` or :class:`Region` that lexeme came from.
+        and ::class:`Region` that lexeme came from.
         """
         self.start += (lexed.start + lexeme.offset)
         self.end += lexed.start

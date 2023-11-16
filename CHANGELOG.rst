@@ -9,7 +9,7 @@ Changes
 5.0.2 (19 May 2023)
 -------------------
 
-- Fixed bug in the :func:`repr` of :class:`LexedRegion` instances where a lexeme was ``None``.
+- Fixed bug in the :func:`repr` of ``LexedRegion`` instances where a lexeme was ``None``.
 
 - Fixed lexing of ReST directives, such as :rst:dir:`code-block`, where they occurred
   at the end of a docstring.

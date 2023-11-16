@@ -92,12 +92,11 @@ def test_other_language_inheritance():
 class IgnoringPythonCodeBlockParser(CodeBlockParser):
 
     def __call__(self, document):
-        for lexed in self.lexers(document):
-            options = lexed.lexemes.get('options')
+        for region in super().__call__(document):
+            options = region.lexemes.get('options')
             if options and 'ignore' in options:
                 continue
-            if lexed.lexemes['arguments'] == self.language:
-                yield Region(lexed.start, lexed.end, lexed.lexemes['source'], self._evaluator)
+            yield region
 
 
 class IgnoringCodeBlockParser(PythonCodeBlockParser):

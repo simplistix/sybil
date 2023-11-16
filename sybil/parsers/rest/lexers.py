@@ -1,7 +1,7 @@
 import re
 from typing import Optional, Dict, Iterable
 
-from sybil import Document, LexedRegion
+from sybil import Document, Region
 from sybil.parsers.abstract.lexers import BlockLexer
 
 START_PATTERN_TEMPLATE =(
@@ -15,7 +15,7 @@ OPTIONS_PATTERN = re.compile(r'[^:]*:(?P<name>[^:]+):[ \t]*(?P<value>[^\n]*)\n')
 END_PATTERN_TEMPLATE = r'(\n?\Z|\n[ \t]{{0,{len_prefix}}}(?=\S|\Z))'
 
 
-def parse_options_and_source(lexed: LexedRegion) -> None:
+def parse_options_and_source(lexed: Region) -> None:
     lexemes = lexed.lexemes
     raw_options = lexemes.pop('options', None)
     options = lexemes['options'] = {}
@@ -44,7 +44,7 @@ class DirectiveLexer(BlockLexer):
 
     :param mapping:
         If provided, this is used to rename lexemes from the keys in the mapping to their values.
-        Only mapped lexemes will be returned in any :class:`~sybil.LexedRegion` objects.
+        Only mapped lexemes will be returned in any :class:`~sybil.Region` objects.
     """
 
     delimiter = '::'
@@ -72,7 +72,7 @@ class DirectiveLexer(BlockLexer):
             mapping=mapping,
         )
 
-    def __call__(self, document: Document) -> Iterable[LexedRegion]:
+    def __call__(self, document: Document) -> Iterable[Region]:
         for lexed in super().__call__(document):
             parse_options_and_source(lexed)
             yield lexed
@@ -103,7 +103,7 @@ class DirectiveInCommentLexer(DirectiveLexer):
 
     :param mapping:
         If provided, this is used to rename lexemes from the keys in the mapping to their values.
-        Only mapped lexemes will be returned in any :class:`~sybil.LexedRegion` objects.
+        Only mapped lexemes will be returned in any :class:`~sybil.Region` objects.
     """
 
     # This is the pattern used for invisible code blocks and the like.

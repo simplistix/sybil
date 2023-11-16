@@ -39,6 +39,7 @@ latex_documents = [
 autodoc_member_order = 'bysource'
 nitpicky = True
 nitpick_ignore = [
-    ('py:class', 'Evaluator')  # https://github.com/sphinx-doc/sphinx/issues/10785
+    ('py:class', 'Evaluator'),  # https://github.com/sphinx-doc/sphinx/issues/10785
+    ('py:class', 'LexemeMapping'),  # https://github.com/sphinx-doc/sphinx/issues/10785
 ]
 toc_object_entries = False

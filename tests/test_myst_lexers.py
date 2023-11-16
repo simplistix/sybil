@@ -7,47 +7,47 @@ from sybil.parsers.myst.lexers import (
     DirectiveInPercentCommentLexer
 )
 from sybil.parsers.markdown.lexers import FencedCodeBlockLexer, DirectiveInHTMLCommentLexer
-from sybil.region import LexedRegion
+from sybil.region import Region, Region
 from .helpers import lex, sample_path, lex_text
 
 
 def test_fenced_code_block():
     lexer = FencedCodeBlockLexer('py?thon')
     compare(lex('myst-lexers.md', lexer), expected=[
-        LexedRegion(36, 56, {'language': 'python', 'source': '>>> 1+1\n2\n'}),
-        LexedRegion(1137, 1168, {'language': 'pthon', 'source': 'assert 1 + 1 == 2\n'}),
+        Region(36, 56, lexemes={'language': 'python', 'source': '>>> 1+1\n2\n'}),
+        Region(1137, 1168, lexemes={'language': 'pthon', 'source': 'assert 1 + 1 == 2\n'}),
     ])
 
 
 def test_fenced_code_block_with_mapping():
     lexer = FencedCodeBlockLexer('python', mapping={'source': 'body'})
     compare(lex('myst-lexers.md', lexer), expected=[
-        LexedRegion(36, 56, {'body': '>>> 1+1\n2\n'})
+        Region(36, 56, lexemes={'body': '>>> 1+1\n2\n'})
     ])
 
 
 def test_myst_directives():
     lexer = DirectiveLexer(directive='[^}]+')
     compare(lex('myst-lexers.md', lexer), expected=[
-        LexedRegion(110, 145, {
+        Region(110, 145, lexemes={
             'directive': 'code-block',
             'arguments': 'python',
             'options': {},
             'source': '>>> 1 + 1\n3\n',
         }),
-        LexedRegion(188, 273, {
+        Region(188, 273, lexemes={
             'directive': 'directivename',
             'arguments': 'arguments',
             'options': {'key1': 'val1', 'key2': 'val2'},
             'source': 'This is\ndirective content\n',
         }),
-        LexedRegion(330, 378, {
+        Region(330, 378, lexemes={
             'directive': 'eval-rst',
             'arguments': '',
             'options': {},
             'source': '.. doctest::\n\n    >>> 1 + 1\n    4\n',
         }),
-        LexedRegion(1398, 1474, {
+        Region(1398, 1474, lexemes={
             'directive': 'foo',
             'arguments': 'bar',
             'options': {'key1': 'val1'},
@@ -59,13 +59,13 @@ def test_myst_directives():
 def test_examples_from_parsing_tests():
     lexer = DirectiveLexer(directive='code-block', arguments='python')
     compare(lex('myst-codeblock.md', lexer), expected=[
-        LexedRegion(99, 151, {
+        Region(99, 151, lexemes={
             'directive': 'code-block',
             'arguments': 'python',
             'options': {},
             'source': "raise Exception('boom!')\n",
         }),
-        LexedRegion(701, 748, {
+        Region(701, 748, lexemes={
             'directive': 'code-block',
             'arguments': 'python',
             'options': {},
@@ -77,7 +77,7 @@ def test_examples_from_parsing_tests():
 def test_myst_directives_with_mapping():
     lexer = DirectiveLexer(directive='directivename', arguments='.*', mapping={'arguments': 'foo'})
     compare(lex('myst-lexers.md', lexer), expected=[
-        LexedRegion(188, 273, {'foo': 'arguments', 'options': {}}),
+        Region(188, 273, lexemes={'foo': 'arguments', 'options': {}}),
     ])
 
 
@@ -86,11 +86,11 @@ def test_myst_percent_comment_invisible_directive():
         directive='(invisible-)?code(-block)?'
     )
     compare(lex('myst-lexers.md', lexer), expected=[
-        LexedRegion(449, 504, {
+        Region(449, 504, lexemes={
             'directive': 'invisible-code-block', 'arguments': 'python',
             'source': '\nb = 5\n\n...etc...\n',
         }),
-        LexedRegion(584, 652, {
+        Region(584, 652, lexemes={
             'directive': 'code-block', 'arguments': 'py',
             'source': '\nb = 6\n...etc...\n\n',
         }),
@@ -102,7 +102,7 @@ def test_myst_percent_comment_invisible_directive_mapping():
         directive='inv[^:]+', arguments='python', mapping={'arguments': 'language'}
     )
     compare(lex('myst-lexers.md', lexer), expected=[
-        LexedRegion(449, 504, {'language': 'python'}),
+        Region(449, 504, lexemes={'language': 'python'}),
     ])
 
 
@@ -111,7 +111,7 @@ def test_myst_html_comment_invisible_directive():
         directive='(invisible-)?code(-block)?'
     )
     compare(lex('myst-lexers.md', lexer), show_whitespace=True, expected=[
-        LexedRegion(702, 827, {
+        Region(702, 827, lexemes={
             'directive': 'invisible-code-block', 'arguments': 'python',
             'source': (
                 'def foo():\n'
@@ -120,7 +120,7 @@ def test_myst_html_comment_invisible_directive():
                 'assert foo() == meaning_of_life()\n'
             ),
         }),
-        LexedRegion(912, 1015, {
+        Region(912, 1015, lexemes={
             'directive': 'code-block', 'arguments': 'python',
             'source': (
                 '\n'
@@ -130,7 +130,7 @@ def test_myst_html_comment_invisible_directive():
                 '\n'
             ),
         }),
-        LexedRegion(1229, 1332, {
+        Region(1229, 1332, lexemes={
             'directive': 'invisible-code', 'arguments': 'py',
             'source': (
                 '\n'
@@ -146,27 +146,27 @@ def test_myst_html_comment_invisible_directive():
 def test_myst_html_comment_invisible_skip_directive():
     lexer = DirectiveInHTMLCommentLexer(directive='skip')
     compare(lex('myst-lexers.md', lexer), show_whitespace=True, expected=[
-        LexedRegion(1482, 1498, {
+        Region(1482, 1498, lexemes={
             'directive': 'skip',
             'arguments': 'next',
             'source': '',
         }),
-        LexedRegion(1503, 1562, {
+        Region(1503, 1562, lexemes={
             'directive': 'skip',
             'arguments': 'start if("some stuff here", reason=\'Something\')' ,
             'source': '',
         }),
-        LexedRegion(1567, 1584, {
+        Region(1567, 1584, lexemes={
             'directive': 'skip',
             'arguments': 'and',
             'source': '',
         }),
-        LexedRegion(1589, 1647, {
+        Region(1589, 1647, lexemes={
             'directive': 'skip',
             'arguments': 'end',
             'source': '\n\n\nOther stuff here just gets ignored\n\n',
         }),
-        LexedRegion(1652, 1672, {
+        Region(1652, 1672, lexemes={
             'directive': 'skip',
             'arguments': 'also',
             'source': '',
@@ -177,7 +177,7 @@ def test_myst_html_comment_invisible_skip_directive():
 def test_myst_html_comment_invisible_clear_directive():
     lexer = DirectiveInHTMLCommentLexer('clear-namespace')
     compare(lex('myst-lexers.md', lexer), show_whitespace=True, expected=[
-        LexedRegion(1678, 1699, {
+        Region(1678, 1699, lexemes={
             'directive': 'clear-namespace',
             'arguments': '',
             'source': '',
@@ -188,7 +188,7 @@ def test_myst_html_comment_invisible_clear_directive():
 def test_lexing_directives():
     lexer = DirectiveLexer('[^}]+')
     compare(lex('myst-lexing-directives.md', lexer), expected=[
-        LexedRegion(55, 233, {
+        Region(55, 233, lexemes={
             'directive': 'note',
             'arguments': 'This is a note admonition.',
             'options': {},
@@ -198,25 +198,25 @@ def test_lexing_directives():
                        '  following.\n'
                        '- It includes this bullet list.\n'),
         }),
-        LexedRegion(238, 317, {
+        Region(238, 317, lexemes={
             'directive': 'admonition',
             'arguments': 'And, by the way...',
             'options': {},
             'source': 'You can make up your own admonition too.\n',
         }),
-        LexedRegion(322, 383, {
+        Region(322, 383, lexemes={
             'directive': 'sample',
             'arguments': '',
             'options': {},
             'source': 'This directive has no arguments, just a body.\n',
         }),
-        LexedRegion(455, 478, {
+        Region(455, 478, lexemes={
             'directive': 'image',
             'arguments': 'picture.png',
             'options': {},
             'source': '',
         }),
-        LexedRegion(483, 592, {
+        Region(483, 592, lexemes={
             'directive': 'image',
             'arguments': 'picture.jpeg',
             'options': {
@@ -228,7 +228,7 @@ def test_lexing_directives():
             },
             'source': '',
         }),
-        LexedRegion(597, 1311, {
+        Region(597, 1311, lexemes={
             'directive': 'figure',
             'arguments': 'picture.png',
             'options': {
@@ -252,7 +252,7 @@ def test_lexing_directives():
                        '+-----------------------+-----------------------+\n'
                        '\n')
         }),
-        LexedRegion(1317, 1449, {
+        Region(1317, 1449, lexemes={
             'directive': 'topic',
             'arguments': 'Topic Title',
             'options': {},
@@ -260,13 +260,13 @@ def test_lexing_directives():
                        'the body of the topic, and are\n'
                        'interpreted as body elements.\n')
         }),
-        LexedRegion(1506, 1589, {
+        Region(1506, 1589, lexemes={
             'directive': 'topic',
             'arguments': 'example.cfg',
             'options': {'class': 'read-file'},
             'source': '::\n\n  [A Section]\n  dir = frob\n'
         }),
-        LexedRegion(1612, 1801, {
+        Region(1612, 1801, lexemes={
             'directive': 'sidebar',
             'arguments': 'Optional Sidebar Title',
             'options': {'subtitle': 'Optional Sidebar Subtitle'},
@@ -274,14 +274,14 @@ def test_lexing_directives():
                        'the body of the sidebar, and are\n'
                        'interpreted as body elements.\n')
         }),
-        LexedRegion(1807, 2003, {
+        Region(1807, 2003, lexemes={
             'directive': 'code-block',
             'arguments': 'python',
             'options': {'lineno-start': 10, 'emphasize-lines': '1, 3',
                         'caption': 'This is my\nmulti-line caption. It is *pretty nifty* ;-)\n'},
             'source': "a = 2\nprint('my 1st line')\nprint(f'my {a}nd line')\n",
         }),
-        LexedRegion(2008, 2210, {
+        Region(2008, 2210, lexemes={
             'directive': 'eval-rst',
             'arguments': '',
             'options': {},
@@ -304,7 +304,7 @@ def test_directive_no_trailing_newline():
     lexer = DirectiveLexer(directive='toctree')
     text = Path(sample_path('myst-directive-no-trailing-newline.md')).read_text().rstrip('\n')
     compare(lex_text(text, lexer), expected=[
-        LexedRegion(16, 64, {
+        Region(16, 64, lexemes={
             'directive': 'toctree',
             'arguments': '',
             'options': {'maxdepth': '1'},

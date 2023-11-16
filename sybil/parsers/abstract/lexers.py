@@ -5,13 +5,13 @@ from typing import Optional, Dict, Iterable, Pattern, List
 
 from sybil import Document
 from sybil.exceptions import LexingException
-from sybil.region import LexedRegion, Lexeme
+from sybil.region import Lexeme, Region
 from sybil.typing import Lexer
 
 
 class LexerCollection(List[Lexer]):
 
-    def __call__(self, document: Document) -> Iterable[LexedRegion]:
+    def __call__(self, document: Document) -> Iterable[Region]:
         return chain(*(lexer(document) for lexer in self))
 
 
@@ -20,14 +20,14 @@ class BlockLexer:
     This is a base class useful for any :any:`Lexer` that must handle block-style languages
     such as ReStructured Text or MarkDown.
 
-    It yields a sequence of :class:`~sybil.LexedRegion` objects for each case where the
+    It yields a sequence of :class:`~sybil.Region` objects for each case where the
     ``start_pattern`` matches. A ``source`` :class:`~sybil.Lexeme` is created from the text between
     the end of the start pattern and the start of the end pattern.
 
     :param start_pattern:
         This is used to match the start of the block. Any named groups will be returned
-        in the :attr:`~sybil.LexedRegion.lexemes` :class:`dict` of resulting
-        :class:`~sybil.LexedRegion` objects. If a ``prefix`` named group forms
+        in the :attr:`~sybil.Region.lexemes` :class:`dict` of resulting
+        :class:`~sybil.Region` objects. If a ``prefix`` named group forms
         part of the match, this will be template substituted into the ``end_pattern_template``
         before it is compiled.
 
@@ -39,7 +39,7 @@ class BlockLexer:
 
     :param mapping:
         If provided, this is used to rename lexemes from the keys in the mapping to their values.
-        Only mapped lexemes will be returned in any :class:`~sybil.LexedRegion` objects.
+        Only mapped lexemes will be returned in any :class:`~sybil.Region` objects.
     """
 
     def __init__(
@@ -52,7 +52,7 @@ class BlockLexer:
         self.end_pattern_template = end_pattern_template
         self.mapping = mapping
 
-    def __call__(self, document: Document) -> Iterable[LexedRegion]:
+    def __call__(self, document: Document) -> Iterable[Region]:
         for start_match in re.finditer(self.start_pattern, document.text):
             source_start = start_match.end()
             lexemes = start_match.groupdict()
@@ -77,4 +77,4 @@ class BlockLexer:
             )
             if self.mapping:
                 lexemes = {dest: lexemes[source] for source, dest in self.mapping.items()}
-            yield LexedRegion(start_match.start(), source_end, lexemes)
+            yield Region(start_match.start(), source_end, lexemes=lexemes)

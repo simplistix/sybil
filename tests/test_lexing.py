@@ -4,7 +4,7 @@ import pytest
 from testfixtures import ShouldRaise, compare
 from testfixtures.comparison import compare_text, compare_dict
 
-from sybil import LexedRegion, Lexeme
+from sybil import Lexeme, Region
 from sybil.parsers.abstract.lexers import BlockLexer
 from sybil.exceptions import LexingException
 from .helpers import lex, sample_path
@@ -15,23 +15,6 @@ def test_examples_from_parsing_tests():
     path = sample_path('lexing-fail.txt')
     with ShouldRaise(LexingException(f"Could not match 'END' in {path}:\n'\\nEDN\\n'")):
         lex('lexing-fail.txt', lexer)
-
-
-def test_repr():
-    compare(
-        str(LexedRegion(36, 56, {
-            'language': 'python',
-            'foo': None,
-            'source': 'X'*1000,
-            'bar': {},
-            'baz': {f'a{i}': 'b' for i in range(11)},
-        })),
-        expected="<LexedRegion start=36 end=56 "
-                 "{'language': 'python', 'foo': None, 'source': 'XXXXXXXXXX...', "
-                 "'bar': {}, 'baz': {'a0': 'b', 'a1': 'b', 'a2': 'b', 'a3': 'b', "
-                 "'a4': 'b', 'a5': 'b', 'a6': 'b', 'a7': 'b', 'a8': 'b', 'a9': 'b', "
-                 "'a10': 'b'}}>"
-    )
 
 
 class TestLexemeStripping:

@@ -34,9 +34,6 @@ Regions
 .. autoclass:: sybil.Region
   :members:
 
-.. autoclass:: sybil.LexedRegion
-  :members:
-
 .. autoclass:: sybil.Lexeme
   :members:
   :show-inheritance:
@@ -45,6 +42,8 @@ Lexing
 ------
 
 .. autodata:: sybil.typing.Lexer
+
+.. autodata:: sybil.typing.LexemeMapping
 
 .. autoclass:: sybil.parsers.abstract.lexers.BlockLexer
 

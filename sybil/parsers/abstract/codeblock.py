@@ -15,7 +15,7 @@ class AbstractCodeBlockParser:
     :param lexers:
         A sequence of :any:`Lexer` objects that will be applied in turn to each
         :class:`~sybil.Document`
-        that is parsed. The :class:`~sybil.LexedRegion` objects returned by these lexers must have
+        that is parsed. The :class:`~sybil.Region` objects returned by these lexers must have
         both an ``arguments`` string, containing the language of the lexed region, and a
         ``source`` :class:`~sybil.Lexeme` containing the source code of the lexed region.
 
@@ -50,10 +50,11 @@ class AbstractCodeBlockParser:
         raise NotImplementedError
 
     def __call__(self, document: Document) -> Iterable[Region]:
-        for lexed in self.lexers(document):
-            if lexed.lexemes['arguments'] == self.language:
-                evaluator = self._evaluator or self.evaluate
-                yield Region(lexed.start, lexed.end, lexed.lexemes['source'], evaluator)
+        for region in self.lexers(document):
+            if region.lexemes['arguments'] == self.language:
+                region.parsed = region.lexemes['source']
+                region.evaluator = self._evaluator or self.evaluate
+                yield region
 
 
 class PythonDocTestOrCodeBlockParser:
