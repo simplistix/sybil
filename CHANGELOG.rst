@@ -1,6 +1,40 @@
 Changes
 =======
 
+6.0.0 (21 Nov 2023)
+-------------------
+
+- The public interface is now fully typed and checked with ``mypy``.
+
+- Official support for Python 3.12 with Python 3.7 now being the minimum
+  supported version.
+
+- :doc:`Markdown <markdown>` is now supported separately to
+  :doc:`MyST <myst>`.
+
+- :any:`ReST <sybil.parsers.rest.lexers.DirectiveLexer>` and
+  :any:`MyST <sybil.parsers.myst.lexers.DirectiveLexer>` directives
+  now have their options extracted as part of the lexing process.
+
+- Added support for MyST single-line html-style comment directives.
+
+- Fixed parsing of MyST directive options with no leading whitespace.
+
+- Fixed parsing of Markdown and MyST fenced codeblocks at the end of documents with no
+  trailing newline.
+
+- Rework document evaluators to be more flexible and structured.
+
+- :ref:`skip <skip-parser>` has been reworked to check validity of operations
+  and allow a reason to be provided for an unconditional skip so it can be
+  highlighted as a skipped test in test runner output. The skip parsers
+  are also now lexer-based.
+
+- Make :attr:`Region.evaluator` optional, removing the need for the separate
+  ``LexedRegion`` class.
+
+Huge thanks to Adam Dangoor for all his work on typing!
+
 5.0.3 (14 Jul 2023)
 -------------------
 
