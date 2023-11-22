@@ -116,10 +116,10 @@ def test_skip_lexing():
         Region(70, 84, lexemes={
             'directive': 'skip', 'arguments': 'next', 'options': {}, 'source': ''
         }),
-        Region(269, 284, lexemes={
+        Region(197, 212, lexemes={
             'directive': 'skip', 'arguments': 'start', 'options': {}, 'source': ''
         }),
-        Region(401, 414, lexemes={
+        Region(329, 342, lexemes={
             'directive': 'skip', 'arguments': 'end', 'options': {}, 'source': ''
         }),
     ])
@@ -251,13 +251,27 @@ def test_lexing_directives():
             'options': {'class': 'read-file'},
             'source': '::\n\n  [A Section]\n  dir = frob\n'
         }),
-        Region(1635, 1818, lexemes={
+        Region(1635, 1819, lexemes={
             'directive': 'sidebar',
             'arguments': 'Optional Sidebar Title',
             'options': {'subtitle': 'Optional Sidebar Subtitle'},
             'source': ('Subsequent indented lines comprise\n'
                        'the body of the sidebar, and are\n'
-                       'interpreted as body elements.')
+                       'interpreted as body elements.\n')
+        }),
+        Region(1856, 1871, lexemes={
+            'directive': 'skip',
+            'arguments': 'next',
+            'options': {},
+            'source': '',
+        }),
+        Region(1871, 1910, lexemes={
+            'directive': 'code-block',
+            'arguments': 'python',
+            'options': {},
+            'source': (
+                'run.append(1)'
+            ),
         }),
     ])
 

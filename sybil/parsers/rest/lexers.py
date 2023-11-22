@@ -12,7 +12,7 @@ START_PATTERN_TEMPLATE =(
 )
 
 OPTIONS_PATTERN = re.compile(r'[^:]*:(?P<name>[^:]+):[ \t]*(?P<value>[^\n]*)\n')
-END_PATTERN_TEMPLATE = r'(\n?\Z|\n[ \t]{{0,{len_prefix}}}(?=\S|\Z))'
+END_PATTERN_TEMPLATE = r'((?<=\n)(?=\.\.)|\n?\Z|\n[ \t]{{0,{len_prefix}}}(?=\S|\Z))'
 
 
 def parse_options_and_source(lexed: Region) -> None:

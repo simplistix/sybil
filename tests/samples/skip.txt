@@ -5,9 +5,6 @@
 Let's skips some stuff:
 
 .. skip: next
-
-After this text is a code block that goes boom, it should be skipped:
-
 .. code-block:: python
 
   run.append(1)
