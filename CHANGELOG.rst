@@ -1,6 +1,12 @@
 Changes
 =======
 
+6.0.1 (22 Nov 2023)
+-------------------
+
+- Fix lexing of ReST directives and directives-in-comments where the directives
+  were not separated by at least one newline.
+
 6.0.0 (21 Nov 2023)
 -------------------
 
