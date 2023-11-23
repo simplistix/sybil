@@ -1,6 +1,11 @@
 Changes
 =======
 
+6.0.2 (23 Nov 2023)
+-------------------
+
+- Remove use of deprecated ``py.path.local``.
+
 6.0.1 (22 Nov 2023)
 -------------------
 
