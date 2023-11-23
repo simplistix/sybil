@@ -265,12 +265,20 @@ def test_lexing_directives():
             'options': {},
             'source': '',
         }),
-        Region(1871, 1910, lexemes={
+        Region(1871, 1911, lexemes={
             'directive': 'code-block',
             'arguments': 'python',
             'options': {},
             'source': (
-                'run.append(1)'
+                'run.append(1)\n'
+            ),
+        }),
+        Region(1988, 2066, lexemes={
+            'directive': 'topic',
+            'arguments': 'example.cfg',
+            'options': {'class': 'read-file'},
+            'source': (
+                '::\n\n  [A Section]\n  dir = frob\n\n'
             ),
         }),
     ])

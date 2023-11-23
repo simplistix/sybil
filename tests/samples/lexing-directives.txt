@@ -78,3 +78,17 @@ Two directives next to each other:
 .. code-block:: python
 
   run.append(1)
+
+The following topic ens with two lines of whitespace, which is important:
+
+
+.. topic:: example.cfg
+ :class: read-file
+
+ ::
+
+   [A Section]
+   dir = frob
+
+
+.. config parser writes whitespace at the end, be careful when testing!
