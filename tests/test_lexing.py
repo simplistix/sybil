@@ -4,9 +4,9 @@ import pytest
 from testfixtures import ShouldRaise, compare
 from testfixtures.comparison import compare_text, compare_dict
 
-from sybil import Lexeme, Region
-from sybil.parsers.abstract.lexers import BlockLexer
+from sybil import Lexeme
 from sybil.exceptions import LexingException
+from sybil.parsers.abstract.lexers import BlockLexer
 from .helpers import lex, sample_path
 
 
