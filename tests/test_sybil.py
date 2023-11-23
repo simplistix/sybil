@@ -6,7 +6,6 @@ from os.path import split
 from pathlib import Path
 
 import pytest
-from py.path import local
 from testfixtures import compare
 
 from sybil import Sybil, Region
@@ -280,15 +279,15 @@ class TestSybil:
         assert (evaluate_examples(document) ==
                 ['X count was 1, as expected'])
 
-    def test_augment_document_mapping(self, tmpdir: local):
+    def test_augment_document_mapping(self, tmp_path: Path):
 
         class TextDocument(Document):
             pass
 
         sybil = Sybil([], document_types={'.txt': TextDocument})
-        document = sybil.parse(write_doctest(tmpdir, 'test.txt'))
+        document = sybil.parse(write_doctest(tmp_path, 'test.txt'))
         assert type(document) is TextDocument
-        document = sybil.parse(write_doctest(tmpdir, 'test.rst'))
+        document = sybil.parse(write_doctest(tmp_path, 'test.rst'))
         assert type(document) is Document
 
     def test_override_document_mapping(self):

@@ -1,8 +1,8 @@
 import sys
 from importlib import import_module
+from pathlib import Path
 
 import pytest
-from py.path import local
 
 from sybil.python import import_cleanup
 from .helpers import Finder, ast_docstrings
@@ -22,15 +22,15 @@ def test_finder_not_present_but_is_present():
     assert str(info.value) == '\nfoo baz bar'
 
 
-def test_import_cleanup(tmpdir: local):
-    (tmpdir / 'some_module.py').write('import unittest\nfoo = 1')
-    (tmpdir / 'other_module.py').write('import other_module\nfoo = 1')
+def test_import_cleanup(tmp_path: Path):
+    (tmp_path / 'some_module.py').write_text('import unittest\nfoo = 1')
+    (tmp_path / 'other_module.py').write_text('import other_module\nfoo = 1')
 
     initial_modules = sys.modules.copy()
     initial_path = sys.path.copy()
 
     with import_cleanup():
-        sys.path.append(tmpdir.strpath)
+        sys.path.append(str(tmp_path))
         some_module = import_module('some_module')
         assert some_module.foo == 1
 

@@ -62,7 +62,7 @@ class SybilItem(pytest.Item):
 
     def reportinfo(self) -> Tuple[Union["os.PathLike[str]", str], Optional[int], str]:
         info = '%s line=%i column=%i' % (
-            self.fspath.basename, self.example.line, self.example.column
+            self.path.name, self.example.line, self.example.column
         )
         return self.example.path, self.example.line, info
 
@@ -115,7 +115,7 @@ class SybilFile(pytest.File):
         self.sybil: 'Sybil' = sybil
 
     def collect(self):
-        self.document = self.sybil.parse(Path(self.fspath.strpath))
+        self.document = self.sybil.parse(self.path)
         for example in self.document:
             yield SybilItem.from_parent(self, sybil=self.sybil, example=example)
 

@@ -14,7 +14,6 @@ import pytest
 from _pytest._code import ExceptionInfo
 from _pytest.capture import CaptureFixture
 from _pytest.config import main as pytest_main
-from py.path import local
 from seedir import seedir
 from testfixtures import compare
 
@@ -147,24 +146,24 @@ class Results:
         self.out = Finder(out)
 
 
-def functional_sample(name: str) -> local:
-    return local(FUNCTIONAL_TEST_DIR) / name
+def functional_sample(name: str) -> Path:
+    return Path(FUNCTIONAL_TEST_DIR) / name
 
 
-def clone_functional_sample(name: str, target: local) -> local:
+def clone_functional_sample(name: str, target: Path) -> Path:
     source = functional_sample(name)
     dest = target / name
-    copytree(source.strpath, dest.strpath)
+    copytree(str(source), str(dest))
     return dest
 
 
-def run_pytest(capsys: CaptureFixture[str], path: local) -> Results:
+def run_pytest(capsys: CaptureFixture[str], path: Path) -> Results:
     class CollectResults:
         def pytest_sessionfinish(self, session):
             self.session = session
 
     results = CollectResults()
-    return_code = pytest_main(['-vvs', path.strpath, '-p', 'no:doctest'],
+    return_code = pytest_main(['-vvs', str(path), '-p', 'no:doctest'],
                               plugins=[results])
     return Results(
         capsys,
@@ -174,11 +173,11 @@ def run_pytest(capsys: CaptureFixture[str], path: local) -> Results:
     )
 
 
-def run_unittest(capsys: CaptureFixture[str], path: local) -> Results:
+def run_unittest(capsys: CaptureFixture[str], path: Path) -> Results:
     runner = TextTestRunner(verbosity=2, stream=sys.stdout)
     main = unittest_main(
         exit=False, module=None, testRunner=runner,
-        argv=['x', 'discover', '-v', '-t', path.strpath, '-s', path.strpath]
+        argv=['x', 'discover', '-v', '-t', str(path), '-s', str(path)]
     )
     return Results(
         capsys,
@@ -194,7 +193,7 @@ RUNNERS = {
 }
 
 
-def run(capsys: CaptureFixture[str], integration: str, path: local) -> Results:
+def run(capsys: CaptureFixture[str], integration: str, path: Path) -> Results:
     return RUNNERS[integration](capsys, path)
 
 
@@ -219,7 +218,7 @@ CONFIG_ASSIGNED_NAME = {
 }
 
 
-def write_config(tmpdir: local, integration: str, template=CONFIG_TEMPLATE, **params: str):
+def write_config(tmp_path: Path, integration: str, template=CONFIG_TEMPLATE, **params: str):
     import sys
     sys.modules.pop('test_docs', None)
     params_ = {'parsers': '[DocTestParser()]'}
@@ -229,11 +228,11 @@ def write_config(tmpdir: local, integration: str, template=CONFIG_TEMPLATE, **pa
         params='\n'.join([f'    {name}={value},' for name, value in params_.items()]),
         integration=integration,
     )
-    (tmpdir / CONFIG_FILENAMES[integration]).write_text(config, 'ascii')
+    (tmp_path / CONFIG_FILENAMES[integration]).write_text(config, 'ascii')
 
 
-def write_doctest(tmpdir: local, *path: str) -> Path:
-    file_path = Path(tmpdir.join(*path).strpath)
+def write_doctest(tmp_path: Path, *path: str) -> Path:
+    file_path = tmp_path.joinpath(*path)
     file_path.parent.mkdir(parents=True, exist_ok=True)
     file_path.write_text(f">>> assert '{file_path.name}' == '{file_path.name}'")
     return file_path
