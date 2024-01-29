@@ -53,12 +53,21 @@ class SybilItem(pytest.Item):
     def request_fixtures(self, names):
         # pytest fixtures dance:
         fm = self.session._fixturemanager
-        closure = fm.getfixtureclosure(names, self)
-        initialnames, names_closure, arg2fixturedefs = closure
-        fixtureinfo = FuncFixtureInfo(names, initialnames, names_closure, arg2fixturedefs)
+        if PYTEST_VERSION >= (8, 0, 0):
+            closure = fm.getfixtureclosure(initialnames=names, parentnode=self, ignore_args=set())
+            names_closure, arg2fixturedefs = closure
+            fixtureinfo = FuncFixtureInfo(argnames=names, initialnames=names, names_closure=names_closure, name2fixturedefs=arg2fixturedefs)
+        else:
+            closure = fm.getfixtureclosure(names, self)
+            initialnames, names_closure, arg2fixturedefs = closure
+            fixtureinfo = FuncFixtureInfo(names, initialnames, names_closure, arg2fixturedefs)
         self._fixtureinfo = fixtureinfo
         self.funcargs = {}
-        self._request = fixtures.FixtureRequest(self, _ispytest=True)
+        if PYTEST_VERSION >= (8, 0, 0):
+            self._request = fixtures.TopRequest(pyfuncitem=self, _ispytest=True)
+            self.fixturenames = names_closure
+        else:
+            self._request = fixtures.FixtureRequest(self, _ispytest=True)
 
     def reportinfo(self) -> Tuple[Union["os.PathLike[str]", str], Optional[int], str]:
         info = '%s line=%i column=%i' % (
