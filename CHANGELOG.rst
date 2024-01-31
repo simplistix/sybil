@@ -1,6 +1,14 @@
 Changes
 =======
 
+6.0.3 (31 Jan 2023)
+-------------------
+
+- Support pytest 8 and above, due to yet another breaking change in an API Sybil relies on.
+
+
+Thanks to Adam Dangoor for the fix.
+
 6.0.2 (23 Nov 2023)
 -------------------
 
