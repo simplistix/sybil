@@ -161,12 +161,18 @@ def test_filter_fnmatch_pattern(tmp_path: Path, capsys: CaptureFixture[str], run
     write_config(tmp_path, runner, pattern="'**/*.rst'")
     results = run(capsys, runner, tmp_path)
     # The fact that the two .rst files in the root aren't matched is
-    # arguably a bug in the Python interpretation of **/
+    # arguably a bug in the Python interpretation of **/ in Python < 3.13
+    expected_total = 4
     results.out.assert_has_run(runner, '/parent/foo.rst')
     results.out.assert_has_run(runner, '/parent/bar.rst')
     results.out.assert_has_run(runner, '/parent/child/foo.rst')
     results.out.assert_has_run(runner, '/parent/child/bar.rst')
-    assert results.total == 4, results.out.text
+    # The interpretation of **/ was fixed in Python 3.13
+    if sys.version_info >= (3, 13):
+        expected_total = 6
+        results.out.assert_has_run(runner, '/foo.rst')
+        results.out.assert_has_run(runner, '/bar.rst')
+    assert results.total == expected_total, results.out.text
 
 
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
@@ -211,10 +217,11 @@ def test_filter_directory_with_excludes(tmp_path: Path, capsys: CaptureFixture[s
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
 def test_filter_filenames_and_excludes(tmp_path: Path, capsys: CaptureFixture[str], runner: str):
     make_tree(tmp_path)
+    globber = "**/" if sys.version_info >= (3, 13) else "**"
     write_config(tmp_path, runner,
                  path=f"'{tmp_path / 'parent'}'",
                  filenames="{'bar.rst'}",
-                 excludes="['**child/*.rst']")
+                 excludes=f"['{globber}child/*.rst']")
     results = run(capsys, runner, tmp_path)
     results.out.assert_has_run(runner, '/parent/bar.rst')
     assert results.total == 1, results.out.text
