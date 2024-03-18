@@ -95,7 +95,7 @@ class Region:
         assert self.start == other.start  # This is where this may happen, if not something weird
         return True
 
-    def adjust(self, lexed: Union['Region', 'Region'], lexeme: Lexeme) -> None:
+    def adjust(self, lexed: 'Region', lexeme: Lexeme) -> None:
         """
         Adjust the start and end of this region based on the provided :class:`Lexeme`
         and ::class:`Region` that lexeme came from.
