@@ -7,7 +7,7 @@ from shutil import copytree
 from tempfile import NamedTemporaryFile
 from textwrap import dedent
 from traceback import TracebackException
-from typing import Optional, Tuple, List, Sequence
+from typing import Optional, Tuple, List, Sequence, Union, Iterable
 from unittest import TextTestRunner, main as unittest_main, SkipTest
 
 import pytest
@@ -28,19 +28,52 @@ HERE = Path(__file__).parent
 DOCS = HERE.parent / 'docs'
 SAMPLE_PATH = HERE / 'samples'
 
+
 def sample_path(name) -> str:
     return str(SAMPLE_PATH / name)
 
 
-def lex(name: str, lexer: Lexer) -> List[Region]:
+def regions_and_document(name: str, lexer: Lexer) -> Tuple[Document, List[Region]]:
     path = sample_path(name)
     document = Document(Path(path).read_text(), path)
-    return list(lexer(document))
+    return document, list(lexer(document))
+
+
+def lex(name: str, lexer: Lexer) -> List[Region]:
+    return regions_and_document(name, lexer)[1]
+
+
+def region_details(
+        document: Document, regions: Iterable[Region]
+) -> List[Tuple[Tuple[str, Union[Region, str]], ...]]:
+    # return a list of tuple of tuples to make failures easier to work through:
+    return [(
+        ('start', document.line_column(region.start)),
+        ('end', document.line_column(region.end)),
+        ('region', region)
+    ) for region in regions]
+
+
+def check_lexed_regions(name: str, lexer: Lexer, *, expected: List[Region]) -> None:
+    document, actual = regions_and_document(name, lexer)
+    compare(
+        expected=region_details(document, expected),
+        actual=region_details(document, actual),
+    )
 
 
 def lex_text(text: str, lexer: Lexer) -> List[Region]:
     document = Document(text, 'sample.txt')
     return list(lexer(document))
+
+
+def check_lexed_text_regions(text: str, lexer: Lexer, *, expected: List[Region]) -> None:
+    document = Document(text, 'sample.txt')
+    actual =list(lexer(document))
+    compare(
+        expected=region_details(document, expected),
+        actual=region_details(document, actual),
+    )
 
 
 def parse(name: str, *parsers: Parser, expected: int) -> Tuple[List[Example], dict]:
