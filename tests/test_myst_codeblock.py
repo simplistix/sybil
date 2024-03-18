@@ -3,8 +3,7 @@ import __future__
 import pytest
 from testfixtures import compare
 
-from sybil import Example, Region
-from sybil.evaluators.python import PythonEvaluator
+from sybil import Example
 from sybil.parsers.myst import PythonCodeBlockParser, CodeBlockParser
 from .helpers import check_excinfo, parse
 
@@ -33,6 +32,11 @@ def test_basic():
     assert examples[6].evaluate() is None
     assert 'YesVars' in namespace
     assert '__builtins__' not in namespace
+
+
+def test_complicated_nesting():
+    # This has no code blocks, but should still parse fine:
+    parse('myst-complicated-nesting.md', PythonCodeBlockParser(), expected=0)
 
 
 def test_doctest_at_end_of_fenced_codeblock():
