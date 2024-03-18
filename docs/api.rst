@@ -90,6 +90,8 @@ ReST Parsing and Lexing
 Markdown Parsing and Lexing
 ---------------------------
 
+.. autoclass:: sybil.parsers.markdown.lexers.RawFencedCodeBlockLexer
+
 .. autoclass:: sybil.parsers.markdown.lexers.FencedCodeBlockLexer
 
 .. autoclass:: sybil.parsers.markdown.lexers.DirectiveInHTMLCommentLexer

@@ -3,13 +3,13 @@ from typing import Optional, Dict, Iterable
 
 from sybil import Document, Region
 from sybil.parsers.abstract.lexers import BlockLexer
-from sybil.parsers.markdown.lexers import CODEBLOCK_END_TEMPLATE
+from sybil.parsers.markdown.lexers import RawFencedCodeBlockLexer
 from sybil.parsers.rest.lexers import parse_options_and_source
 
-DIRECTIVE_START_TEMPLATE = (
-    r"^(?P<prefix>[ \t]*)```\{{(?P<directive>{directive})}} ?(?P<arguments>{arguments})$\n"
-    r'(?P<options>(?:\1[ \t]*:[\w-]*:[^\n]*\n)+)?'
-    r"(\1---\n(?P<yaml_options>(?:.+\n)*)\1---\n)?"
+INFO_PATTERN = (
+    r'\{{(?P<directive>{directive})}} ?(?P<arguments>{arguments})$\n'
+    r'(?P<options>(?:[ \t]*:[\w-]*:[^\n]*\n)+)?'
+    r"([ \t]*---\n(?P<yaml_options>(?:.+\n)*)[ \t]*---\n)?"
 )
 
 
@@ -23,9 +23,9 @@ def parse_yaml_options(lexed: Region) -> None:
         lexemes['options'].update(options)
 
 
-class DirectiveLexer(BlockLexer):
+class DirectiveLexer(RawFencedCodeBlockLexer):
     """
-    A :class:`~sybil.parsers.abstract.lexers.BlockLexer` for MyST directives such as:
+    A :class:`~sybil.typing.Lexer` for MyST directives such as:
 
     .. code-block:: markdown
 
@@ -60,11 +60,10 @@ class DirectiveLexer(BlockLexer):
             self, directive: str, arguments: str = '.*', mapping: Optional[Dict[str, str]] = None
     ) -> None:
         super().__init__(
-            start_pattern=re.compile(
-                DIRECTIVE_START_TEMPLATE.format(directive=directive, arguments=arguments),
-                re.MULTILINE
+            info_pattern=re.compile(
+                INFO_PATTERN.format(directive=directive, arguments=arguments),
+                re.MULTILINE,
             ),
-            end_pattern_template=CODEBLOCK_END_TEMPLATE,
             mapping=mapping,
         )
 

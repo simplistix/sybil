@@ -1,15 +1,106 @@
 import re
-from typing import Optional, Dict
+import textwrap
+from typing import Optional, Dict, Pattern, Iterable, Match, List
 
+from sybil import Document, Region, Lexeme
 from sybil.parsers.abstract.lexers import BlockLexer
 
-CODEBLOCK_START_TEMPLATE = r"^(?P<prefix>[ \t]*)```(?P<language>{language})$\n"
-CODEBLOCK_END_TEMPLATE = r"(?<=\n){prefix}```(:?\n|\Z)"
+FENCE = re.compile(r"^(?P<prefix>[ \t]*)(?P<fence>`{3,}|~{3,})", re.MULTILINE)
 
 
-class FencedCodeBlockLexer(BlockLexer):
+class RawFencedCodeBlockLexer:
     """
-    A :class:`~sybil.parsers.abstract.lexers.BlockLexer` for Markdown fenced code blocks.
+    A :class:`~sybil.typing.Lexer` for Markdown fenced code blocks allowing flexible lexing
+    of the whole `info` line along with more complicated prefixes.
+
+    The following lexemes are extracted:
+
+    - ``source`` as a :class:`~sybil.Lexeme`.
+    - any other named groups specified in ``info_pattern`` as :class:`strings <str>`.
+
+
+    :param info_pattern:
+        a :class:`re.Pattern` to match the `info` line and any required prefix that follows it.
+
+    :param mapping:
+        If provided, this is used to rename lexemes from the keys in the mapping to their
+        values. Only mapped lexemes will be returned in any :class:`~sybil.Region` objects.
+
+    """
+
+
+    def __init__(
+            self,
+            info_pattern: Pattern[str] = re.compile(r'$\n', re.MULTILINE),
+            mapping: Optional[Dict[str, str]] = None,
+    ) -> None:
+        self.info_pattern = info_pattern
+        self.mapping = mapping
+
+    @staticmethod
+    def match_closes_existing(current: Match[str], existing: Match[str]) -> bool:
+        current_fence = current.group('fence')
+        existing_fence = existing.group('fence')
+        same_type = current_fence[0] == existing_fence[0]
+        okay_length = len(current_fence) >= len(existing_fence)
+        same_prefix = len(current.group('prefix')) == len(existing.group('prefix'))
+        return same_type and okay_length and same_prefix
+
+    def make_region(
+            self, opening: Match[str], document: Document, closing: Optional[Match[str]]
+    ) -> Optional[Region]:
+        if closing is None:
+            content_end = region_end = len(document.text)
+        else:
+            content_end = closing.start()
+            region_end = closing.end()
+        content = document.text[opening.end(): content_end]
+        info = self.info_pattern.match(content)
+        if info is None:
+            return None
+        lexemes = info.groupdict()
+        lines = content[info.end():].splitlines(keepends=True)
+        stripped = ''.join(line[len(opening.group('prefix')):] for line in lines)
+        lexemes['source'] = Lexeme(
+            textwrap.dedent(stripped),
+            offset=len(opening.group(0))+info.end(),
+            line_offset=0,
+        )
+        if self.mapping:
+            lexemes = {dest: lexemes[source] for source, dest in self.mapping.items()}
+        return Region(opening.start(), region_end, lexemes=lexemes)
+
+    def __call__(self, document: Document) -> Iterable[Region]:
+        open_blocks: List[Match[str]] = []
+        index = 0
+        while True:
+            match = FENCE.search(document.text, index)
+            if match is None:
+                break
+            else:
+                index = match.end()
+            # does this fence close any open block?
+            for i in range(len(open_blocks)):
+                existing = open_blocks[i]
+                if self.match_closes_existing(match, existing):
+                    maybe_region = self.make_region(existing, document, match)
+                    if maybe_region is not None:
+                        yield maybe_region
+                    open_blocks = open_blocks[:i]
+                    break
+            else:
+                open_blocks.append(match)
+        if open_blocks:
+            maybe_region = self.make_region(open_blocks[0], document, closing=None)
+            if maybe_region is not None:
+                yield maybe_region
+
+
+class FencedCodeBlockLexer(RawFencedCodeBlockLexer):
+    """
+    A :class:`~sybil.typing.Lexer` for Markdown fenced code blocks where a language is specified.
+    :class:`RawFencedCodeBlockLexer` can be used if the whole `info` line, or a more complicated
+    prefix, is required.
 
     The following lexemes are extracted:
 
@@ -28,13 +119,8 @@ class FencedCodeBlockLexer(BlockLexer):
 
     def __init__(self, language: str, mapping: Optional[Dict[str, str]] = None) -> None:
         super().__init__(
-            start_pattern=re.compile(CODEBLOCK_START_TEMPLATE.format(language=language)),
-            end_pattern_template=CODEBLOCK_END_TEMPLATE,
+            info_pattern=re.compile(f'(?P<language>{language})$\n', re.MULTILINE),
             mapping=mapping,
-        )
-        self.start_pattern = re.compile(
-            CODEBLOCK_START_TEMPLATE.format(language=language),
-            re.MULTILINE
         )
 
 
