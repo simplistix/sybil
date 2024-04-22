@@ -1,7 +1,16 @@
 Changes
 =======
 
-6.0.3 (31 Jan 2023)
+6.1.0 (22 Apr 2024)
+-------------------
+
+- Add support for lexing nested fenced codeblocks in markdown.
+
+- Add support for tilde-delimited codeblocks in markdown.
+
+- Fix bug with the end offset of codeblocks in markdown.
+
+6.0.3 (31 Jan 2024)
 -------------------
 
 - Support pytest 8 and above, due to yet another breaking change in an API Sybil relies on.
