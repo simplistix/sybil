@@ -173,3 +173,30 @@ def test_blank_lines():
     # check the line number in the exception:
     check_excinfo(example, excinfo, 'Boom!', lineno=12)
 
+
+def test_blank_lines_indented():
+    examples, namespace = parse(
+        "myst-codeblock-blank-lines-indented.md", PythonCodeBlockParser(), expected=1
+    )
+    (example,) = examples
+    compare(
+        example.parsed,
+        expected="".join(
+            (
+                "\n",
+                "y = 0\n",
+                "# now a blank line:\n",
+                "\n",
+                "y += 1\n",
+                "# two blank lines:\n",
+                "\n",
+                "\n",
+                "assert not y, 'Boom!'\n",
+            )
+        ),
+    )
+    with pytest.raises(AssertionError) as excinfo:
+        example.evaluate()
+
+    # check the line number in the exception:
+    check_excinfo(example, excinfo, "Boom!", lineno=12)
