@@ -354,7 +354,10 @@ def test_lexing_nested_directives():
             },
             'source': (
                 'This is the caption of the figure (a simple paragraph).\n'
+                '\n'
+                '\n'
                 ' .. topic:: Topic Title\n'
+                '\n'
                 '     Subsequent indented lines comprise\n'
                 '     the body of the topic, and are\n'
                 '     interpreted as body elements.'

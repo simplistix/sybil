@@ -17,6 +17,32 @@ def test_examples_from_parsing_tests():
         lex('lexing-fail.txt', lexer)
 
 
+def test_indented_block():
+    lexer = BlockLexer(
+        start_pattern=re.compile('(?P<prefix> *)START\n'),
+        end_pattern_template=' {{{len_prefix}}}END'
+    )
+    region, = lex('lexing-indented-block.txt', lexer)
+    compare(
+        region.lexemes,
+        expected={
+            'source': Lexeme(
+                "".join(
+                    (
+                        "\n",
+                        "line 1\n",
+                        "\n",
+                        "  line 2\n",
+                        "\n",
+                    )
+                ),
+                offset=0,
+                line_offset=0,
+            ),
+        }
+    )
+
+
 class TestLexemeStripping:
 
     @staticmethod
