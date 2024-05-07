@@ -149,3 +149,27 @@ def test_functional_future_imports():
     foo = future_import_checks('annotations')
     # This will keep working but not be an effective test once PEP 563 finally lands:
     assert foo.__code__.co_flags & __future__.annotations.compiler_flag
+
+
+def test_blank_lines():
+    examples, namespace = parse(
+        'myst-codeblock-blank-lines.md', PythonCodeBlockParser(), expected=1
+    )
+    example, = examples
+    compare(example.parsed, expected=''.join((
+        '\n',
+        'y = 0\n',
+        '# now a blank line:\n',
+        '\n',
+        'y += 1\n',
+        '# two blank lines:\n',
+        '\n',
+        '\n',
+        "assert not y, 'Boom!'\n",
+    )))
+    with pytest.raises(AssertionError) as excinfo:
+        example.evaluate()
+
+    # check the line number in the exception:
+    check_excinfo(example, excinfo, 'Boom!', lineno=12)
+
