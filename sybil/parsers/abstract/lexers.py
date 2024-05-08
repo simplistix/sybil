@@ -68,13 +68,17 @@ class BlockLexer:
                 )
             source_end = end_match.start()
             source = document.text[source_start:source_end]
-            lines = source.splitlines(keepends=True)
-            stripped = ''.join(line[len(prefix):] for line in lines)
             lexemes['source'] = Lexeme(
-                textwrap.dedent(stripped),
+                strip_prefix(source, prefix),
                 offset=source_start-start_match.start(),
                 line_offset=start_match.group(0).count('\n')-1
             )
             if self.mapping:
                 lexemes = {dest: lexemes[source] for source, dest in self.mapping.items()}
             yield Region(start_match.start(), source_end, lexemes=lexemes)
+
+
+def strip_prefix(text: str, prefix: str) -> str:
+    lines = text.splitlines(keepends=True)
+    prefix_length = len(prefix)
+    return textwrap.dedent(''.join(line[prefix_length:] or line[-1] for line in lines))

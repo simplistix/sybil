@@ -1,9 +1,8 @@
 import re
-import textwrap
 from typing import Optional, Dict, Pattern, Iterable, Match, List
 
 from sybil import Document, Region, Lexeme
-from sybil.parsers.abstract.lexers import BlockLexer
+from sybil.parsers.abstract.lexers import BlockLexer, strip_prefix
 
 FENCE = re.compile(r"^(?P<prefix>[ \t]*)(?P<fence>`{3,}|~{3,})", re.MULTILINE)
 
@@ -59,10 +58,8 @@ class RawFencedCodeBlockLexer:
         if info is None:
             return None
         lexemes = info.groupdict()
-        lines = content[info.end():].splitlines(keepends=True)
-        stripped = ''.join(line[len(opening.group('prefix')):] for line in lines)
         lexemes['source'] = Lexeme(
-            textwrap.dedent(stripped),
+            strip_prefix(content[info.end():], opening.group('prefix')),
             offset=len(opening.group(0))+info.end(),
             line_offset=0,
         )

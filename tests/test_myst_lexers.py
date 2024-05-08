@@ -69,7 +69,7 @@ def test_examples_from_parsing_tests():
             'directive': 'code-block',
             'arguments': 'python',
             'options': {},
-            'source': 'define_this = 1\n',
+            'source': 'define_this = 1\n\n',
         }),
     ])
 
