@@ -1,6 +1,11 @@
 Changes
 =======
 
+6.1.1 (9 May 2024)
+------------------
+
+- Fix lexing of indented blocks where embedded blank lines would be erroneously removed.
+
 6.1.0 (22 Apr 2024)
 -------------------
 
