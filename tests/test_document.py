@@ -31,11 +31,12 @@ def test_all_docstrings_extracted_correctly(python_file):
     path, source = python_file
     expected = list(ast_docstrings(source))
     actual = list(PythonDocStringDocument.extract_docstrings(source))
-    check = partial(compare, prefix=str(path), raises=False, show_whitespace=True)
+    actual_from_start_end = [source[s:e].replace('\\"', '"') for s, e, _ in actual]
+    check = partial(compare, raises=False, show_whitespace=True)
     for check_result in (
-        check(expected=len(expected), actual=len(actual)),
-        check(expected, actual=[text for _, _, text in actual]),
-        check(expected, actual=[source[s:e] for s, e, _ in actual]),
+        check(expected=len(expected), actual=len(actual), prefix=f'{path}: number'),
+        check(expected, actual=[text for _, _, text in actual], prefix=f'{path}: content'),
+        check(expected, actual=actual_from_start_end, prefix=f'{path}: start/end'),
     ):
         if check_result:  # pragma: no cover - Only on failures!
             problems.append(check_result)
