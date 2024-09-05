@@ -12,10 +12,9 @@ from sybil import Region, Example
 from sybil.document import PythonDocStringDocument, Document
 from sybil.example import NotEvaluated, SybilFailure
 from sybil.exceptions import LexingException
-from .helpers import ast_docstrings, skip_if_37_or_older, parse, sample_path
+from .helpers import ast_docstrings, parse, sample_path
 
 
-@skip_if_37_or_older()
 def test_extract_docstring():
     """
     This is a function docstring.
@@ -27,7 +26,6 @@ def test_extract_docstring():
     compare(expected, actual=[python_source_code[s:e] for s, e, _ in actual], show_whitespace=True)
 
 
-@skip_if_37_or_older()
 def test_all_docstrings_extracted_correctly(python_file):
     problems = []
     path, source = python_file

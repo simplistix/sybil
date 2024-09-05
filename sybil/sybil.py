@@ -6,11 +6,9 @@ from typing import Any, Dict, Sequence, Callable, Collection, Mapping, Optional,
 from .document import Document, PythonDocStringDocument, PythonDocument
 from .typing import Parser
 
-PY37_AND_EARLIER = sys.version_info[:2] <= (3, 7)
-
 DEFAULT_DOCUMENT_TYPES = {
     None: Document,
-    '.py': PythonDocument if PY37_AND_EARLIER else PythonDocStringDocument,
+    '.py': PythonDocStringDocument,
 }
 
 

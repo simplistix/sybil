@@ -9,7 +9,7 @@ from sybil.document import Document, PythonDocStringDocument
 from sybil.example import SybilFailure
 from sybil.parsers.abstract import DocTestStringParser
 from sybil.parsers.rest import DocTestParser, DocTestDirectiveParser
-from .helpers import sample_path, parse, FUNCTIONAL_TEST_DIR, skip_if_37_or_older
+from .helpers import sample_path, parse, FUNCTIONAL_TEST_DIR
 
 
 def test_pass():
@@ -131,7 +131,6 @@ UNPARSEABLE = {
 MINIMUM_EXPECTED_DOCTESTS = 9
 
 
-@skip_if_37_or_older()
 def test_sybil_example_count(all_python_files):
     parser = DocTestStringParser()
 
@@ -149,7 +148,6 @@ def test_sybil_example_count(all_python_files):
 
 
 def check_sybil_against_doctest(path, text):
-    skip_if_37_or_older()
     problems = []
     name = str(path)
     regions = list(DocTestStringParser()(text, path))
@@ -177,7 +175,6 @@ def test_all_docstest_examples_extracted_from_source_correctly(python_file):
     check_sybil_against_doctest(path, source)
 
 
-@skip_if_37_or_older()
 def test_all_docstest_examples_extracted_from_docstrings_correctly(python_file):
     path, source = python_file
     for start, end, docstring in PythonDocStringDocument.extract_docstrings(source):

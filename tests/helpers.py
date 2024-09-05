@@ -288,8 +288,3 @@ def ast_docstrings(python_source_code: str) -> Sequence[str]:
         else:
             if docstring:
                 yield docstring
-
-
-def skip_if_37_or_older():
-    return pytest.mark.skipif(sys.version_info[:2] < (3, 8), reason="requires python3.8 or higher")
-

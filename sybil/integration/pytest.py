@@ -53,21 +53,13 @@ class SybilItem(pytest.Item):
     def request_fixtures(self, names):
         # pytest fixtures dance:
         fm = self.session._fixturemanager
-        if PYTEST_VERSION >= (8, 0, 0):
-            closure = fm.getfixtureclosure(initialnames=names, parentnode=self, ignore_args=set())
-            names_closure, arg2fixturedefs = closure
-            fixtureinfo = FuncFixtureInfo(argnames=names, initialnames=names, names_closure=names_closure, name2fixturedefs=arg2fixturedefs)
-        else:
-            closure = fm.getfixtureclosure(names, self)
-            initialnames, names_closure, arg2fixturedefs = closure
-            fixtureinfo = FuncFixtureInfo(names, initialnames, names_closure, arg2fixturedefs)
+        closure = fm.getfixtureclosure(initialnames=names, parentnode=self, ignore_args=set())
+        names_closure, arg2fixturedefs = closure
+        fixtureinfo = FuncFixtureInfo(argnames=names, initialnames=names, names_closure=names_closure, name2fixturedefs=arg2fixturedefs)
         self._fixtureinfo = fixtureinfo
         self.funcargs = {}
-        if PYTEST_VERSION >= (8, 0, 0):
-            self._request = fixtures.TopRequest(pyfuncitem=self, _ispytest=True)
-            self.fixturenames = names_closure
-        else:
-            self._request = fixtures.FixtureRequest(self, _ispytest=True)
+        self._request = fixtures.TopRequest(pyfuncitem=self, _ispytest=True)
+        self.fixturenames = names_closure
 
     def reportinfo(self) -> Tuple[Union["os.PathLike[str]", str], Optional[int], str]:
         info = '%s line=%i column=%i' % (
@@ -89,23 +81,13 @@ class SybilItem(pytest.Item):
     def runtest(self) -> None:
         self.example.evaluate()
 
-    if PYTEST_VERSION >= (7, 4, 0):
-
-        def _traceback_filter(self, excinfo: ExceptionInfo[BaseException]) -> Traceback:
-            traceback = excinfo.traceback
-            tb = traceback.cut(path=example_module_path)
-            tb_entry = tb[1]
-            if getattr(tb_entry, '_rawentry', None) is not None:
-                traceback = Traceback(tb_entry._rawentry)
-            return traceback
-
-    else:
-
-        def _prunetraceback(self, excinfo):
-            tb = excinfo.traceback.cut(path=example_module_path)
-            tb_entry = tb[1]
-            if getattr(tb_entry, '_rawentry', None) is not None:
-                excinfo.traceback = Traceback(tb_entry._rawentry, excinfo)
+    def _traceback_filter(self, excinfo: ExceptionInfo[BaseException]) -> Traceback:
+        traceback = excinfo.traceback
+        tb = traceback.cut(path=example_module_path)
+        tb_entry = tb[1]
+        if getattr(tb_entry, '_rawentry', None) is not None:
+            traceback = Traceback(tb_entry._rawentry)
+        return traceback
 
     def repr_failure(
         self,
