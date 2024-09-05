@@ -10,7 +10,7 @@ from sybil.parsers.rest import PythonCodeBlockParser, DocTestParser
 from sybil.python import import_cleanup
 from .helpers import (
     run_pytest, run_unittest, PYTEST, run, write_config, UNITTEST, write_doctest,
-    functional_sample, clone_functional_sample, skip_if_37_or_older, check_path, sample_path
+    functional_sample, clone_functional_sample, check_path, sample_path
 )
 
 
@@ -339,7 +339,6 @@ def test_modules_not_importable_unittest(tmp_path: Path, capsys: CaptureFixture[
     out.then_find("ModuleNotFoundError: No module named 'b'")
 
 
-@skip_if_37_or_older()
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
 def test_package_and_docs(tmp_path: Path, capsys: CaptureFixture[str], runner: str):
     root = clone_functional_sample('package_and_docs', tmp_path)
@@ -468,7 +467,6 @@ def test_markdown(capsys: CaptureFixture[str], runner: str):
     out.then_find("Exception: boom!")
 
 
-@skip_if_37_or_older()
 def test_codeblock_with_protocol_then_doctest():
     sybil = Sybil([PythonCodeBlockParser(), DocTestParser()])
     check_path(sample_path('protocol-typing.rst'), sybil, expected=3)

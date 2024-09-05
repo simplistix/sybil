@@ -23,7 +23,7 @@ setup(
     ],
     packages=find_packages(exclude=['tests', 'functional_tests']),
     package_data={"sybil": ["py.typed"]},
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     extras_require=dict(
         test=[
             'mypy',
