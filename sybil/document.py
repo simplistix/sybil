@@ -1,6 +1,6 @@
 import ast
 import re
-from ast import AsyncFunctionDef, FunctionDef, ClassDef, Module, Expr, Constant
+from ast import AsyncFunctionDef, FunctionDef, ClassDef, Module, Expr, Constant, Str
 from bisect import bisect
 from io import open
 from itertools import chain
@@ -215,9 +215,9 @@ class PythonDocStringDocument(PythonDocument):
             if not (node.body and isinstance(node.body[0], Expr)):
                 continue
             docstring = node.body[0].value
-            if not (
-                    isinstance(docstring, Constant) and isinstance(docstring.value, str)
-            ):
+            if isinstance(docstring, Str):
+                text = docstring.s
+            else:
                 continue
             node_start = line_offsets.get(docstring.lineno-1, docstring.col_offset)
             end_lineno = docstring.end_lineno or 1
@@ -227,7 +227,7 @@ class PythonDocStringDocument(PythonDocument):
             punc_size = len(punc.group(1))
             start = punc.end()
             end = node_end - punc_size
-            yield start, end, python_source_code[start:end]
+            yield start, end, text
 
     @classmethod
     def parse(cls, path: str, *parsers: Parser, encoding: str = 'utf-8') -> 'Document':

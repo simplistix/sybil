@@ -35,3 +35,13 @@ def function_with_multi_line_codeblock_at_end(text):
         function_with_multi_line_codeblock_at_end("World")
     """
     assert text in ('Hello', 'World')
+
+
+def decorator(fn):
+    """
+    Example:
+
+    >>> def decorated():
+    ...     \"\"\"docstring of a decorated function\"\"\"
+
+    """
