@@ -161,8 +161,14 @@ def check_sybil_against_doctest(path, text):
         region_source = text[region.start:region.end]
         for name in 'source', 'want':
             expected = getattr(example, name)
-            if expected not in region_source:  # pragma: no cover - Only on failures!
-                problems.append(f'{region}:{name}\n{expected!r} not in {region_source!r}')
+            if name == 'source':
+                # doctest.DocTestParser REPL examples are pre-processed into python
+                # source to execute, so do similar here but note this is pretty fragile:
+                expected_source = region_source.replace('>>>', '').replace('    ... ', '')
+            else:
+                expected_source = region_source
+            if expected not in expected_source:  # pragma: no cover - Only on failures!
+                problems.append(f'{region}:{name}\n{expected!r} not in {expected_source!r}')
     problems = [problem for problem in problems if problem]
     if problems:  # pragma: no cover - Only on failures!
         raise AssertionError('doctests not correctly extracted:\n\n'+'\n\n'.join(problems))

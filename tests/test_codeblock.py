@@ -8,6 +8,7 @@ from testfixtures import compare
 from sybil import Example, Sybil, Region
 from sybil.document import Document
 from sybil.parsers.codeblock import PythonCodeBlockParser, CodeBlockParser
+from sybil.parsers.rest import DocTestParser
 from .helpers import check_excinfo, parse, sample_path, check_path, SAMPLE_PATH, add_to_python_path
 
 
@@ -167,3 +168,9 @@ def test_codeblocks_in_docstrings():
     sybil = Sybil([PythonCodeBlockParser()])
     with add_to_python_path(SAMPLE_PATH):
         check_path(sample_path('docstrings.py'), sybil, expected=3)
+
+
+def test_doctest_in_docstrings():
+    sybil = Sybil([DocTestParser()])
+    with add_to_python_path(SAMPLE_PATH):
+        check_path(sample_path('docstrings.py'), sybil, expected=1)
