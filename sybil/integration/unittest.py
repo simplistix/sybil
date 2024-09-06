@@ -1,19 +1,17 @@
-from typing import TYPE_CHECKING, Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict, Optional
 from unittest import TestCase as BaseTestCase, TestSuite
 from unittest.loader import TestLoader
 
+from sybil import Sybil
 from sybil.example import Example
-
-if TYPE_CHECKING:
-    from ..sybil import Sybil
 
 
 class TestCase(BaseTestCase):
 
-    sybil: 'Sybil'
+    sybil: Sybil
     namespace: Dict[str, Any]
 
-    def __init__(self, example: 'Example') -> None:
+    def __init__(self, example: Example) -> None:
         BaseTestCase.__init__(self)
         self.example = example
 
@@ -39,7 +37,7 @@ class TestCase(BaseTestCase):
 
 
 def unittest_integration(
-    *sybils: 'Sybil',
+    *sybils: Sybil,
 ) -> Callable[[Optional[TestLoader], Optional[TestSuite], Optional[str]], TestSuite]:
 
     def load_tests(

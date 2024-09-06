@@ -4,7 +4,7 @@ import os
 from inspect import getsourcefile
 from os.path import abspath
 from pathlib import Path
-from typing import Callable, Union, TYPE_CHECKING, Tuple, Optional
+from typing import Callable, Union, Tuple, Optional
 
 import pytest
 from _pytest import fixtures
@@ -15,12 +15,9 @@ from _pytest.main import Session
 from _pytest.nodes import Collector
 from _pytest.python import Module
 
-from .. import example as example_module
-from ..example import Example
-from ..example import SybilFailure
-
-if TYPE_CHECKING:
-    from ..sybil import Sybil
+from sybil import example as example_module, Sybil, Document
+from sybil.example import Example
+from sybil.example import SybilFailure
 
 PYTEST_VERSION = tuple(int(i) for i in pytest.__version__.split('.'))
 
@@ -101,9 +98,11 @@ class SybilItem(pytest.Item):
 
 class SybilFile(pytest.File):
 
-    def __init__(self, *, sybil: 'Sybil', **kwargs) -> None:
+    document: Document
+
+    def __init__(self, *, sybil: Sybil, **kwargs) -> None:
         super(SybilFile, self).__init__(**kwargs)
-        self.sybil: 'Sybil' = sybil
+        self.sybil: Sybil = sybil
 
     def collect(self):
         self.document = self.sybil.parse(self.path)
@@ -119,7 +118,7 @@ class SybilFile(pytest.File):
             self.sybil.teardown(self.document.namespace)
 
 
-def pytest_integration(*sybils: 'Sybil') -> Callable[[Path, Collector], Optional[SybilFile]]:
+def pytest_integration(*sybils: Sybil) -> Callable[[Path, Collector], Optional[SybilFile]]:
 
     def pytest_collect_file(file_path: Path, parent: Collector) -> Optional[SybilFile]:
         for sybil in sybils:
