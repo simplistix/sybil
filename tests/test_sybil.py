@@ -6,7 +6,7 @@ from os.path import split
 from pathlib import Path
 
 import pytest
-from testfixtures import compare
+from testfixtures import compare, StringComparison
 
 from sybil import Sybil, Region
 from sybil.document import Document, PythonDocument
@@ -320,6 +320,22 @@ class TestSybil:
         # check integrations exist:
         assert sybil.pytest
         assert sybil.unittest
+
+    def test_default_str(self):
+        sybil = Sybil([parse_for_x])
+        compare(str(sybil), expected=StringComparison('<Sybil: \d+>'))
+
+    def test_named_str(self):
+        sybil = Sybil([parse_for_x], name='foo')
+        compare(str(sybil), expected='<Sybil: foo>')
+
+    def test_default_repr(self):
+        sybil = Sybil([parse_for_x])
+        compare(repr(sybil), expected=StringComparison('<Sybil: \d+>'))
+
+    def test_named_repr(self):
+        sybil = Sybil([parse_for_x], name='foo')
+        compare(repr(sybil), expected='<Sybil: foo>')
 
 
 def check_into_namespace(example):

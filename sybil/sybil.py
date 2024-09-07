@@ -87,7 +87,8 @@ class Sybil:
         teardown: Optional[Callable[[Dict[str, Any]], None]] = None,
         fixtures: Sequence[str] = (),
         encoding: str = 'utf-8',
-        document_types: Optional[Mapping[Optional[str], Type[Document]]] = None
+        document_types: Optional[Mapping[Optional[str], Type[Document]]] = None,
+        name: str = '',
     ) -> None:
 
         self.parsers: Sequence[Parser] = parsers
@@ -112,6 +113,10 @@ class Sybil:
         if document_types:
             self.document_types.update(document_types)
         self.default_document_type: Type[Document] = self.document_types[None]
+        self.name = name or str(id(self))
+
+    def __repr__(self) -> str:
+        return f'<Sybil: {self.name}>'
 
     def __add__(self, other: 'Sybil') -> 'SybilCollection':
         """
