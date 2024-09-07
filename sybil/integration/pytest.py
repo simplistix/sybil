@@ -4,7 +4,7 @@ import os
 from inspect import getsourcefile
 from os.path import abspath
 from pathlib import Path
-from typing import Callable, Union, Tuple, Optional
+from typing import Callable, Union, Tuple, Optional, Sequence, List
 
 import pytest
 from _pytest import fixtures
@@ -98,33 +98,39 @@ class SybilItem(pytest.Item):
 
 class SybilFile(pytest.File):
 
-    document: Document
-
-    def __init__(self, *, sybil: Sybil, **kwargs) -> None:
+    def __init__(self, *, sybils: Sequence[Sybil], **kwargs) -> None:
         super(SybilFile, self).__init__(**kwargs)
-        self.sybil: Sybil = sybil
+        self.sybils: Sequence[Sybil] = sybils
+        self.documents: List[Document] = []
 
     def collect(self):
-        self.document = self.sybil.parse(self.path)
-        for example in self.document:
-            yield SybilItem.from_parent(self, sybil=self.sybil, example=example)
+        for sybil in self.sybils:
+            document = sybil.parse(self.path)
+            self.documents.append(document)
+            for example in document:
+                yield SybilItem.from_parent(
+                    self,
+                    sybil=sybil,
+                    example=example
+                )
 
     def setup(self) -> None:
-        if self.sybil.setup:
-            self.sybil.setup(self.document.namespace)
+        for sybil, document in zip(self.sybils, self.documents):
+            if sybil.setup:
+                sybil.setup(document.namespace)
 
     def teardown(self) -> None:
-        if self.sybil.teardown:
-            self.sybil.teardown(self.document.namespace)
+        for sybil, document in zip(self.sybils, self.documents):
+            if sybil.teardown:
+                sybil.teardown(document.namespace)
 
 
 def pytest_integration(*sybils: Sybil) -> Callable[[Path, Collector], Optional[SybilFile]]:
 
     def pytest_collect_file(file_path: Path, parent: Collector) -> Optional[SybilFile]:
-        for sybil in sybils:
-            if sybil.should_parse(file_path):
-                result: SybilFile = SybilFile.from_parent(parent, path=file_path, sybil=sybil)
-                return result
+        active_sybils = [sybil for sybil in sybils if sybil.should_parse(file_path)]
+        if active_sybils:
+            return SybilFile.from_parent(parent, path=file_path, sybils=active_sybils)
         return None
 
     return pytest_collect_file

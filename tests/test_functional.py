@@ -371,12 +371,7 @@ def test_multiple_sybils_process_all(tmp_path: Path, capsys: CaptureFixture[str]
     """
     write_config(tmp_path, runner, template=config_template)
     results = run(capsys, runner, tmp_path)
-    if runner == PYTEST:
-        # the pytest integration only looks at each file once
-        expected_total = 2
-    else:
-        expected_total = 4
-    assert results.total == expected_total, results.out.text
+    compare(results.total, expected=4, suffix=results.out.text)
 
 
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
@@ -394,7 +389,7 @@ def test_multiple_sybils_process_one_each(tmp_path: Path, capsys: CaptureFixture
     """
     write_config(tmp_path, runner, template=config_template)
     results = run(capsys, runner, tmp_path)
-    assert results.total == 2, results.out.text
+    compare(results.total, expected=2, suffix=results.out.text)
 
 
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
