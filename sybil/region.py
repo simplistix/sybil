@@ -1,4 +1,4 @@
-from typing import Any, Union, Optional
+from typing import Any, Optional
 
 from sybil.typing import Evaluator, LexemeMapping
 
@@ -14,7 +14,9 @@ class Lexeme(str):
         return str.__new__(cls, text)
 
     def __init__(self, text: str, offset: int, line_offset: int) -> None:
-        self.text, self.offset, self.line_offset = text, offset, line_offset
+        self.text = text
+        self.offset = offset
+        self.line_offset = line_offset
 
     def strip_leading_newlines(self) -> 'Lexeme':
         stripped = self.lstrip('\n')
