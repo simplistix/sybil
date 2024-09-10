@@ -14,6 +14,14 @@ def pad(source: str, line: int) -> str:
 
 
 class PythonEvaluator:
+    """
+    The :any:`Evaluator` to use for :class:`Regions <sybil.Region>` containing
+    Python source code.
+
+    :param future_imports:
+        A sequence of strings naming future import options, for example ``'annotations'``,
+        that should be used at the top of each :class:`~sybil.Example` being evaluated.
+    """
 
     def __init__(self, future_imports: Sequence[str] = ()) -> None:
         self.flags = 0

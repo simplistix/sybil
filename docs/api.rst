@@ -134,3 +134,5 @@ Evaluation
 .. autoclass:: sybil.typing.Evaluator
 
 .. autoclass:: sybil.evaluators.doctest.DocTestEvaluator
+
+.. autoclass:: sybil.evaluators.python.PythonEvaluator
