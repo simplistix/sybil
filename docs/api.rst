@@ -3,8 +3,8 @@
 API Reference
 =============
 
-This reference is organised into sections relating to the different things you're
-likely to be doing when using Sybil.
+This reference is organised into sections relating to the different :doc:`concepts <concepts>`
+you're likely to encounter when using Sybil.
 
 Sybils
 ------

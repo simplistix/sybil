@@ -11,13 +11,16 @@ is designed so that it's easy to provide your own additional parsers.
    quickstart.rst
    use.rst
    patterns.rst
+   Test Runners <integration.rst>
    ReST Parsers <rest.rst>
    markdown.rst
    myst.rst
+   Developing Parsers <parsers.rst>
 
 .. toctree::
    :maxdepth: 1
 
+   concepts.rst
    api.rst
    development.rst
    changes.rst
