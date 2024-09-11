@@ -41,6 +41,8 @@ class SybilFailureRepr(TerminalRepr):
 
 class SybilItem(pytest.Item):
 
+    obj = None
+
     def __init__(self, parent, sybil, example: Example) -> None:
         super(SybilItem, self).__init__(sybil.identify(example), parent)
         self.example = example

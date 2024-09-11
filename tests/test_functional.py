@@ -470,3 +470,20 @@ def test_markdown(capsys: CaptureFixture[str], runner: str):
 def test_codeblock_with_protocol_then_doctest():
     sybil = Sybil([PythonCodeBlockParser(), DocTestParser()])
     check_path(sample_path('protocol-typing.rst'), sybil, expected=3)
+
+
+def test_request_missing_fixtures(tmp_path: Path, capsys: CaptureFixture[str]):
+    write_doctest(tmp_path, 'test.rst')
+    config_template = """
+    from sybil.parsers.rest import DocTestParser
+    from sybil import Sybil
+
+    sybil = Sybil(parsers=[DocTestParser()], pattern='*.rst', fixtures=['bad'])
+
+    {assigned_name} = sybil.{integration}()
+    """
+    write_config(tmp_path, PYTEST, template=config_template)
+    results = run(capsys, PYTEST, tmp_path)
+    compare(results.total, expected=1, suffix=results.out.text)
+    compare(results.failures, expected=1, suffix=results.out.text)
+    compare(results.errors, expected=0, suffix=results.out.text)
