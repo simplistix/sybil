@@ -107,11 +107,11 @@ class SybilFile(pytest.File):
         for sybil in self.sybils:
             document = sybil.parse(self.path)
             self.documents.append(document)
-            for example in document:
+            for example in document.examples():
                 yield SybilItem.from_parent(
                     self,
                     sybil=sybil,
-                    example=example
+                    example=example,
                 )
 
     def setup(self) -> None:

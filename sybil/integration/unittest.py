@@ -55,7 +55,7 @@ def unittest_integration(
                         sybil=sybil, namespace=document.namespace,
                     ))
 
-                    for example in document:
+                    for example in document.examples():
                         suite.addTest(case(example))
 
         return suite

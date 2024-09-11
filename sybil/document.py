@@ -96,7 +96,10 @@ class Document:
                 self.raise_overlap(region, next)
         self.regions.insert(index, entry)
 
-    def __iter__(self) -> Iterator[Example]:
+    def examples(self) -> Iterator[Example]:
+        """
+        Return the :term:`examples <example>` contained within this document.
+        """
         line = 1
         place = 0
         for _, region in self.regions:
@@ -106,6 +109,9 @@ class Document:
             yield Example(self,
                           line, region.start-line_start,
                           region, self.namespace)
+
+    def __iter__(self) -> Iterator[Example]:
+        return self.examples()
 
     def find_region_sources(
         self, start_pattern: Pattern[str], end_pattern: Pattern[str]
