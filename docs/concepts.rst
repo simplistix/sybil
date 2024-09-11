@@ -36,7 +36,7 @@ writing :doc:`parsers <parsers>` for it:
     :term:`example` that needs to be :term:`evaluated <evaluator>`.
 
     Within a single :term:`Sybil`, no region may overlap with another. This is to ensure
-    that :term:`examples <example>` an be executed in a consistent order, and also helps
+    that :term:`examples <example>` can be executed in a consistent order, and also helps
     to highlight :doc:`parsing <parsers>` errors, which often result in overlapping
     regions.
 
