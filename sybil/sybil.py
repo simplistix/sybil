@@ -18,7 +18,7 @@ class Sybil:
     in documentation and ensuring they are correct.
     
     :param parsers: 
-      A sequence of callables. See :ref:`parsers`.
+      A sequence of callable :term:`parsers <parser>`.
       
     :param path:
       The path in which source files are found, relative
