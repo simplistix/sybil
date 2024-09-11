@@ -1,3 +1,5 @@
+.. currentmodule:: sybil
+
 Patterns of Use
 ===============
 
@@ -77,6 +79,25 @@ Then the following configuration in a ``conftest.py`` will ensure all
 your examples are correct:
 
 .. literalinclude:: examples/myst_text_rest_src/conftest.py
+
+Linting and checking examples
+-----------------------------
+
+If you wish to perform linting of examples in addition to checking that they are correct,
+you will need to parse each documentation file once for linting and once for checking.
+
+This can be done by having one :class:`Sybil` to do the linting and another :class:`Sybil`
+to do the checking.
+
+Given documentation that looks like this:
+
+.. literalinclude:: examples/linting_and_checking/index.rst
+
+Then the following configuration in a ``conftest.py`` could be used to ensure all
+your examples are both correct and lint-free:
+
+.. literalinclude:: examples/linting_and_checking/conftest.py
+
 
 .. _migrating-from-sphinx.ext.doctest:
 

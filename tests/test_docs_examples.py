@@ -65,3 +65,11 @@ def test_myst_text_rest_src():
         session = pytest_in(directory)
     assert session.testsfailed == 0
     assert session.testscollected == 5
+
+
+def test_linting_and_checking():
+    directory = 'linting_and_checking'
+    with add_to_python_path(DOC_EXAMPLES / directory / 'src'):
+        session = pytest_in(directory)
+    assert session.testsfailed == 0
+    assert session.testscollected == 3
