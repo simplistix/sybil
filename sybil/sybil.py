@@ -1,9 +1,9 @@
 import inspect
-import sys
 from pathlib import Path
 from typing import Any, Dict, Sequence, Callable, Collection, Mapping, Optional, Type, List, Tuple
 
-from .document import Document, PythonDocStringDocument, PythonDocument
+from .document import Document, PythonDocStringDocument
+from .example import Example
 from .typing import Parser
 
 DEFAULT_DOCUMENT_TYPES = {
@@ -73,6 +73,10 @@ class Sybil:
     :param document_types:
       A mapping of file extension to :class:`Document` subclass such that custom evaluation
       can be performed per document type.
+
+    :param name:
+      A name to use in test identifiers so that the identifier indicates which :class:`Sybil`
+      that test was discovered by.
     """
     def __init__(
         self,
@@ -113,10 +117,10 @@ class Sybil:
         if document_types:
             self.document_types.update(document_types)
         self.default_document_type: Type[Document] = self.document_types[None]
-        self.name = name or str(id(self))
+        self.name = name
 
     def __repr__(self) -> str:
-        return f'<Sybil: {self.name}>'
+        return f'<Sybil: {self.name or str(id(self))}>'
 
     def __add__(self, other: 'Sybil') -> 'SybilCollection':
         """
@@ -146,6 +150,10 @@ class Sybil:
     def parse(self, path: Path) -> Document:
         type_ = self.document_types.get(path.suffix, self.default_document_type)
         return type_.parse(str(path), *self.parsers, encoding=self.encoding)
+
+    def identify(self, example: Example) -> str:
+        sybil_name = f'sybil:{self.name},' if self.name else ''
+        return f'{sybil_name}line:{example.line},column:{example.column}'
 
     def pytest(self) -> Callable[[Path, Any], Any]:
         """

@@ -364,14 +364,19 @@ def test_multiple_sybils_process_all(tmp_path: Path, capsys: CaptureFixture[str]
     from sybil.parsers.rest import DocTestParser
     from sybil import Sybil
     
-    sybil1 = Sybil(parsers=[DocTestParser()], pattern='test.*')
-    sybil2 = Sybil(parsers=[DocTestParser()], pattern='test.*')
+    sybil1 = Sybil(parsers=[DocTestParser()], pattern='test.*', name='a')
+    sybil2 = Sybil(parsers=[DocTestParser()], pattern='test.*', name='b')
     
     {assigned_name} = (sybil1 + sybil2).{integration}()
     """
     write_config(tmp_path, runner, template=config_template)
     results = run(capsys, runner, tmp_path)
     compare(results.total, expected=4, suffix=results.out.text)
+    # make sure the name is used:
+    results.out.assert_has_run(runner, 'test.rst', sybil='a')
+    results.out.assert_has_run(runner, 'test.rst', sybil='b')
+    results.out.assert_has_run(runner, 'test.txt', sybil='a')
+    results.out.assert_has_run(runner, 'test.txt', sybil='b')
 
 
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])

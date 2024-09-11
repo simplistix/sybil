@@ -42,8 +42,7 @@ class SybilFailureRepr(TerminalRepr):
 class SybilItem(pytest.Item):
 
     def __init__(self, parent, sybil, example: Example) -> None:
-        name = 'line:{},column:{}'.format(example.line, example.column)
-        super(SybilItem, self).__init__(name, parent)
+        super(SybilItem, self).__init__(sybil.identify(example), parent)
         self.example = example
         self.request_fixtures(sybil.fixtures)
 

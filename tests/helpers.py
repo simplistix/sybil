@@ -135,8 +135,8 @@ PYTEST = 'pytest'
 UNITTEST = 'unittest'
 
 TEST_OUTPUT_TEMPLATES = {
-    PYTEST: '{file}::line:{line},column:{column}',
-    UNITTEST: '{file},line:{line},column:{column}'
+    PYTEST: '{file}::{sybil}line:{line},column:{column}',
+    UNITTEST: '{file},{sybil}line:{line},column:{column}'
 }
 
 
@@ -158,9 +158,13 @@ class Finder:
         if index > -1:
             raise AssertionError('\n'+self.text[index-500:index+500])
 
-    def assert_has_run(self, integration: str, file: str, *, line: int = 1, column: int = 1):
+    def assert_has_run(
+            self, integration: str, file: str, *, sybil: str = '', line: int = 1, column: int = 1
+    ):
+        if sybil:
+            sybil=f'sybil:{sybil},'
         self.assert_present(TEST_OUTPUT_TEMPLATES[integration].format(
-            file=file, line=line, column=column
+            sybil=sybil, file=file, line=line, column=column
         ))
 
 

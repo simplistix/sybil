@@ -19,9 +19,7 @@ class TestCase(BaseTestCase):
         self.example.evaluate()
 
     def id(self) -> str:
-        return '{},line:{},column:{}'.format(
-            self.example.path, self.example.line, self.example.column
-        )
+        return f'{self.example.path},{self.sybil.identify(self.example)}'
 
     __str__ = __repr__ = id
 
