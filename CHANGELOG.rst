@@ -1,6 +1,23 @@
 Changes
 =======
 
+7.0.0 (12 Sep 2024)
+-------------------
+
+- Drop Python 3.7 support.
+
+- :class:`Sybil` now takes a name which is used in any test identifiers it produces.
+
+- Add support for :rst:dir:`code` and :rst:dir:`sourcecode` directives in both ReST and MyST.
+
+- Fix bug in the pytest integration that prevented multiple :class:`Sybil` instances from
+  parsing the same file.
+
+- Fix bug where escaped quotes were not correctly unescaped in regions extracted from docstrings.
+
+- Restructure usage documentation, splitting out :doc:`integration` and :doc:`parsers`
+  documents and introducing a :doc:`concepts` glossary.
+
 6.1.1 (9 May 2024)
 ------------------
 
