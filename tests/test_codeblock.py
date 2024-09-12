@@ -179,3 +179,8 @@ def test_doctest_in_docstrings():
 def test_code_directive():
     sybil = Sybil([PythonCodeBlockParser()])
     check_path(sample_path('code.rst'), sybil, expected=1)
+
+
+def test_sourcecode_directive():
+    sybil = Sybil([PythonCodeBlockParser()])
+    check_path(sample_path('sourcecode.rst'), sybil, expected=1)

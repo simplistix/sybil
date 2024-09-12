@@ -20,7 +20,7 @@ class CodeBlockParser(AbstractCodeBlockParser):
     def __init__(self, language: Optional[str] = None, evaluator: Optional[Evaluator] = None) -> None:
         super().__init__(
             [
-                DirectiveLexer(directive=r'code(-block)?'),
+                DirectiveLexer(directive=r'(sourcecode|code-block|code)'),
                 DirectiveInCommentLexer(directive=r'(invisible-)?code(-block)?'),
             ],
             language, evaluator
