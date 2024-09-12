@@ -3,9 +3,9 @@ import __future__
 import pytest
 from testfixtures import compare
 
-from sybil import Example
+from sybil import Example, Sybil
 from sybil.parsers.myst import PythonCodeBlockParser, CodeBlockParser
-from .helpers import check_excinfo, parse
+from .helpers import check_excinfo, parse, check_path, sample_path
 
 
 def test_basic():
@@ -200,3 +200,8 @@ def test_blank_lines_indented():
 
     # check the line number in the exception:
     check_excinfo(example, excinfo, "Boom!", lineno=12)
+
+
+def test_code_directive():
+    sybil = Sybil([PythonCodeBlockParser()])
+    check_path(sample_path('myst-code.md'), sybil, expected=1)
