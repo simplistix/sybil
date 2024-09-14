@@ -1,11 +1,11 @@
 import ast
 import re
-from ast import AsyncFunctionDef, FunctionDef, ClassDef, Module, Expr, Constant, Str
+from ast import AsyncFunctionDef, FunctionDef, ClassDef, Constant, Module, Expr
 from bisect import bisect
 from io import open
 from itertools import chain
 from pathlib import Path
-from typing import Any, Dict, cast
+from typing import Any, Dict
 from typing import List, Iterator, Pattern, Tuple, Match
 
 from .example import Example, SybilFailure, NotEvaluated
@@ -221,8 +221,8 @@ class PythonDocStringDocument(PythonDocument):
             if not (node.body and isinstance(node.body[0], Expr)):
                 continue
             docstring = node.body[0].value
-            if isinstance(docstring, Str):
-                text = docstring.s
+            if isinstance(docstring, Constant):
+                text = docstring.value
             else:
                 continue
             node_start = line_offsets.get(docstring.lineno-1, docstring.col_offset)
