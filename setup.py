@@ -11,7 +11,7 @@ PYTEST_VERSION_SPEC = 'pytest>=8'
 
 setup(
     name='sybil',
-    version='7.1.0',
+    version='7.1.1',
     author='Chris Withers',
     author_email='chris@withers.org',
     license='MIT',

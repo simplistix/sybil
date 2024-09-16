@@ -1,6 +1,12 @@
 Changes
 =======
 
+7.1.1 (16 Sep 2024)
+-------------------
+
+- Fix bug that broke docstring collection where a method had an :any:`ellipsis <Ellipsis>` in
+  place of the docstring.
+
 7.1.0 (16 Sep 2024)
 -------------------
 
