@@ -18,6 +18,15 @@ will be tested. They use :ref:`doctests <doctest-simple-testfile>`,
 pytest
 ~~~~~~
 
+You should install Sybil with the ``pytest`` extra, to ensure
+you have a compatible version of `pytest`__:
+
+__ https://docs.pytest.org
+
+.. code-block:: bash
+
+  pip install sybil[pytest]
+
 To have `pytest`__ check the examples, Sybil makes use of the
 ``pytest_collect_file`` hook. To use this, configuration is placed in
 a ``confest.py`` in your documentation source directory, as shown below.
