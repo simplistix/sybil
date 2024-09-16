@@ -6,6 +6,8 @@ Changes
 
 - Drop Python 3.7 support.
 
+- Drop support for pytest versions less than 8.
+
 - :class:`Sybil` now takes a name which is used in any test identifiers it produces.
 
 - Add support for :rst:dir:`code` and :rst:dir:`sourcecode` directives in both ReST and MyST.
