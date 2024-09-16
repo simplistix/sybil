@@ -45,3 +45,7 @@ def decorator(fn):
     ...     \"\"\"docstring of a decorated function\"\"\"
 
     """
+
+
+def ellipsis_as_body():
+    ...

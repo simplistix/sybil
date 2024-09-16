@@ -225,6 +225,8 @@ class PythonDocStringDocument(PythonDocument):
                 text = docstring.value
             else:
                 continue
+            if text is Ellipsis:
+                continue
             node_start = line_offsets.get(docstring.lineno-1, docstring.col_offset)
             end_lineno = docstring.end_lineno or 1
             end_col_offset = docstring.end_col_offset or 0
