@@ -1,6 +1,16 @@
 Changes
 =======
 
+7.1.0 (16 Sep 2024)
+-------------------
+
+- Introduce a ``pytest`` extra, such that you can install Sybil in a way that ensures
+  compatible versions of Sybil and pytest are used.
+
+- Fix a :class:`DeprecationWarning` on Python 3.13.
+
+Thanks to Adam Dangoor for this fix.
+
 7.0.0 (12 Sep 2024)
 -------------------
 
