@@ -8,14 +8,26 @@ common: &common
 
     - python/pip-run-tests:
         matrix:
+          alias: "python-versions"
           parameters:
             image:
               - cimg/python:3.8
               - cimg/python:3.9
               - cimg/python:3.11
               - cimg/python:3.12
+
+    - python/pip-run-tests:
+        matrix:
+          alias: "pytest-versions"
+          parameters:
+            image:
+              - cimg/python:3.12
+            extras:
+              - "[test,pytest]"
             extra_packages:
-              - "'pytest'"
+              - "'pytest>=7.1,<7.4'"
+              - "'pytest>=7.4,<8'"
+              - "'pytest>=8'"
 
     - python/typing:
         packages: sybil
@@ -23,7 +35,8 @@ common: &common
     - python/coverage:
         name: coverage
         requires:
-          - python/pip-run-tests
+          - "python-versions"
+          - "pytest-versions"
 
     - python/release:
         name: release
