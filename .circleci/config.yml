@@ -25,9 +25,10 @@ common: &common
             extras:
               - "[test,pytest]"
             extra_packages:
-              - "'pytest>=7.1,<7.4'"
-              - "'pytest>=7.4,<8'"
-              - "'pytest>=8'"
+              # No known problems around 8.3, these are here to provide
+              # syntax examples and ensure the matrix still works:
+              - "'pytest>=8,<8.3'"
+              - "'pytest>=8.3'"
 
     - python/typing:
         packages: sybil
