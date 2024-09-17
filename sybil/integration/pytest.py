@@ -1,10 +1,11 @@
 from __future__ import absolute_import
 
 import os
+from collections.abc import Callable, Sequence
 from inspect import getsourcefile
 from os.path import abspath
 from pathlib import Path
-from typing import Callable, Union, Tuple, Optional, Sequence, List
+from typing import Union, Tuple, Optional, List
 
 import pytest
 from pytest import Collector, ExceptionInfo, Module, Session

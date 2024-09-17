@@ -1,5 +1,5 @@
 import re
-from typing import Iterable, Sequence
+from collections.abc import Iterable, Sequence
 
 from sybil import Document, Region
 from sybil.evaluators.skip import Skipper

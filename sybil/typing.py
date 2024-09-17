@@ -1,4 +1,5 @@
-from typing import Callable, TYPE_CHECKING, Iterable, Optional, Any, Dict
+from collections.abc import Callable, Iterable
+from typing import TYPE_CHECKING, Optional, Any, Dict
 
 if TYPE_CHECKING:
     import sybil

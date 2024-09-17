@@ -1,8 +1,10 @@
+from collections.abc import Sequence
+from typing import Optional
+
 from sybil.evaluators.python import pad, PythonEvaluator
 from sybil.parsers.abstract import AbstractCodeBlockParser
 from sybil.parsers.rest.lexers import DirectiveLexer, DirectiveInCommentLexer
 from sybil.typing import Evaluator
-from typing import Optional, Sequence
 
 
 class CodeBlockParser(AbstractCodeBlockParser):

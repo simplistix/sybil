@@ -2,11 +2,12 @@ import ast
 import re
 from ast import AsyncFunctionDef, FunctionDef, ClassDef, Constant, Module, Expr
 from bisect import bisect
+from collections.abc import Iterator
 from io import open
 from itertools import chain
 from pathlib import Path
 from typing import Any, Dict
-from typing import List, Iterator, Pattern, Tuple, Match
+from typing import List, Pattern, Tuple, Match
 
 from .example import Example, SybilFailure, NotEvaluated
 from .exceptions import LexingException

@@ -1,5 +1,6 @@
 import re
-from typing import Optional, Dict, Iterable
+from collections.abc import Iterable
+from typing import Optional, Dict
 
 from sybil import Document, Region
 from sybil.parsers.abstract.lexers import BlockLexer
@@ -119,5 +120,3 @@ class DirectiveInPercentCommentLexer(BlockLexer):
             end_pattern_template=DIRECTIVE_IN_PERCENT_COMMENT_END,
             mapping=mapping,
         )
-
-

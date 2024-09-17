@@ -1,5 +1,6 @@
 import re
-from typing import Optional, Dict, Pattern, Iterable, Match, List
+from collections.abc import Iterable
+from typing import Optional, Dict, Pattern, Match, List
 
 from sybil import Document, Region, Lexeme
 from sybil.parsers.abstract.lexers import BlockLexer, strip_prefix

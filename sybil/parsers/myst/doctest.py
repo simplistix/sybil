@@ -1,4 +1,4 @@
-from typing import Iterable
+from collections.abc import Iterable
 
 from sybil import Document, Region
 from sybil.evaluators.doctest import DocTestEvaluator
@@ -25,4 +25,3 @@ class DocTestDirectiveParser:
             for region in self.string_parser(source, document.path):
                 region.adjust(lexed_region, source)
                 yield region
-

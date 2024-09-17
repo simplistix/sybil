@@ -1,5 +1,6 @@
 import ast
 import sys
+from collections.abc import Sequence, Iterable
 from contextlib import contextmanager
 from os.path import dirname, join
 from pathlib import Path
@@ -7,7 +8,7 @@ from shutil import copytree
 from tempfile import NamedTemporaryFile
 from textwrap import dedent
 from traceback import TracebackException
-from typing import Optional, Tuple, List, Sequence, Union, Iterable
+from typing import Optional, Tuple, List, Union
 from unittest import TextTestRunner, main as unittest_main, SkipTest
 
 from pytest import CaptureFixture, ExceptionInfo, main as pytest_main
