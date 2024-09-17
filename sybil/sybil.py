@@ -1,6 +1,7 @@
 import inspect
 from pathlib import Path
-from typing import Any, Dict, Sequence, Callable, Collection, Mapping, Optional, Type, List, Tuple
+from collections.abc import Callable, Collection, Mapping, Sequence
+from typing import Any, Dict, Optional, Type, List, Tuple
 
 from .document import Document, PythonDocStringDocument
 from .example import Example

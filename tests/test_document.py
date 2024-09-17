@@ -4,7 +4,7 @@ This is a module doc string.
 import re
 from functools import partial
 from pathlib import Path
-from typing import Iterable
+from collections.abc import Iterable
 
 from testfixtures import compare, ShouldRaise
 
@@ -54,7 +54,7 @@ def test_evaluator_returns_non_string():
         yield Region(0, 1, None, evaluator)
 
     examples, namespace = parse('sample1.txt', parser, expected=1)
-    with ShouldRaise(SybilFailure(examples[0], f'NotEvaluated()')):
+    with ShouldRaise(SybilFailure(examples[0], 'NotEvaluated()')):
         examples[0].evaluate()
 
 

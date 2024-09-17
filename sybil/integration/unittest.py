@@ -1,4 +1,5 @@
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any, Dict, Optional
 from unittest import TestCase as BaseTestCase, TestSuite
 from unittest.loader import TestLoader
 

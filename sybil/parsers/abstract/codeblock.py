@@ -1,4 +1,5 @@
-from typing import Iterable, Sequence, Optional, Callable
+from collections.abc import Iterable, Sequence, Callable
+from typing import Optional
 
 from sybil import Region, Document, Example
 from sybil.typing import Evaluator, Lexer, Parser

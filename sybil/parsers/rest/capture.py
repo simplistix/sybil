@@ -1,6 +1,7 @@
 import re
 import string
-from typing import Iterable, List, Tuple
+from collections.abc import Iterable
+from typing import List, Tuple
 from textwrap import dedent
 
 from sybil import Region, Document

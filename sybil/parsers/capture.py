@@ -1,5 +1,5 @@
 # THIS MODULE IS FOR BACKWARDS COMPATIBILITY ONLY!
-from typing import Iterable
+from collections.abc import Iterable
 
 from sybil import Region, Document
 from sybil.parsers.rest import CaptureParser

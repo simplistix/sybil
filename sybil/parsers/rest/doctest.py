@@ -1,4 +1,4 @@
-from typing import Iterable
+from collections.abc import Iterable
 
 from sybil import Document, Region
 from sybil.evaluators.doctest import DocTestEvaluator

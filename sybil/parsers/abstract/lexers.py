@@ -1,7 +1,8 @@
 import re
 import textwrap
 from itertools import chain
-from typing import Optional, Dict, Iterable, Pattern, List
+from collections.abc import Iterable
+from typing import Optional, Dict, Pattern, List
 
 from sybil import Document
 from sybil.exceptions import LexingException

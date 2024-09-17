@@ -1,8 +1,8 @@
+from collections.abc import Iterable
 from doctest import (
     DocTestParser as BaseDocTestParser,
     Example as DocTestExample,
 )
-from typing import Iterable
 
 from sybil.evaluators.doctest import DocTestEvaluator
 from sybil.region import Region
@@ -51,5 +51,3 @@ class DocTestStringParser(BaseDocTestParser):
             lineno += string.count('\n', m.start(), m.end())
             # Update charno.
             charno = m.end()
-
-
