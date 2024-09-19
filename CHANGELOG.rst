@@ -1,6 +1,11 @@
 Changes
 =======
 
+Next
+----
+
+- Drop Python 3.8 support.
+
 7.1.1 (16 Sep 2024)
 -------------------
 

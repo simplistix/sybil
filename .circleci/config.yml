@@ -11,7 +11,6 @@ common: &common
           alias: "python-versions"
           parameters:
             image:
-              - cimg/python:3.8
               - cimg/python:3.9
               - cimg/python:3.11
               - cimg/python:3.12
