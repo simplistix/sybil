@@ -7,13 +7,11 @@ from pathlib import Path
 from typing import Callable, Union, Tuple, Optional, Sequence, List
 
 import pytest
+from pytest import Collector, ExceptionInfo, Module, Session
 from _pytest import fixtures
-from _pytest._code.code import TerminalRepr, Traceback, ExceptionInfo
+from _pytest._code.code import TerminalRepr, Traceback
 from _pytest._io import TerminalWriter
 from _pytest.fixtures import FuncFixtureInfo
-from _pytest.main import Session
-from _pytest.nodes import Collector
-from _pytest.python import Module
 
 from sybil import example as example_module, Sybil, Document
 from sybil.example import Example

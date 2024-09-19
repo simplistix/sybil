@@ -10,9 +10,7 @@ from traceback import TracebackException
 from typing import Optional, Tuple, List, Sequence, Union, Iterable
 from unittest import TextTestRunner, main as unittest_main, SkipTest
 
-from _pytest._code import ExceptionInfo
-from _pytest.capture import CaptureFixture
-from _pytest.config import main as pytest_main
+from pytest import CaptureFixture, ExceptionInfo, main as pytest_main
 from seedir import seedir
 from testfixtures import compare
 
