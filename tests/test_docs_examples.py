@@ -4,7 +4,6 @@ from pathlib import Path
 from unittest.main import main as unittest_main
 from unittest.runner import TextTestRunner
 
-import pytest
 from pytest import main as pytest_main
 
 from tests.helpers import add_to_python_path

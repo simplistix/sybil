@@ -1,11 +1,10 @@
 import __future__
-import sys
 from pathlib import Path
 
 import pytest
 from testfixtures import compare
 
-from sybil import Example, Sybil, Region
+from sybil import Example, Sybil
 from sybil.document import Document
 from sybil.parsers.codeblock import PythonCodeBlockParser, CodeBlockParser
 from sybil.parsers.rest import DocTestParser
