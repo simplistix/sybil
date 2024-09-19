@@ -1,4 +1,3 @@
-import re
 
 from sybil.parsers.abstract import AbstractClearNamespaceParser
 from .lexers import DirectiveInPercentCommentLexer

@@ -1,8 +1,7 @@
-from testfixtures import compare
 
 from sybil.parsers.markdown.lexers import RawFencedCodeBlockLexer
 from sybil.region import Region
-from .helpers import region_details, check_lexed_regions
+from .helpers import check_lexed_regions
 
 
 def test_fenced_code_block():

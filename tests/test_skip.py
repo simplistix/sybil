@@ -1,11 +1,9 @@
 import sys
-from typing import Iterable
 from unittest import SkipTest
 
 import pytest
 from testfixtures import ShouldRaise
 
-from sybil import Example, Document, Region
 from sybil.parsers.rest import PythonCodeBlockParser, DocTestParser, SkipParser
 from .helpers import parse
 
