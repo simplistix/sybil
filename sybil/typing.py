@@ -15,7 +15,6 @@ Lexer = Callable[['sybil.Document'], Iterable['sybil.Region']]
 #: The signature for a :term:`parser`.
 Parser = Callable[['sybil.Document'], Iterable['sybil.Region']]
 
-# In the future, this could likely be a TypedDict when Python 3.8 is the minimum supported version
+# This could likely be a TypedDict.
 #: Mappings used to store lexemes for a :class:`~sybil.Region`.
 LexemeMapping = Dict[str, Any]
-
