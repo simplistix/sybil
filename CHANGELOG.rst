@@ -1,10 +1,14 @@
 Changes
 =======
 
-Next
-----
+8.0.0 (20 Sep 2024)
+-------------------
 
 - Drop Python 3.8 support.
+
+- Internal code tidying.
+
+Thanks to Adam Dangoor for the work on these!
 
 7.1.1 (16 Sep 2024)
 -------------------
