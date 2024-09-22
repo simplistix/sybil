@@ -1,0 +1,41 @@
+.. invisible-code-block: python
+
+  run = []
+
+Let's use the default "skip" marker, which should not skip anything:
+
+.. skip: next
+
+.. code-block:: python
+
+  run.append(1)
+
+.. skip: start
+
+.. invisible-code-block: python
+
+  run.append(2)
+
+.. skip: end
+
+.. custom-skip-marker: start
+
+These should not:
+
+.. code-block:: python
+
+  run.append(3)
+
+Nor this one:
+
+.. code-block:: python
+
+  run.append(4)
+
+.. custom-skip-marker: end
+
+But this one should:
+
+.. code-block:: python
+
+  run.append(5)

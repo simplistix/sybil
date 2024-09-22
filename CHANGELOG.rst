@@ -1,6 +1,13 @@
 Changes
 =======
 
+Next
+----
+
+- Introduce the ``directive`` option to :class:``sybil.parsers.myst.SkipParser``,
+  :class:``sybil.parsers.markdown.SkipParser`` and :class:``sybil.parsers.rest.SkipParser``
+  to allow for skipping particular code blocks.
+
 8.0.0 (20 Sep 2024)
 -------------------
 

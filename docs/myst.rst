@@ -287,6 +287,8 @@ The above examples could be checked with the following configuration:
       expected_skips=('not yet working', 'Fix in v5', 'Fix in v5'),
   )
 
+Use the ``directive`` argument to :class:`sybil.parsers.myst.SkipParser` to skip examples using a directive other than ``"skip"``.
+
 .. _myst-clear-namespace:
 
 Clearing the namespace

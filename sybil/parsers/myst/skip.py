@@ -8,8 +8,8 @@ class SkipParser(AbstractSkipParser):
     A :any:`Parser` for :ref:`skip <myst-skip-parser>` instructions.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, directive: str = 'skip') -> None:
         super().__init__([
-            DirectiveInPercentCommentLexer('skip'),
-            DirectiveInHTMLCommentLexer('skip'),
+            DirectiveInPercentCommentLexer(directive=directive),
+            DirectiveInHTMLCommentLexer(directive=directive),
         ])

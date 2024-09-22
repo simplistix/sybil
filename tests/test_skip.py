@@ -105,3 +105,9 @@ def test_next_follows_next():
     for example in examples:
         example.evaluate()
     assert result == [1]
+
+def test_skip_custom_directive():
+    examples, namespace = parse('skip-custom-directive.txt', PythonCodeBlockParser(), SkipParser('custom-skip-marker'), expected=8)
+    for example in examples:
+        example.evaluate()
+    assert namespace['run'] == [1, 2, 5]
