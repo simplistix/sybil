@@ -4,8 +4,9 @@ from unittest import SkipTest
 import pytest
 from testfixtures import ShouldRaise
 
+from sybil import Document
 from sybil.parsers.rest import PythonCodeBlockParser, DocTestParser, SkipParser
-from .helpers import parse
+from .helpers import parse, sample_path
 
 
 def test_basic():
@@ -105,3 +106,9 @@ def test_next_follows_next():
     for example in examples:
         example.evaluate()
     assert result == [1]
+
+
+def test_malformed_arguments():
+    path = sample_path('skip-malformed-arguments.txt')
+    with ShouldRaise(ValueError("malformed arguments to skip: '<:'")):
+        Document.parse(path, SkipParser())

@@ -1,0 +1,3 @@
+.. skip<:
+
+  The above arguments are invalid
