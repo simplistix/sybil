@@ -18,8 +18,6 @@ from sybil import example as example_module, Sybil, Document
 from sybil.example import Example
 from sybil.example import SybilFailure
 
-PYTEST_VERSION = tuple(int(i) for i in pytest.__version__.split('.'))
-
 example_module_path = abspath(getsourcefile(example_module))
 
 
