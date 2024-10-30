@@ -1,6 +1,13 @@
 Changes
 =======
 
+8.0.1 (30 Oct 2024)
+-------------------
+
+- Better error message when skip arguments are malformed.
+
+- Remove unused constant that caused problems with development releases of pytest.
+
 8.0.0 (20 Sep 2024)
 -------------------
 
