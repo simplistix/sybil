@@ -13,7 +13,11 @@ from .helpers import lex, sample_path
 def test_examples_from_parsing_tests():
     lexer = BlockLexer(start_pattern=re.compile('START'), end_pattern_template='END')
     path = sample_path('lexing-fail.txt')
-    with ShouldRaise(LexingException(f"Could not match 'END' in {path}:\n'\\nEDN\\n'")):
+    with ShouldRaise(
+            LexingException(
+                f"Could not find end of 'START', looking for 'END' in {path}:\n'\\nEDN\\n'"
+            )
+    ):
         lex('lexing-fail.txt', lexer)
 
 
