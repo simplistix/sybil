@@ -5,8 +5,7 @@ from testfixtures import ShouldRaise, compare
 from testfixtures.comparison import compare_text, compare_dict
 
 from sybil import Lexeme
-from sybil.exceptions import LexingException
-from sybil.parsers.abstract.lexers import BlockLexer
+from sybil.parsers.abstract.lexers import BlockLexer, LexingException
 from .helpers import lex, sample_path
 
 
@@ -15,7 +14,8 @@ def test_examples_from_parsing_tests():
     path = sample_path('lexing-fail.txt')
     with ShouldRaise(
             LexingException(
-                f"Could not find end of 'START', looking for 'END' in {path}:\n'\\nEDN\\n'"
+                f"Could not find end of 'START', starting at line 1, column 1, "
+                f"looking for 'END' in {path}:\n'\\nEDN\\n'"
             )
     ):
         lex('lexing-fail.txt', lexer)

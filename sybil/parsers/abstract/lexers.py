@@ -65,6 +65,7 @@ class BlockLexer:
             if end_match is None:
                 raise LexingException(
                     f'Could not find end of {start_match.group(0)!r}, '
+                    f'starting at {document.line_column(start_match.start())}, '
                     f'looking for {end_pattern.pattern!r} in {document.path}:\n'
                     f'{document.text[source_start:]!r}'
                 )
