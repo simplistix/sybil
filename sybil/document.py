@@ -7,10 +7,9 @@ from io import open
 from itertools import chain
 from pathlib import Path
 from typing import Any, Dict
-from typing import List, Pattern, Tuple, Match
+from typing import List, Tuple
 
 from .example import Example, SybilFailure, NotEvaluated
-from .exceptions import LexingException
 from .python import import_path
 from .region import Region
 from .text import LineNumberOffsets
@@ -113,33 +112,6 @@ class Document:
 
     def __iter__(self) -> Iterator[Example]:
         return self.examples()
-
-    def find_region_sources(
-        self, start_pattern: Pattern[str], end_pattern: Pattern[str]
-    ) -> Iterator[Tuple[Match[str], Match[str], str]]:
-        """
-        This helper method can be used to extract source text
-        for regions based on the two :ref:`regular expressions <re-objects>`
-        provided.
-        
-        It will yield a tuple of ``(start_match, end_match, source)`` for each 
-        occurrence of ``start_pattern`` in the document's 
-        :attr:`~Document.text` that is followed by an
-        occurrence of ``end_pattern``.
-        The matches will be provided as :ref:`match objects <match-objects>`,
-        while the source is provided as a string.
-        """
-        for start_match in re.finditer(start_pattern, self.text):
-            source_start = start_match.end()
-            end_match = end_pattern.search(self.text, source_start)
-            if end_match is None:
-                raise LexingException(
-                    f'Could not match {end_pattern.pattern!r} in {self.path}:\n'
-                    f'{self.text[source_start:]!r}'
-                )
-            source_end = end_match.start()
-            source = self.text[source_start:source_end]
-            yield start_match, end_match, source
 
     def push_evaluator(self, evaluator: Evaluator) -> None:
         """

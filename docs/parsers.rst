@@ -35,10 +35,6 @@ namespace. Evaluators **are** free to modify the
 If you need to write your own parser, you should consult the :doc:`api` so see if suitable
 :term:`lexers <Lexer>` already exist for the source language containing your examples.
 
-Failing that, parsers quite often use regular expressions to extract the text for examples
-from the document. There's no hard requirement for this, but if you find you need to, then
-:meth:`~sybil.Document.find_region_sources` may be of help.
-
 Worked example
 ~~~~~~~~~~~~~~
 
@@ -111,6 +107,8 @@ Here, the parsed version consists of a tuple of the command to run and the expec
   from tests.helpers import check_text
   check_text(bash_document_text, sybil)
 
+.. _parser-from-scratch:
+
 Finally, the parser could be implemented from scratch, with the parsed version again consisting of
 a tuple of the command to run and the expected output:
 
@@ -119,9 +117,10 @@ a tuple of the command to run and the expected output:
     from subprocess import check_output
     import re, textwrap
     from sybil import Sybil, Region
+    from sybil.parsers.abstract.lexers import BlockLexer
 
     BASHBLOCK_START = re.compile(r'^\.\.\s*code-block::\s*bash')
-    BASHBLOCK_END = re.compile(r'(\n\Z|\n(?=\S))')
+    BASHBLOCK_END = r'(\n\Z|\n(?=\S))'
 
     def evaluate_bash_block(example):
         command, expected = example.parsed
@@ -129,14 +128,13 @@ a tuple of the command to run and the expected output:
         assert actual == expected, repr(actual) + ' != ' + repr(expected)
 
     def parse_bash_blocks(document):
-        for start_match, end_match, source in document.find_region_sources(
-            BASHBLOCK_START, BASHBLOCK_END
-        ):
-            command, output = textwrap.dedent(source).strip().split('\n')
+        lexer = BlockLexer(BASHBLOCK_START, BASHBLOCK_END)
+        for region in lexer(document):
+            command, output = region.lexemes['source'].strip().split('\n')
             assert command.startswith('$ ')
-            parsed = command[2:].split(), output
-            yield Region(start_match.start(), end_match.end(),
-                         parsed, evaluate_bash_block)
+            region.parsed = command[2:].split(), output
+            region.evaluator = evaluate_bash_block
+            yield region
 
     sybil = Sybil(parsers=[parse_bash_blocks], pattern='*.rst')
 
