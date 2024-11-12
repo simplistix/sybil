@@ -5,9 +5,16 @@ from collections.abc import Iterable
 from typing import Optional, Dict, Pattern, List
 
 from sybil import Document
-from sybil.exceptions import LexingException
 from sybil.region import Lexeme, Region
 from sybil.typing import Lexer
+
+
+class LexingException(Exception):
+    """
+    An exception when :term:`lexing <Lexer>` a document.
+    This may indicate invalid source text, or valid source text but where the elements
+    found cannot be handled successfully.
+    """
 
 
 class LexerCollection(List[Lexer]):

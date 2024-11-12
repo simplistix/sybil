@@ -1,2 +1,0 @@
-class LexingException(Exception):
-    pass

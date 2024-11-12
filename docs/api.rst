@@ -55,6 +55,8 @@ See the :term:`Lexer` concept definition for information.
 
 .. autoclass:: sybil.parsers.abstract.lexers.BlockLexer
 
+.. autoclass:: sybil.parsers.abstract.lexers.LexingException
+
 Parsing
 -------
 
