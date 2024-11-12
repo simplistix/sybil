@@ -3,7 +3,7 @@ Markdown Parsers
 
 Sybil supports `Markdown`__, including `GitHub Flavored Markdown`__ and
 :external+myst:doc:`MyST <index>`.
-If you are using Myst, then you should use the :doc:`MyST parsers <myst>`.
+If you are using MyST, then you should use the :doc:`MyST parsers <myst>`.
 For other flavors of markdown, the parsers described below support extracting and checking
 examples from Markdown source, including the ability to :ref:`skip <markdown-skip-parser>` the
 evaluation of examples where necessary.

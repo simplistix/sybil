@@ -1,4 +1,4 @@
-Myst Parsers
+MyST Parsers
 ============
 
 Sybil includes a range of parsers for extracting and checking examples from
