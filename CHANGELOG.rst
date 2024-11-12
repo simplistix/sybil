@@ -1,6 +1,17 @@
 Changes
 =======
 
+9.0.0 (12 Nov 2024)
+-------------------
+
+- Retire ``Document.find_region_sources()`` in favour of using a
+  :class:`~sybil.parsers.abstract.lexers.BlockLexer`.
+  See the :ref:`updated example <parser-from-scratch>`.
+
+- Better error messages when lexing fails to find the end of a block.
+
+- Improved documentation.
+
 8.0.1 (30 Oct 2024)
 -------------------
 
