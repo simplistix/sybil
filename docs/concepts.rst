@@ -72,6 +72,8 @@ writing :doc:`parsers <parsers>` for it:
 
   Parser
     A callable that takes a :term:`document` and yields a sequence of :term:`regions <Region>`.
+    Parsers may user :term:`lexers <Lexer>` to turn text in specific text formats into abstract
+    primitives such as :class:`blocks <sybil.parsers.abstract.lexers.BlockLexer>`.
 
     Its API is defined by :any:`sybil.typing.Parser`.
 
