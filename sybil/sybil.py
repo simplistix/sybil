@@ -149,6 +149,10 @@ class Sybil:
         return True
 
     def parse(self, path: Path) -> Document:
+        """
+        Raises a :class:`~sybil.parsers.abstract.lexers.LexingException` if the
+        end of a block cannot be found.
+        """
         type_ = self.document_types.get(path.suffix, self.default_document_type)
         return type_.parse(str(path), *self.parsers, encoding=self.encoding)
 
