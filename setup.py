@@ -37,9 +37,11 @@ setup(
             'testfixtures',
             'types-PyYAML',
             ],
-        build=[
+        docs=[
             'furo',
             'sphinx',
+        ],
+        release=[
             'twine',
             'wheel',
         ]
