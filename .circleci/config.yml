@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  python: cjw296/python-ci@4
+  python: cjw296/python-ci@5.1
 
 common: &common
   jobs:
@@ -30,6 +30,7 @@ common: &common
               - "'pytest>=8.3'"
 
     - python/typing:
+        name: typing
         packages: sybil
 
     - python/coverage:
@@ -38,11 +39,24 @@ common: &common
           - "python-versions"
           - "pytest-versions"
 
+    - python/pip-setuptools-build-package:
+        name: package
+        requires:
+          - typing
+          - coverage
+
+    - python/check-package:
+        name: check-package
+        package: sybil
+        typed: true
+        requires:
+          - package
+
     - python/release:
         name: release
         config: .carthorse.yml
         requires:
-          - coverage
+          - check-package
         filters:
           branches:
             only: master

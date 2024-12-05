@@ -20,7 +20,7 @@ a virtualenv and then install the package in editable form as follows::
   $ python3 -m venv ~/virtualenvs/sybil
   $ source ~/virtualenvs/sybil/bin/activate
   $ pip install -U pip setuptools
-  $ pip install -U -e .[test,build]
+  $ pip install -U -e .[test,docs]
 
 Running the tests
 -----------------
