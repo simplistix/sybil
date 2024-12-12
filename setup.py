@@ -41,7 +41,6 @@ setup(
             'furo',
             'sphinx',
             'twine',
-            'urllib3<2',  # workaround for RTD builds failing with old SSL
             'wheel',
         ]
     ),
