@@ -19,8 +19,8 @@ class AbstractSkipParser:
     """
 
     def __init__(self, lexers: Sequence[Lexer]):
-        self.lexers = LexerCollection(lexers)
-        self.skipper = Skipper()
+        self.lexers: LexerCollection = LexerCollection(lexers)
+        self.skipper: Skipper = Skipper()
 
     def __call__(self, document: Document) -> Iterable[Region]:
         for lexed in self.lexers(document):
