@@ -18,9 +18,9 @@ class AbstractSkipParser:
         :class:`~sybil.Document` that is parsed.
     """
 
-    def __init__(self, lexers: Sequence[Lexer]):
+    def __init__(self, lexers: Sequence[Lexer], directive: str):
         self.lexers = LexerCollection(lexers)
-        self.skipper = Skipper()
+        self.skipper = Skipper(directive=directive)
 
     def __call__(self, document: Document) -> Iterable[Region]:
         for lexed in self.lexers(document):

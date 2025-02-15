@@ -27,8 +27,9 @@ class SkipState:
 
 class Skipper:
 
-    def __init__(self) -> None:
+    def __init__(self, directive: str) -> None:
         self.document_state: Dict[Document, SkipState] = {}
+        self.directive = directive
 
     def state_for(self, example: Example) -> SkipState:
         document = example.document
@@ -59,14 +60,15 @@ class Skipper:
 
     def evaluate_skip_example(self, example: Example) -> None:
         state = self.state_for(example)
+        directive = self.directive
         action, reason = example.parsed
 
         if action not in ('start', 'next', 'end'):
             raise ValueError('Bad skip action: ' + action)
         if state.last_action is None and action not in ('start', 'next'):
-            raise ValueError(f"'skip: {action}' must follow 'skip: start'")
+            raise ValueError(f"'{directive}: {action}' must follow '{directive}: start'")
         elif state.last_action and action != 'end':
-            raise ValueError(f"'skip: {action}' cannot follow 'skip: {state.last_action}'")
+            raise ValueError(f"'{directive}: {action}' cannot follow '{directive}: {state.last_action}'")
 
         state.last_action = action
 
