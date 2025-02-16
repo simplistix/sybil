@@ -8,4 +8,4 @@ class SkipParser(AbstractSkipParser):
     """
 
     def __init__(self) -> None:
-        super().__init__([DirectiveInCommentLexer('skip')])
+        super().__init__([DirectiveInCommentLexer(self.directive)])
