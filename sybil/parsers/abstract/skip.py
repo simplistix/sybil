@@ -28,8 +28,7 @@ class AbstractSkipParser:
         for lexed in self.lexers(document):
             arguments = lexed.lexemes['arguments']
             if arguments is None:
-                directive = lexed.lexemes.get('directive', 'skip')
-                raise ValueError(f'missing arguments to {directive}')
+                raise ValueError(f'missing arguments to {self.directive}')
             match = SKIP_ARGUMENTS_PATTERN.match(arguments)
             if match is None:
                 raise ValueError(f'malformed arguments to {self.directive}: {arguments!r}')
