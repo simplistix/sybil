@@ -1,6 +1,15 @@
 Changes
 =======
 
+9.1.0 (18 Feb 2025)
+-------------------
+
+- The various "skip" parsers can now be subclassed to specify a different directive name.
+
+- Clearer error message when a "skip" directive is encountered with missing parameters.
+
+Thanks to Adam Dangoor for the work on these!
+
 9.0.0 (12 Nov 2024)
 -------------------
 
