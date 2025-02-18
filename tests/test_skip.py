@@ -112,3 +112,8 @@ def test_malformed_arguments():
     path = sample_path('skip-malformed-arguments.txt')
     with ShouldRaise(ValueError("malformed arguments to skip: '<:'")):
         Document.parse(path, SkipParser())
+
+def test_missing_arguments():
+    path = sample_path('skip-missing-arguments.txt')
+    with ShouldRaise(ValueError("missing arguments to skip")):
+        Document.parse(path, SkipParser())

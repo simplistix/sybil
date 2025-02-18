@@ -1,0 +1,3 @@
+.. skip:
+
+  There are no arguments above

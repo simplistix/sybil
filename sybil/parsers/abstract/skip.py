@@ -27,6 +27,8 @@ class AbstractSkipParser:
     def __call__(self, document: Document) -> Iterable[Region]:
         for lexed in self.lexers(document):
             arguments = lexed.lexemes['arguments']
+            if arguments is None:
+                raise ValueError(f'missing arguments to {self.directive}')
             match = SKIP_ARGUMENTS_PATTERN.match(arguments)
             if match is None:
                 raise ValueError(f'malformed arguments to {self.directive}: {arguments!r}')
