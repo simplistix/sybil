@@ -22,7 +22,7 @@ class AbstractSkipParser:
 
     def __init__(self, lexers: Sequence[Lexer]):
         self.lexers = LexerCollection(lexers)
-        self.skipper = Skipper()
+        self.skipper = Skipper(self.directive)
 
     def __call__(self, document: Document) -> Iterable[Region]:
         for lexed in self.lexers(document):
