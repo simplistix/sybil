@@ -10,6 +10,6 @@ class SkipParser(AbstractSkipParser):
 
     def __init__(self) -> None:
         super().__init__([
-            DirectiveInPercentCommentLexer('skip'),
-            DirectiveInHTMLCommentLexer('skip'),
+            DirectiveInPercentCommentLexer(self.directive),
+            DirectiveInHTMLCommentLexer(self.directive),
         ])

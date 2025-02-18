@@ -18,9 +18,11 @@ class AbstractSkipParser:
         :class:`~sybil.Document` that is parsed.
     """
 
+    directive = 'skip'
+
     def __init__(self, lexers: Sequence[Lexer]):
         self.lexers = LexerCollection(lexers)
-        self.skipper = Skipper()
+        self.skipper = Skipper(self.directive)
 
     def __call__(self, document: Document) -> Iterable[Region]:
         for lexed in self.lexers(document):
@@ -30,6 +32,5 @@ class AbstractSkipParser:
                 raise ValueError(f'missing arguments to {directive}')
             match = SKIP_ARGUMENTS_PATTERN.match(arguments)
             if match is None:
-                directive = lexed.lexemes.get('directive', 'skip')
-                raise ValueError(f'malformed arguments to {directive}: {arguments!r}')
+                raise ValueError(f'malformed arguments to {self.directive}: {arguments!r}')
             yield Region(lexed.start, lexed.end, match.groups(), self.skipper)
