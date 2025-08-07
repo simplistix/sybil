@@ -1,18 +1,14 @@
-from doctest import (
-    DocTest as BaseDocTest,
-    DocTestRunner as BaseDocTestRunner,
-    Example as BaseDocTestExample,
-    set_unittest_reportflags,
-)
+import doctest
+from doctest import set_unittest_reportflags
 from typing import Any, Dict, List, Optional
 
 from sybil import Example
 
 
-class DocTest(BaseDocTest):
+class DocTest(doctest.DocTest):
     def __init__(
             self,
-            examples: List[BaseDocTestExample],
+            examples: List[doctest.Example],
             globs: Dict[str, Any],
             name: str,
             filename: Optional[str],
@@ -20,24 +16,23 @@ class DocTest(BaseDocTest):
             docstring: Optional[str],
         ) -> None:
         # do everything like regular doctests, but don't make a copy of globs
-        BaseDocTest.__init__(self, examples, globs, name, filename, lineno, docstring)
+        doctest.DocTest.__init__(self, examples, globs, name, filename, lineno, docstring)
         self.globs = globs
 
 
-class DocTestRunner(BaseDocTestRunner):
+class DocTestRunner(doctest.DocTestRunner):
 
     def __init__(self, optionflags: int) -> None:
         _unittest_reportflags = set_unittest_reportflags(0)
         set_unittest_reportflags(_unittest_reportflags)
         optionflags |= _unittest_reportflags
-        BaseDocTestRunner.__init__(
-
+        doctest.DocTestRunner.__init__(
             self,
             verbose=False,
             optionflags=optionflags,
         )
 
-    def _failure_header(self, test: DocTest, example: BaseDocTestExample) -> str:
+    def _failure_header(self, test: DocTest, example: doctest.Example) -> str:
         return ''
 
 
