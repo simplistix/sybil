@@ -104,6 +104,33 @@ Then you would use the normal :class:`sybil.parsers.rest.DocTestDirectiveParser`
   You will have to enable :external+sphinx:doc:`sphinx.ext.doctest <usage/extensions/doctest>`
   in your ``conf.py`` for Sphinx to render :rst:dir:`doctest` directives.
 
+Floating point numbers
+~~~~~~~~~~~~~~~~~~~~~~
+
+A :data:`~sybil.evaluators.doctest.NUMBER` option flag is provided such that floating point
+numbers can be used in examples without worrying about precision errors. An example
+such as the following can be problematic:
+
+.. literalinclude:: examples/markdown/number.md
+  :language: rest
+
+However, it can be checked with the following configuration:
+
+.. code-block:: python
+
+   from sybil import Sybil
+   from sybil.evaluators.doctest import NUMBER
+   from sybil.parsers.myst import PythonCodeBlockParser
+   sybil = Sybil(parsers=[PythonCodeBlockParser(doctest_optionflags=NUMBER)])
+
+.. invisible-code-block: python
+
+  from tests.helpers import check_path
+  check_path('examples/markdown/number.md', sybil, expected=2)
+
+:class:`~sybil.parsers.myst.DocTestDirectiveParser` also has an ``optionflags`` parameter that
+supports use of :data:`~sybil.evaluators.doctest.NUMBER`.
+
 .. _myst-codeblock-parser:
 
 Code blocks

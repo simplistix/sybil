@@ -43,6 +43,27 @@ configuration:
   from tests.helpers import check_path
   check_path('examples/markdown/doctest.md', sybil, expected=2)
 
+A :data:`~sybil.evaluators.doctest.NUMBER` option flag is provided such that floating point
+numbers can be used in examples without worrying about precision errors. An example
+such as the following can be problematic:
+
+.. literalinclude:: examples/markdown/number.md
+  :language: rest
+
+However, it can be checked with the following configuration:
+
+.. code-block:: python
+
+   from sybil import Sybil
+   from sybil.evaluators.doctest import NUMBER
+   from sybil.parsers.markdown import PythonCodeBlockParser
+   sybil = Sybil(parsers=[PythonCodeBlockParser(doctest_optionflags=NUMBER)])
+
+.. invisible-code-block: python
+
+  from tests.helpers import check_path
+  check_path('examples/markdown/number.md', sybil, expected=2)
+
 .. _markdown-codeblock-parser:
 
 Code blocks

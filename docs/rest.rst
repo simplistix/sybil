@@ -61,6 +61,27 @@ These could be checked with the following configuration:
   You will have to enable :external+sphinx:doc:`sphinx.ext.doctest <usage/extensions/doctest>`
   in your ``conf.py`` for Sphinx to render :rst:dir:`doctest` directives.
 
+A :data:`~sybil.evaluators.doctest.NUMBER` option flag is provided such that floating point
+numbers can be used in examples without worrying about precision errors. An example
+such as the following can be problematic:
+
+.. literalinclude:: examples/rest/number.rst
+  :language: rest
+
+However, it can be checked with the following configuration:
+
+.. code-block:: python
+
+   from sybil import Sybil
+   from sybil.parsers.rest import DocTestParser
+   from sybil.evaluators.doctest import NUMBER
+   sybil = Sybil(parsers=[DocTestParser(optionflags=NUMBER)])
+
+.. invisible-code-block: python
+
+  from tests.helpers import check_path
+  check_path('examples/rest/number.rst', sybil, expected=2)
+
 .. _codeblock-parser:
 
 Code blocks
