@@ -1,0 +1,8 @@
+>>> 'a'
+'...'
+
+>>> 'b' #doctest: -ELLIPSIS
+'...'
+
+>>> 'c' #doctest: +SKIP
+...

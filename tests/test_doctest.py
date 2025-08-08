@@ -123,6 +123,27 @@ def test_directive_with_options():
     ))
 
 
+def test_directive_with_inline_options():
+    name = 'doctest_inline_options.txt'
+    path = sample_path(name)
+    parser = DocTestParser(optionflags=ELLIPSIS)
+    examples, namespace = parse(name, parser, expected=3)
+    # ELLIPSIS active from options:
+    examples[0].evaluate()
+    # ELLIPSIS deactivated by comment:
+    with pytest.raises(SybilFailure) as excinfo:
+        examples[1].evaluate()
+    compare(str(excinfo.value), expected = (
+        f"Example at {path}, line 4, column 1 did not evaluate as expected:\n"
+        "Expected:\n"
+        "    '...'\n"
+        "Got:\n"
+        "    'b'\n"
+    ))
+    # SKIP activated by comment:
+    examples[2].evaluate()
+
+
 # Number of doctests that can't be parsed in a file when looking at the whole file source:
 ROOT = Path(FUNCTIONAL_TEST_DIR)
 UNPARSEABLE = {
