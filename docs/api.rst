@@ -153,6 +153,9 @@ See the :term:`Evaluator` concept definition for information.
 
 .. autoclass:: sybil.typing.Evaluator
 
+.. autodata:: sybil.evaluators.doctest.NUMBER
+   :annotation:
+
 .. autoclass:: sybil.evaluators.doctest.DocTestEvaluator
 
 .. autoclass:: sybil.evaluators.python.PythonEvaluator
