@@ -1,6 +1,11 @@
 Changes
 =======
 
+9.2.0 (8 Aug 2025)
+------------------
+
+- Add support for a :data:`~sybil.evaluators.doctest.NUMBER` option flag when using doctest.
+
 9.1.0 (18 Feb 2025)
 -------------------
 
