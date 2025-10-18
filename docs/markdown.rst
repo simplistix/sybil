@@ -10,7 +10,7 @@ evaluation of examples where necessary.
 
 __ https://commonmark.org/
 
-__ https://github.github.com/markdown/
+__ https://github.github.com/gfm/
 
 
 .. _markdown-doctest-parser:
