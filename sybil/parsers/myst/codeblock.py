@@ -31,7 +31,7 @@ class CodeBlockParser(AbstractCodeBlockParser):
                     mapping={'language': 'arguments', 'source': 'source'},
                 ),
                 DirectiveLexer(
-                    directive=r'(sourcecode|code-block|code)',
+                    directive=r'(sourcecode|code-block|code-cell|code)',
                     arguments='.+',
                 ),
                 DirectiveInPercentCommentLexer(
