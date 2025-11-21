@@ -210,3 +210,8 @@ def test_code_directive():
 def test_sourcecode_directive():
     sybil = Sybil([PythonCodeBlockParser()])
     check_path(sample_path('myst-sourcecode.md'), sybil, expected=1)
+
+
+def test_code_cell_directive():
+    sybil = Sybil([PythonCodeBlockParser()])
+    check_path(sample_path('myst-code-cell.md'), sybil, expected=1)

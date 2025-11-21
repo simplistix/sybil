@@ -12,7 +12,8 @@ doctest
 
 A selection of parsers are included that can extract and check doctest examples in
 ``python`` `fenced code blocks`__,
-MyST ``code-block`` :ref:`directives <syntax/directives>` and
+MyST ``code-block`` :ref:`directives <syntax/directives>`,
+MyST ``code-cell`` :ref:`directives <syntax/directives>`, and
 MyST ``doctest`` :ref:`directives <syntax/directives>`.
 
 __ https://spec.commonmark.org/0.30/#fenced-code-blocks
@@ -137,16 +138,18 @@ Code blocks
 -----------
 
 The codeblock parsers extract examples from `fenced code blocks`__,
-MyST ``code-block`` :ref:`directives <syntax/directives>` and "invisible"
+MyST ``code-block`` :ref:`directives <syntax/directives>`, MyST ``code-cell`` 
+:ref:`directives <syntax/directives>` (used by `mystmd`__), and "invisible"
 code blocks in both styles of Markdown mult-line comment.
 
 __ https://spec.commonmark.org/0.30/#fenced-code-blocks
+__ https://mystmd.org/
 
 Python
 ~~~~~~
 
-Python examples can be checked in either ``python`` `fenced code blocks`__ or
-MyST ``code-block`` :ref:`directives <syntax/directives>` using the
+Python examples can be checked in either ``python`` `fenced code blocks`__,
+MyST ``code-block``, or MyST ``code-cell`` :ref:`directives <syntax/directives>` using the
 :class:`sybil.parsers.myst.PythonCodeBlockParser`.
 
 __ https://spec.commonmark.org/0.30/#fenced-code-blocks
@@ -172,6 +175,19 @@ These examples can be checked with the following configuration:
 
   from tests.helpers import check_path
   check_path('examples/myst/codeblock-python.md', sybil, expected=4)
+
+The ``code-cell`` directive, which is used by `mystmd`__ for Jupyter notebook integration,
+is also supported:
+
+__ https://mystmd.org/
+
+.. literalinclude:: examples/myst/codeblock-python-code-cell.md
+  :language: markdown
+
+.. invisible-code-block: python
+
+  from tests.helpers import check_path
+  check_path('examples/myst/codeblock-python-code-cell.md', sybil, expected=4)
 
 
 .. _myst-codeblock-other:
