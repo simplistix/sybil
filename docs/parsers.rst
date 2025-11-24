@@ -64,15 +64,15 @@ the existing support for :ref:`other languages <codeblock-other>`:
         actual = check_output(command).strip().decode('ascii')
         assert actual == expected, repr(actual) + ' != ' + repr(expected)
 
-    parser = CodeBlockParser(language='bash', evaluator=evaluate_bash_block)
+    bash_parser = CodeBlockParser(language='bash', evaluator=evaluate_bash_block)
 
-    sybil = Sybil(parsers=[parser], pattern='*.rst')
+    sybil = Sybil(parsers=[bash_parser], pattern='*.rst')
 
 
 .. invisible-code-block: python
 
-  from tests.helpers import check_text
-  check_text(bash_document_text, sybil)
+  from sybil.testing import check_sybil
+  check_sybil(sybil, bash_document_text)
 
 Another alternative would be to start with the
 :class:`lexer for ReST directives <sybil.parsers.rest.lexers.DirectiveLexer>`.
@@ -104,8 +104,8 @@ Here, the parsed version consists of a tuple of the command to run and the expec
 
 .. invisible-code-block: python
 
-  from tests.helpers import check_text
-  check_text(bash_document_text, sybil)
+  from sybil.testing import check_sybil
+  check_sybil(sybil, bash_document_text)
 
 .. _parser-from-scratch:
 
@@ -140,5 +140,5 @@ a tuple of the command to run and the expected output:
 
 .. invisible-code-block: python
 
-  from tests.helpers import check_text
-  check_text(bash_document_text, sybil)
+  from sybil.testing import check_sybil
+  check_sybil(sybil, bash_document_text)

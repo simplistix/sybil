@@ -177,8 +177,8 @@ We can do this using :class:`~sybil.parsers.rest.CodeBlockParser` as follows:
 
 .. invisible-code-block: python
 
-  from tests.helpers import check_text
-  check_text(bash_document_text, sybil)
+  from sybil.testing import check_sybil
+  check_sybil(sybil, bash_document_text)
 
 Alternatively, we can create our own parser class and use it as follows:
 
@@ -203,8 +203,8 @@ Alternatively, we can create our own parser class and use it as follows:
 
 .. invisible-code-block: python
 
-  from tests.helpers import check_text
-  check_text(bash_document_text, sybil)
+  from sybil.testing import check_sybil
+  check_sybil(sybil, bash_document_text)
 
 .. _capture-parser:
 
@@ -243,7 +243,7 @@ configuration:
 
 .. invisible-code-block: python
 
-  document = check_text(capture_example, sybil)
+  document = check_sybil(sybil, capture_example)
   expected_listing = document.namespace['expected_listing']
 
 The above documentation source, when parsed by this parser and then evaluated,
@@ -271,7 +271,7 @@ executable code, for example:
 
 .. invisible-code-block: python
 
-  document = check_text(capture_example, sybil)
+  document = check_sybil(sybil, capture_example)
   json_source = document.namespace['json_source']
 
 The JSON source can now be used as follows:

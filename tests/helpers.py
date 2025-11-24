@@ -5,7 +5,6 @@ from contextlib import contextmanager
 from os.path import dirname, join
 from pathlib import Path
 from shutil import copytree
-from tempfile import NamedTemporaryFile
 from textwrap import dedent
 from traceback import TracebackException
 from typing import Optional, Tuple, List, Union
@@ -67,7 +66,7 @@ def lex_text(text: str, lexer: Lexer) -> List[Region]:
 
 def check_lexed_text_regions(text: str, lexer: Lexer, *, expected: List[Region]) -> None:
     document = Document(text, 'sample.txt')
-    actual =list(lexer(document))
+    actual = list(lexer(document))
     compare(
         expected=region_details(document, expected),
         actual=region_details(document, actual),
@@ -100,16 +99,6 @@ def check_path(path: str, sybil: Sybil, *, expected: int, expected_skips: Sequen
             actual_skips.append(str(e))
     compare(expected, actual=len(examples))
     compare(expected=expected_skips, actual=actual_skips)
-
-
-def check_text(text: str, sybil: Sybil):
-    with NamedTemporaryFile() as temp:
-        temp.write(text.encode('ascii'))
-        temp.flush()
-        document = sybil.parse(Path(temp.name))
-    (example,) = document
-    example.evaluate()
-    return document
 
 
 def check_tree(expected: str, path: str):
