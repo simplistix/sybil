@@ -142,3 +142,41 @@ a tuple of the command to run and the expected output:
 
   from sybil.testing import check_sybil
   check_sybil(sybil, bash_document_text)
+
+Of course, you should also write tests for your parser, showing it both succeeding and failing.
+Here are examples for the Bash parser implementation at the start of this section, making use
+of :func:`~sybil.testing.check_parser` to check a single example in a string against the supplied
+:data:`~sybil.typing.Parser`:
+
+.. code-block:: python
+
+    from sybil.testing import check_parser
+    from testfixtures import ShouldAssert
+
+    def test_bash_success() -> None:
+        check_parser(
+            bash_parser,
+            text="""
+                .. code-block:: bash
+
+                    $ echo hi there
+                    hi there
+            """,
+        )
+
+    def test_bash_failure() -> None:
+        with ShouldAssert("'this is wrong' != 'hi there'"):
+            check_parser(
+                bash_parser,
+                text="""
+                    .. code-block:: bash
+
+                        $ echo this is wrong
+                        hi there
+                """,
+            )
+
+.. invisible-code-block: python
+
+  test_bash_success()
+  test_bash_failure()
