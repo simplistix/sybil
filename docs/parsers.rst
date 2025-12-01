@@ -180,3 +180,122 @@ of :func:`~sybil.testing.check_parser` to check a single example in a string aga
 
   test_bash_success()
   test_bash_failure()
+
+Developing with Lexers
+~~~~~~~~~~~~~~~~~~~~~~
+
+Sybil has a fairly rich selection of :term:`parsers <Parser>` and :term:`lexers <Lexer>` such that
+even if your source format isn't directly supported, you may not have too much work to do in order
+to support it.
+
+Take `Docusaurus code blocks`__, which add parameters to Markdown fenced code blocks. Suppose we
+want to implement a parser which will execute Python code blocks in this format:
+
+.. code-block:: markdown
+
+    ```python title="hello.py"
+    print("hello")
+    ```
+
+__ https://docusaurus.io/docs/markdown-features/code-blocks
+
+Firstly, let's implement a lexer that understands this extension to the markdown format:
+
+.. code-block:: python
+
+    from sybil.parsers.markdown.lexers import RawFencedCodeBlockLexer
+
+    class DocusaurusCodeBlockLexer(RawFencedCodeBlockLexer):
+
+        def __init__(self) -> None:
+            super().__init__(
+                info_pattern=re.compile(
+                    r'^(?P<language>\w+)(?:\s+(?P<params>.+))?$\n', re.MULTILINE
+                ),
+            )
+
+        def __call__(self, document: Document) -> Iterable[Region]:
+            for lexed in super().__call__(document):
+                lexemes = lexed.lexemes
+                raw_params = lexemes.pop('params', None)
+                params = lexemes['params'] = {}
+                if raw_params:
+                    for match in re.finditer(r'(?P<key>\w+)="(?P<value>[^"]*)"', raw_params):
+                        params[match.group('key')] = match.group('value')
+                yield lexed
+
+We can write a unit test that verifies this lexer works as follows:
+
+.. code-block:: python
+
+    from sybil import Region
+    from sybil.testing import check_lexer
+
+    def test_docusaurus_lexing() -> None:
+        regions = check_lexer(
+            lexer=DocusaurusCodeBlockLexer(),
+            source_text="""
+                ```jsx title="/src/components/HelloCodeTitle.js"
+                function HelloCodeTitle(props) {
+                  return <h1>Hello, {props.name}</h1>;
+                }
+                ```
+            """,
+            expected_text=(
+                '            ```jsx title="/src/components/HelloCodeTitle.js"\n'
+                '            function HelloCodeTitle(props) {\n'
+                '              return <h1>Hello, {props.name}</h1>;\n'
+                '            }\n            ```'
+            ),
+            expected_lexemes={
+                'language': 'jsx',
+                'params': {'title': '/src/components/HelloCodeTitle.js'},
+                'source': (
+                    'function HelloCodeTitle(props) {\n'
+                    '  return <h1>Hello, {props.name}</h1>;\n}'
+                    '\n'
+                ),
+            }
+        )
+
+.. invisible-code-block: python
+
+  test_docusaurus_lexing()
+
+Once we're confident that the lexer is working as required, we can use it with the existing
+:class:`~sybil.parsers.abstract.codeblock.AbstractCodeBlockParser` as follows:
+
+.. code-block:: python
+
+    from sybil.evaluators.python import PythonEvaluator
+    from sybil.parsers.abstract.codeblock import AbstractCodeBlockParser
+
+    class DocusaurusCodeBlockParser(AbstractCodeBlockParser):
+        def __init__(self) -> None:
+            super().__init__(
+                lexers=[DocusaurusCodeBlockLexer()],
+                language='python',
+                evaluator=PythonEvaluator(),
+                language_lexeme_name = 'language',
+            )
+
+This can then be tested as follows:
+
+.. code-block:: python
+
+    from sybil.testing import check_parser
+
+    def test_docusaurus_parsing() -> None:
+        document = check_parser(
+            DocusaurusCodeBlockParser(),
+            text="""
+                ```python title="hello.py"
+                x = 1
+                ```
+            """,
+        )
+        assert document.namespace['x'] == 1
+
+.. invisible-code-block: python
+
+  test_docusaurus_parsing()

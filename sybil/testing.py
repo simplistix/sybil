@@ -30,3 +30,20 @@ def check_parser(parser: Parser, text: str) -> Document:
     """
     sybil = Sybil(parsers=[parser], pattern='*')
     return check_sybil(sybil, text)
+
+
+def check_lexer(
+    lexer: Lexer, source_text: str, expected_text: str, expected_lexemes: LexemeMapping
+) -> None:
+    """
+    Run the supplied text through the supplied lexer make sure it lexes a single
+    region and captures the expected text and lexemes.
+
+    This is for testing :data:`~sybil.typing.Lexer` implementations.
+    """
+    document = Document(source_text, 'sample.txt')
+    regions = list(lexer(document))
+    assert len(regions) == 1, f'Expected exactly one region, got: {regions}'
+    region = regions[0]
+    assert expected_text == document.text[region.start:region.end]
+    assert region.lexemes == expected_lexemes
