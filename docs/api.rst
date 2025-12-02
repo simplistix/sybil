@@ -159,3 +159,17 @@ See the :term:`Evaluator` concept definition for information.
 .. autoclass:: sybil.evaluators.doctest.DocTestEvaluator
 
 .. autoclass:: sybil.evaluators.python.PythonEvaluator
+
+
+Testing
+-------
+
+Meta-testing of components you've written to work with Sybil.
+See :doc:`parsers`.
+
+.. autofunction:: sybil.testing.check_sybil
+
+.. autofunction:: sybil.testing.check_parser
+
+.. autofunction:: sybil.testing.check_lexer
+

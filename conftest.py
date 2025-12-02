@@ -26,9 +26,12 @@ pytest_collect_file = Sybil(
 
 def _find_python_files() -> List[Tuple[Path, str]]:
     paths = []
-    for path in Path(__file__).parent.rglob('*.py'):
-        source = Path(path).read_text()
-        paths.append((path, source))
+    for root_path in Path(__file__).parent.iterdir():
+        if root_path.name.startswith('.'):
+            continue
+        for path in root_path.rglob('*.py'):
+            source = Path(path).read_text()
+            paths.append((path, source))
     return paths
 
 

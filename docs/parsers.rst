@@ -64,15 +64,15 @@ the existing support for :ref:`other languages <codeblock-other>`:
         actual = check_output(command).strip().decode('ascii')
         assert actual == expected, repr(actual) + ' != ' + repr(expected)
 
-    parser = CodeBlockParser(language='bash', evaluator=evaluate_bash_block)
+    bash_parser = CodeBlockParser(language='bash', evaluator=evaluate_bash_block)
 
-    sybil = Sybil(parsers=[parser], pattern='*.rst')
+    sybil = Sybil(parsers=[bash_parser], pattern='*.rst')
 
 
 .. invisible-code-block: python
 
-  from tests.helpers import check_text
-  check_text(bash_document_text, sybil)
+  from sybil.testing import check_sybil
+  check_sybil(sybil, bash_document_text)
 
 Another alternative would be to start with the
 :class:`lexer for ReST directives <sybil.parsers.rest.lexers.DirectiveLexer>`.
@@ -104,8 +104,8 @@ Here, the parsed version consists of a tuple of the command to run and the expec
 
 .. invisible-code-block: python
 
-  from tests.helpers import check_text
-  check_text(bash_document_text, sybil)
+  from sybil.testing import check_sybil
+  check_sybil(sybil, bash_document_text)
 
 .. _parser-from-scratch:
 
@@ -140,5 +140,162 @@ a tuple of the command to run and the expected output:
 
 .. invisible-code-block: python
 
-  from tests.helpers import check_text
-  check_text(bash_document_text, sybil)
+  from sybil.testing import check_sybil
+  check_sybil(sybil, bash_document_text)
+
+Of course, you should also write tests for your parser, showing it both succeeding and failing.
+Here are examples for the Bash parser implementation at the start of this section, making use
+of :func:`~sybil.testing.check_parser` to check a single example in a string against the supplied
+:data:`~sybil.typing.Parser`:
+
+.. code-block:: python
+
+    from sybil.testing import check_parser
+    from testfixtures import ShouldAssert
+
+    def test_bash_success() -> None:
+        check_parser(
+            bash_parser,
+            text="""
+                .. code-block:: bash
+
+                    $ echo hi there
+                    hi there
+            """,
+        )
+
+    def test_bash_failure() -> None:
+        with ShouldAssert("'this is wrong' != 'hi there'"):
+            check_parser(
+                bash_parser,
+                text="""
+                    .. code-block:: bash
+
+                        $ echo this is wrong
+                        hi there
+                """,
+            )
+
+.. invisible-code-block: python
+
+  test_bash_success()
+  test_bash_failure()
+
+Developing with Lexers
+~~~~~~~~~~~~~~~~~~~~~~
+
+Sybil has a fairly rich selection of :term:`parsers <Parser>` and :term:`lexers <Lexer>` such that
+even if your source format isn't directly supported, you may not have too much work to do in order
+to support it.
+
+Take `Docusaurus code blocks`__, which add parameters to Markdown fenced code blocks. Suppose we
+want to implement a parser which will execute Python code blocks in this format:
+
+.. code-block:: markdown
+
+    ```python title="hello.py"
+    print("hello")
+    ```
+
+__ https://docusaurus.io/docs/markdown-features/code-blocks
+
+Firstly, let's implement a lexer that understands this extension to the markdown format:
+
+.. code-block:: python
+
+    from sybil.parsers.markdown.lexers import RawFencedCodeBlockLexer
+
+    class DocusaurusCodeBlockLexer(RawFencedCodeBlockLexer):
+
+        def __init__(self) -> None:
+            super().__init__(
+                info_pattern=re.compile(
+                    r'^(?P<language>\w+)(?:\s+(?P<params>.+))?$\n', re.MULTILINE
+                ),
+            )
+
+        def __call__(self, document: Document) -> Iterable[Region]:
+            for lexed in super().__call__(document):
+                lexemes = lexed.lexemes
+                raw_params = lexemes.pop('params', None)
+                params = lexemes['params'] = {}
+                if raw_params:
+                    for match in re.finditer(r'(?P<key>\w+)="(?P<value>[^"]*)"', raw_params):
+                        params[match.group('key')] = match.group('value')
+                yield lexed
+
+We can write a unit test that verifies this lexer works as follows:
+
+.. code-block:: python
+
+    from sybil import Region
+    from sybil.testing import check_lexer
+
+    def test_docusaurus_lexing() -> None:
+        regions = check_lexer(
+            lexer=DocusaurusCodeBlockLexer(),
+            source_text="""
+                ```jsx title="/src/components/HelloCodeTitle.js"
+                function HelloCodeTitle(props) {
+                  return <h1>Hello, {props.name}</h1>;
+                }
+                ```
+            """,
+            expected_text=(
+                '            ```jsx title="/src/components/HelloCodeTitle.js"\n'
+                '            function HelloCodeTitle(props) {\n'
+                '              return <h1>Hello, {props.name}</h1>;\n'
+                '            }\n            ```'
+            ),
+            expected_lexemes={
+                'language': 'jsx',
+                'params': {'title': '/src/components/HelloCodeTitle.js'},
+                'source': (
+                    'function HelloCodeTitle(props) {\n'
+                    '  return <h1>Hello, {props.name}</h1>;\n}'
+                    '\n'
+                ),
+            }
+        )
+
+.. invisible-code-block: python
+
+  test_docusaurus_lexing()
+
+Once we're confident that the lexer is working as required, we can use it with the existing
+:class:`~sybil.parsers.abstract.codeblock.AbstractCodeBlockParser` as follows:
+
+.. code-block:: python
+
+    from sybil.evaluators.python import PythonEvaluator
+    from sybil.parsers.abstract.codeblock import AbstractCodeBlockParser
+
+    class DocusaurusCodeBlockParser(AbstractCodeBlockParser):
+        def __init__(self) -> None:
+            super().__init__(
+                lexers=[DocusaurusCodeBlockLexer()],
+                language='python',
+                evaluator=PythonEvaluator(),
+                language_lexeme_name = 'language',
+            )
+
+This can then be tested as follows:
+
+.. code-block:: python
+
+    from sybil.testing import check_parser
+
+    def test_docusaurus_parsing() -> None:
+        document = check_parser(
+            DocusaurusCodeBlockParser(),
+            text="""
+                ```python title="hello.py"
+                x = 1
+                ```
+            """,
+        )
+        assert document.namespace['x'] == 1
+
+.. invisible-code-block: python
+
+  test_docusaurus_parsing()
