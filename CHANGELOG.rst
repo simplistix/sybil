@@ -1,6 +1,16 @@
 Changes
 =======
 
+9.3.0 (2 Dec 2025)
+------------------
+
+- Add support for MyST ``code-cell`` :ref:`directives <syntax/directives>`.
+
+- Provide :func:`sybil.testing.check_sybil`, :func:`sybil.testing.check_parser` and
+  :func:`sybil.testing.check_lexer` to help test custom lexers and parsers.
+
+- Add documentation around testing custom lexers and parsers.
+
 9.2.0 (8 Aug 2025)
 ------------------
 
