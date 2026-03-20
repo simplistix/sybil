@@ -1,0 +1,15 @@
+name: "Continuous Integration"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "0 1 * * *"
+
+jobs:
+  ci:
+    uses: cjw296/python-workflow/.github/workflows/uv-ci.yml@v2
+    with:
+      package: sybil
+      python-versions: '[ "3.10", "3.12", "3.13" ]'

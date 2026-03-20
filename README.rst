@@ -1,10 +1,10 @@
 Sybil
 =====
 
-|CircleCI|_ |Docs|_
+|CI|_ |Docs|_
 
-.. |CircleCI| image:: https://circleci.com/gh/simplistix/sybil/tree/master.svg?style=shield
-.. _CircleCI: https://circleci.com/gh/simplistix/sybil/tree/master
+.. |CI| image:: https://github.com/simplistix/sybil/actions/workflows/ci.yml/badge.svg
+.. _CI: https://github.com/simplistix/sybil/actions/workflows/ci.yml
 
 .. |Docs| image:: https://readthedocs.org/projects/sybil/badge/?version=latest
 .. _Docs: http://sybil.readthedocs.org/en/latest/

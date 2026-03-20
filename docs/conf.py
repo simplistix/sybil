@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
-import os, pkg_resources, datetime, time
+from importlib import metadata
+import os, datetime, time
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
@@ -18,7 +18,7 @@ master_doc = 'index'
 project = 'sybil'
 build_date = datetime.datetime.utcfromtimestamp(int(os.environ.get('SOURCE_DATE_EPOCH', time.time())))
 copyright = '2017 - %s Chris Withers' % build_date.year
-version = release = pkg_resources.get_distribution(project).version
+version = release = metadata.version(project)
 exclude_patterns = [
     '_build',
     'example*',

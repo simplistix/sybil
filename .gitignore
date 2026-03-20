@@ -9,3 +9,7 @@ _build/
 .*cache/
 pytestdebug.log
 __pycache__/
+.venv
+.claude
+uv.lock
+README.html
