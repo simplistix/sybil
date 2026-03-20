@@ -5,7 +5,7 @@ description = "Automated testing for the examples in your code and documentation
 readme = "README.rst"
 authors = [{ name = "Chris Withers", email = "chris@withers.org" }]
 license = { text = "MIT" }
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = []
 classifiers = [
     "Intended Audience :: Developers",
@@ -30,7 +30,7 @@ dev = [
     "pytest-cov>=6",
     "ruff>=0.15.7",
     "seedir",
-    "testfixtures>=8",
+    "testfixtures>=11",
     "types-PyYAML",
 ]
 docs = [

@@ -61,6 +61,19 @@ The ``path`` parameter, however, is ignored.
     .. literalinclude:: examples/quickstart/pytest.ini
         :language: ini
 
+
+Run example tests
+-----------------
+
+If you need to demonstrate that a pytest fixture and test work correctly, you can use
+:func:`~sybil.testing.run_pytest` to run them in-process from within a documentation example:
+
+.. literalinclude:: examples/run_pytest/example.rst
+    :language: rst
+
+More than one test can be passed. Multiple fixtures can be used, including internal ones such
+as :any:`tmp_path <pytest:tmp_path>`, but they must be explicitly specified.
+
 .. _unitttest_integration:
 
 unittest

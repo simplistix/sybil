@@ -173,3 +173,5 @@ See :doc:`parsers`.
 
 .. autofunction:: sybil.testing.check_lexer
 
+.. autofunction:: sybil.testing.run_pytest
+
