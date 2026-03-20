@@ -73,3 +73,10 @@ def test_linting_and_checking():
         session = pytest_in(directory)
     assert session.testsfailed == 0
     assert session.testscollected == 3
+
+
+def test_run_pytest():
+    session = pytest_in('run_pytest')
+    assert session.exitstatus == 0
+    assert session.testsfailed == 0
+    assert session.testscollected == 2
