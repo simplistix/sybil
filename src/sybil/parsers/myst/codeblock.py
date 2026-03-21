@@ -2,9 +2,7 @@ from typing import Optional
 
 from sybil.parsers.abstract import AbstractCodeBlockParser
 from sybil.typing import Evaluator
-from .lexers import (
-    DirectiveLexer, DirectiveInPercentCommentLexer
-)
+from .lexers import DirectiveLexer, DirectiveInPercentCommentLexer
 from ..markdown.lexers import FencedCodeBlockLexer, DirectiveInHTMLCommentLexer
 from ..abstract.codeblock import PythonDocTestOrCodeBlockParser
 
@@ -22,7 +20,7 @@ class CodeBlockParser(AbstractCodeBlockParser):
     """
 
     def __init__(
-            self, language: Optional[str] = None, evaluator: Optional[Evaluator] = None
+        self, language: Optional[str] = None, evaluator: Optional[Evaluator] = None
     ) -> None:
         super().__init__(
             [
@@ -43,7 +41,8 @@ class CodeBlockParser(AbstractCodeBlockParser):
                     arguments='.+',
                 ),
             ],
-            language, evaluator
+            language,
+            evaluator,
         )
 
 

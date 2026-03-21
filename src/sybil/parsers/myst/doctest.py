@@ -15,6 +15,7 @@ class DocTestDirectiveParser:
         when evaluating the examples found by this parser.
 
     """
+
     def __init__(self, optionflags: int = 0) -> None:
         self.lexer = DirectiveLexer('doctest')
         self.string_parser = DocTestStringParser(DocTestEvaluator(optionflags))

@@ -18,7 +18,6 @@ class LexingException(Exception):
 
 
 class LexerCollection(List[Lexer]):
-
     def __call__(self, document: Document) -> Iterable[Region]:
         return chain(*(lexer(document) for lexer in self))
 
@@ -51,10 +50,10 @@ class BlockLexer:
     """
 
     def __init__(
-            self,
-            start_pattern: Pattern[str],
-            end_pattern_template: str,
-            mapping: Optional[Dict[str, str]] = None,
+        self,
+        start_pattern: Pattern[str],
+        end_pattern_template: str,
+        mapping: Optional[Dict[str, str]] = None,
     ) -> None:
         self.start_pattern = start_pattern
         self.end_pattern_template = end_pattern_template
@@ -65,9 +64,9 @@ class BlockLexer:
             source_start = start_match.end()
             lexemes = start_match.groupdict()
             prefix = lexemes.pop('prefix', '')
-            end_pattern = re.compile(self.end_pattern_template.format(
-                prefix=prefix, len_prefix=len(prefix)
-            ))
+            end_pattern = re.compile(
+                self.end_pattern_template.format(prefix=prefix, len_prefix=len(prefix))
+            )
             end_match = end_pattern.search(document.text, source_start)
             if end_match is None:
                 raise LexingException(
@@ -80,8 +79,8 @@ class BlockLexer:
             source = document.text[source_start:source_end]
             lexemes['source'] = Lexeme(
                 strip_prefix(source, prefix),
-                offset=source_start-start_match.start(),
-                line_offset=start_match.group(0).count('\n')-1
+                offset=source_start - start_match.start(),
+                line_offset=start_match.group(0).count('\n') - 1,
             )
             if self.mapping:
                 lexemes = {dest: lexemes[source] for source, dest in self.mapping.items()}

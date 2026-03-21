@@ -8,7 +8,6 @@ from sybil.example import Example
 
 
 class TestCase(BaseTestCase):
-
     sybil: Sybil
     namespace: Dict[str, Any]
 
@@ -38,7 +37,6 @@ class TestCase(BaseTestCase):
 def unittest_integration(
     *sybils: Sybil,
 ) -> Callable[[Optional[TestLoader], Optional[TestSuite], Optional[str]], TestSuite]:
-
     def load_tests(
         loader: Optional[TestLoader] = None,
         tests: Optional[TestSuite] = None,
@@ -50,9 +48,14 @@ def unittest_integration(
                 if path.is_file() and sybil.should_parse(path):
                     document = sybil.parse(path)
 
-                    case = type(document.path, (TestCase, ), dict(
-                        sybil=sybil, namespace=document.namespace,
-                    ))
+                    case = type(
+                        document.path,
+                        (TestCase,),
+                        dict(
+                            sybil=sybil,
+                            namespace=document.namespace,
+                        ),
+                    )
 
                     for example in document.examples():
                         suite.addTest(case(example))

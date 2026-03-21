@@ -40,12 +40,15 @@ class DocTestStringParser(BaseDocTestParser):
                 yield Region(
                     m.start(),
                     m.end(),
-                    DocTestExample(source, want, exc_msg,
-                                   lineno=lineno,
-                                   indent=len(m.group('indent')),
-                                   options=options),
-                    self.evaluator
-
+                    DocTestExample(
+                        source,
+                        want,
+                        exc_msg,
+                        lineno=lineno,
+                        indent=len(m.group('indent')),
+                        options=options,
+                    ),
+                    self.evaluator,
                 )
             # Update lineno (lines inside this example)
             lineno += string.count('\n', m.start(), m.end())

@@ -19,7 +19,7 @@ class CodeBlockParser(AbstractCodeBlockParser):
     """
 
     def __init__(
-            self, language: Optional[str] = None, evaluator: Optional[Evaluator] = None
+        self, language: Optional[str] = None, evaluator: Optional[Evaluator] = None
     ) -> None:
         super().__init__(
             [
@@ -32,7 +32,8 @@ class CodeBlockParser(AbstractCodeBlockParser):
                     arguments='.+',
                 ),
             ],
-            language, evaluator
+            language,
+            evaluator,
         )
 
 

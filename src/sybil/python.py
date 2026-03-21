@@ -35,7 +35,7 @@ def import_path(path: Path) -> ModuleType:
     if relative.name == INIT_FILE:
         parts = tuple(relative.parts)[:-1]
     else:
-        parts = tuple(relative.parts)[:-1]+(relative.stem,)
+        parts = tuple(relative.parts)[:-1] + (relative.stem,)
     module = '.'.join(parts)
     try:
         return importlib.import_module(module)

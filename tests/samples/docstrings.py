@@ -47,5 +47,4 @@ def decorator(fn):
     """
 
 
-def ellipsis_as_body():
-    ...
+def ellipsis_as_body(): ...

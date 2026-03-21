@@ -21,13 +21,16 @@ def test_use_existing_doctest_parser():
     assert namespace['x'] == 3
     with pytest.raises(SybilFailure) as excinfo:
         examples[3].evaluate()
-    compare(str(excinfo.value), expected = (
-        f"Example at {path}, line 28, column 1 did not evaluate as expected:\n"
-        "Expected:\n"
-        "    3\n"
-        "Got:\n"
-        "    2\n"
-    ))
+    compare(
+        str(excinfo.value),
+        expected=(
+            f"Example at {path}, line 28, column 1 did not evaluate as expected:\n"
+            "Expected:\n"
+            "    3\n"
+            "Got:\n"
+            "    2\n"
+        ),
+    )
     examples[4].evaluate()
     examples[5].evaluate()
 
@@ -42,7 +45,7 @@ def test_use_python_codeblock_parser():
 
 
 def test_fail_with_options_using_python_codeblock_parser():
-    parser = PythonCodeBlockParser(doctest_optionflags=REPORT_NDIFF|ELLIPSIS)
+    parser = PythonCodeBlockParser(doctest_optionflags=REPORT_NDIFF | ELLIPSIS)
     examples, namespace = parse('myst-doctest-fail.md', parser, expected=1)
     with pytest.raises(SybilFailure) as excinfo:
         examples[0].evaluate()
@@ -62,17 +65,20 @@ def test_use_doctest_role_parser():
     examples[2].evaluate()
     with pytest.raises(SybilFailure) as excinfo:
         examples[3].evaluate()
-    compare(str(excinfo.value), expected=(
-        f"Example at {path}, line 45, column 1 did not evaluate as expected:\n"
-        "Expected:\n"
-        "    3\n"
-        "Got:\n"
-        "    2\n"
-    ))
+    compare(
+        str(excinfo.value),
+        expected=(
+            f"Example at {path}, line 45, column 1 did not evaluate as expected:\n"
+            "Expected:\n"
+            "    3\n"
+            "Got:\n"
+            "    2\n"
+        ),
+    )
 
 
 def test_fail_with_options_using_doctest_role_parser():
-    parser = DocTestDirectiveParser(optionflags=REPORT_NDIFF|ELLIPSIS)
+    parser = DocTestDirectiveParser(optionflags=REPORT_NDIFF | ELLIPSIS)
     examples, namespace = parse('myst-doctest-fail.md', parser, expected=1)
     with pytest.raises(SybilFailure) as excinfo:
         examples[0].evaluate()

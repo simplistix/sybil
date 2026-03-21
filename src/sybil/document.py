@@ -58,15 +58,13 @@ class Document:
         Return a line and column location in this document based on a character
         position.
         """
-        line = self.text.count('\n', 0, position)+1
+        line = self.text.count('\n', 0, position) + 1
         col = position - self.text.rfind('\n', 0, position)
         return 'line {}, column {}'.format(line, col)
 
     def region_details(self, region: Region) -> str:
         return '{!r} from {} to {}'.format(
-            region,
-            self.line_column(region.start),
-            self.line_column(region.end)
+            region, self.line_column(region.start), self.line_column(region.end)
         )
 
     def raise_overlap(self, *regions: Region) -> None:
@@ -77,17 +75,13 @@ class Document:
 
     def add(self, region: Region) -> None:
         if region.start < 0:
-            raise ValueError('{} is before start of document'.format(
-                self.region_details(region)
-            ))
+            raise ValueError('{} is before start of document'.format(self.region_details(region)))
         if region.end > self.end:
-            raise ValueError('{} goes beyond end of document'.format(
-                self.region_details(region)
-            ))
+            raise ValueError('{} goes beyond end of document'.format(self.region_details(region)))
         entry = (region.start, region)
         index = bisect(self.regions, entry)
         if index > 0:
-            previous = self.regions[index-1][1]
+            previous = self.regions[index - 1][1]
             if previous.end > region.start:
                 self.raise_overlap(previous, region)
         if index < len(self.regions):
@@ -106,9 +100,7 @@ class Document:
             line += self.text.count('\n', place, region.start)
             line_start = self.text.rfind('\n', place, region.start)
             place = region.start
-            yield Example(self,
-                          line, region.start-line_start,
-                          region, self.namespace)
+            yield Example(self, line, region.start - line_start, region, self.namespace)
 
     def __iter__(self) -> Iterator[Example]:
         return self.examples()
@@ -137,7 +129,6 @@ class Document:
             self.evaluators.remove(evaluator)
 
     def evaluate(self, example: Example, evaluator: Evaluator) -> None:
-
         __tracebackhide__ = True
 
         for current_evaluator in chain(reversed(self.evaluators), (evaluator,)):
@@ -200,10 +191,10 @@ class PythonDocStringDocument(PythonDocument):
                 continue
             if not isinstance(text, str):
                 continue
-            node_start = line_offsets.get(docstring.lineno-1, docstring.col_offset)
+            node_start = line_offsets.get(docstring.lineno - 1, docstring.col_offset)
             end_lineno = docstring.end_lineno or 1
             end_col_offset = docstring.end_col_offset or 0
-            node_end = line_offsets.get(end_lineno-1, end_col_offset)
+            node_end = line_offsets.get(end_lineno - 1, end_col_offset)
             punc = DOCSTRING_PUNCTUATION.match(python_source_code, node_start, node_end)
             punc_size = len(punc.group(1))
             start = punc.end()

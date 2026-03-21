@@ -4,10 +4,9 @@ NEWLINE = re.compile("\n")
 
 
 class LineNumberOffsets:
-
     def __init__(self, text: str) -> None:
         self.offsets = {
-            line: match.start()+1 for (line, match) in enumerate(NEWLINE.finditer(text), start=1)
+            line: match.start() + 1 for (line, match) in enumerate(NEWLINE.finditer(text), start=1)
         }
         self.offsets[0] = 0
 

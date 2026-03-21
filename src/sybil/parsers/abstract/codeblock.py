@@ -32,11 +32,11 @@ class AbstractCodeBlockParser:
     language: str
 
     def __init__(
-            self,
-            lexers: Sequence[Lexer],
-            language: Optional[str] = None,
-            evaluator: Optional[Evaluator] = None,
-            language_lexeme_name: str = 'arguments',
+        self,
+        lexers: Sequence[Lexer],
+        language: Optional[str] = None,
+        evaluator: Optional[Evaluator] = None,
+        language_lexeme_name: str = 'arguments',
     ) -> None:
         self.lexers = LexerCollection(lexers)
         if language is not None:
@@ -61,13 +61,10 @@ class AbstractCodeBlockParser:
 
 
 class PythonDocTestOrCodeBlockParser:
-
     codeblock_parser_class: Callable[[str, Evaluator], Parser]
 
     def __init__(self, future_imports: Sequence[str] = (), doctest_optionflags: int = 0) -> None:
-        self.doctest_parser = DocTestStringParser(
-            DocTestEvaluator(doctest_optionflags)
-        )
+        self.doctest_parser = DocTestStringParser(DocTestEvaluator(doctest_optionflags))
         self.codeblock_parser = self.codeblock_parser_class(
             'python', PythonEvaluator(future_imports)
         )

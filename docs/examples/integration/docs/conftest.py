@@ -6,6 +6,7 @@ from sybil import Sybil
 from sybil.parsers.codeblock import PythonCodeBlockParser
 from sybil.parsers.doctest import DocTestParser
 
+
 @pytest.fixture(scope="module")
 def tempdir():
     # there are better ways to do temp directories, but it's a simple example:
@@ -18,11 +19,12 @@ def tempdir():
         chdir(cwd)
         rmtree(path)
 
+
 pytest_collect_file = Sybil(
     parsers=[
         DocTestParser(),
         PythonCodeBlockParser(future_imports=['print_function']),
     ],
     pattern='*.rst',
-    fixtures=['tempdir']
+    fixtures=['tempdir'],
 ).pytest()

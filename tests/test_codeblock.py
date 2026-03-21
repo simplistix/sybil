@@ -27,7 +27,7 @@ def test_basic():
     assert namespace['z'] == 1
     assert examples[3].evaluate() is None
     assert namespace['bin'] == b'x'
-    assert namespace['uni'] == u'x'
+    assert namespace['uni'] == 'x'
     assert examples[4].evaluate() is None
     assert 'NoVars' in namespace
     assert examples[5].evaluate() is None
@@ -38,7 +38,6 @@ def test_basic():
 
 
 def test_other_language_composition_pass():
-
     def oh_hai(example):
         assert isinstance(example, Example)
         assert 'HAI' in example.parsed
@@ -66,7 +65,6 @@ def test_other_language_no_evaluator():
 
 
 class LolCodeCodeBlockParser(CodeBlockParser):
-
     language = 'lolcode'
 
     def evaluate(self, example: Example):
@@ -83,7 +81,6 @@ def test_other_language_inheritance():
 
 
 class IgnoringPythonCodeBlockParser(PythonCodeBlockParser):
-
     def __call__(self, document):
         for region in super().__call__(document):
             options = region.lexemes.get('options')
@@ -145,7 +142,7 @@ def test_windows_line_endings(tmp_path: Path):
         b'That was my example.\r\n'
     )
     document = Document.parse(str(p), PythonCodeBlockParser())
-    example, = document
+    (example,) = document
     example.evaluate()
     assert document.namespace['x'] == 123
 

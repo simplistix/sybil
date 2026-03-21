@@ -17,10 +17,10 @@ class Sybil:
     """
     An object to provide test runner integration for discovering examples
     in documentation and ensuring they are correct.
-    
-    :param parsers: 
+
+    :param parsers:
       A sequence of callable :term:`parsers <parser>`.
-      
+
     :param path:
       The path in which source files are found, relative
       to the path of the Python source file in which this class is instantiated.
@@ -29,11 +29,11 @@ class Sybil:
       .. note::
 
         This is ignored when using the :ref:`pytest integration <pytest_integration>`.
-      
+
     :param pattern:
       An optional :func:`pattern <fnmatch.fnmatch>` used to match source
       files that will be parsed for examples.
-      
+
     :param patterns:
       An optional sequence of :func:`patterns <fnmatch.fnmatch>` used to match source
       paths that will be parsed for examples.
@@ -54,14 +54,14 @@ class Sybil:
       An optional callable that will be called once before any examples from
       a :class:`~sybil.document.Document` are evaluated. If provided, it is
       called with the document's :attr:`~sybil.Document.namespace`.
-      
+
     :param teardown:
       An optional callable that will be called after all the examples from
-      a :class:`~sybil.document.Document` have been evaluated. If provided, 
+      a :class:`~sybil.document.Document` have been evaluated. If provided,
       it is called with the document's :attr:`~sybil.Document.namespace`.
-      
+
     :param fixtures:
-      An optional sequence of strings specifying the names of fixtures to 
+      An optional sequence of strings specifying the names of fixtures to
       be requested when using the  :ref:`pytest integration <pytest_integration>`.
       The fixtures will be inserted into the document's :attr:`~sybil.Document.namespace`
       before any examples for that document are evaluated.
@@ -79,6 +79,7 @@ class Sybil:
       A name to use in test identifiers so that the identifier indicates which :class:`Sybil`
       that test was discovered by.
     """
+
     def __init__(
         self,
         parsers: Sequence[Parser],
@@ -95,7 +96,6 @@ class Sybil:
         document_types: Optional[Mapping[Optional[str], Type[Document]]] = None,
         name: str = '',
     ) -> None:
-
         self.parsers: Sequence[Parser] = parsers
         current_frame = inspect.currentframe()
         calling_frame = current_frame.f_back
@@ -161,6 +161,7 @@ class Sybil:
         The helper method for when you use :ref:`pytest_integration`.
         """
         from .integration.pytest import pytest_integration
+
         return pytest_integration(self)
 
     def unittest(self) -> Callable[[Any, Any, Optional[str]], Any]:
@@ -168,6 +169,7 @@ class Sybil:
         The helper method for when you use :ref:`unitttest_integration`.
         """
         from .integration.unittest import unittest_integration
+
         return unittest_integration(self)
 
 
@@ -184,6 +186,7 @@ class SybilCollection(List[Sybil]):
         The helper method for when you use :ref:`pytest_integration`.
         """
         from .integration.pytest import pytest_integration
+
         return pytest_integration(*self)
 
     def unittest(self) -> Callable[[Any, Any, Optional[str]], Any]:
@@ -191,4 +194,5 @@ class SybilCollection(List[Sybil]):
         The helper method for when you use :ref:`unitttest_integration`.
         """
         from .integration.unittest import unittest_integration
+
         return unittest_integration(*self)

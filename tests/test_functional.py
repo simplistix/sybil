@@ -9,8 +9,17 @@ from sybil import Sybil
 from sybil.parsers.rest import PythonCodeBlockParser, DocTestParser
 from sybil.python import import_cleanup
 from .helpers import (
-    run_pytest, run_unittest, PYTEST, run, write_config, UNITTEST, write_doctest,
-    functional_sample, clone_functional_sample, check_path, sample_path
+    run_pytest,
+    run_unittest,
+    PYTEST,
+    run,
+    write_config,
+    UNITTEST,
+    write_doctest,
+    functional_sample,
+    clone_functional_sample,
+    check_path,
+    sample_path,
 )
 
 
@@ -28,64 +37,84 @@ def test_pytest(capsys: CaptureFixture[str]):
     out.assert_not_present('sybil/example.py')
 
     out.then_find('fail.rst::line:1,column:1')
-    out.then_find('fail.rst::line:1,column:1 sybil setup session_fixture setup\n'
-                  'module_fixture setup\n'
-                  'class_fixture setup\n'
-                  'function_fixture setup\n'
-                  'x is currently: 0\n'
-                  'FAILED function_fixture teardown\n'
-                  'class_fixture teardown')
+    out.then_find(
+        'fail.rst::line:1,column:1 sybil setup session_fixture setup\n'
+        'module_fixture setup\n'
+        'class_fixture setup\n'
+        'function_fixture setup\n'
+        'x is currently: 0\n'
+        'FAILED function_fixture teardown\n'
+        'class_fixture teardown'
+    )
     out.then_find('fail.rst::line:6,column:1')
-    out.then_find('fail.rst::line:6,column:1 class_fixture setup\n'
-                  'function_fixture setup\n'
-                  '0smcf PASSED function_fixture teardown\n'
-                  'class_fixture teardown')
+    out.then_find(
+        'fail.rst::line:6,column:1 class_fixture setup\n'
+        'function_fixture setup\n'
+        '0smcf PASSED function_fixture teardown\n'
+        'class_fixture teardown'
+    )
     out.then_find('fail.rst::line:8,column:1')
-    out.then_find('fail.rst::line:8,column:1 class_fixture setup\n'
-                  'function_fixture setup\n'
-                  '1smcf FAILED function_fixture teardown\n'
-                  'class_fixture teardown')
+    out.then_find(
+        'fail.rst::line:8,column:1 class_fixture setup\n'
+        'function_fixture setup\n'
+        '1smcf FAILED function_fixture teardown\n'
+        'class_fixture teardown'
+    )
     out.then_find('fail.rst::line:10,column:1')
-    out.then_find('fail.rst::line:10,column:1 class_fixture setup\n'
-                  'function_fixture setup\n'
-                  '2smcf FAILED function_fixture teardown\n'
-                  'class_fixture teardown')
+    out.then_find(
+        'fail.rst::line:10,column:1 class_fixture setup\n'
+        'function_fixture setup\n'
+        '2smcf FAILED function_fixture teardown\n'
+        'class_fixture teardown'
+    )
     out.then_find('fail.rst::line:12,column:1')
-    out.then_find('fail.rst::line:12,column:1 class_fixture setup\n'
-                  'function_fixture setup\n'
-                  '3smcf PASSED function_fixture teardown\n'
-                  'class_fixture teardown')
+    out.then_find(
+        'fail.rst::line:12,column:1 class_fixture setup\n'
+        'function_fixture setup\n'
+        '3smcf PASSED function_fixture teardown\n'
+        'class_fixture teardown'
+    )
     out.then_find('fail.rst::line:14,column:1')
-    out.then_find('fail.rst::line:14,column:1 class_fixture setup\n'
-                  'function_fixture setup\n'
-                  'FAILED function_fixture teardown\n'
-                  'class_fixture teardown\n'
-                  'module_fixture teardown\n'
-                  'sybil teardown 5')
+    out.then_find(
+        'fail.rst::line:14,column:1 class_fixture setup\n'
+        'function_fixture setup\n'
+        'FAILED function_fixture teardown\n'
+        'class_fixture teardown\n'
+        'module_fixture teardown\n'
+        'sybil teardown 5'
+    )
     out.then_find('pass.rst::line:1,column:1')
-    out.then_find('pass.rst::line:1,column:1 sybil setup module_fixture setup\n'
-                  'class_fixture setup\n'
-                  'function_fixture setup\n'
-                  '0smcf PASSED function_fixture teardown\n'
-                  'class_fixture teardown')
+    out.then_find(
+        'pass.rst::line:1,column:1 sybil setup module_fixture setup\n'
+        'class_fixture setup\n'
+        'function_fixture setup\n'
+        '0smcf PASSED function_fixture teardown\n'
+        'class_fixture teardown'
+    )
     out.then_find('pass.rst::line:3,column:1')
-    out.then_find('pass.rst::line:3,column:1 class_fixture setup\n'
-                  'function_fixture setup\n'
-                  '1smcf PASSED function_fixture teardown\n'
-                  'class_fixture teardown')
+    out.then_find(
+        'pass.rst::line:3,column:1 class_fixture setup\n'
+        'function_fixture setup\n'
+        '1smcf PASSED function_fixture teardown\n'
+        'class_fixture teardown'
+    )
     out.then_find('pass.rst::line:5,column:1')
-    out.then_find('pass.rst::line:5,column:1 class_fixture setup\n'
-                  'function_fixture setup\n'
-                  '2smcf PASSED function_fixture teardown\n'
-                  'class_fixture teardown')
+    out.then_find(
+        'pass.rst::line:5,column:1 class_fixture setup\n'
+        'function_fixture setup\n'
+        '2smcf PASSED function_fixture teardown\n'
+        'class_fixture teardown'
+    )
     out.then_find('pass.rst::line:7,column:1')
-    out.then_find('pass.rst::line:7,column:1 class_fixture setup\n'
-                  'function_fixture setup\n'
-                  '3smcf PASSED function_fixture teardown\n'
-                  'class_fixture teardown\n'
-                  'module_fixture teardown\n'
-                  'sybil teardown 4\n'
-                  'session_fixture teardown')
+    out.then_find(
+        'pass.rst::line:7,column:1 class_fixture setup\n'
+        'function_fixture setup\n'
+        '3smcf PASSED function_fixture teardown\n'
+        'class_fixture teardown\n'
+        'module_fixture teardown\n'
+        'sybil teardown 4\n'
+        'session_fixture teardown'
+    )
     out.then_find('_ fail.rst line=1 column=1 _')
     out.then_find("raise Exception('the start!')")
     out.then_find('_ fail.rst line=8 column=1 _')
@@ -172,8 +201,7 @@ def test_filter_fnmatch_pattern(tmp_path: Path, capsys: CaptureFixture[str], run
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
 def test_filter_just_filenames(tmp_path: Path, capsys: CaptureFixture[str], runner: str):
     make_tree(tmp_path)
-    write_config(tmp_path, runner,
-                 filenames="['bar.rst']")
+    write_config(tmp_path, runner, filenames="['bar.rst']")
     results = run(capsys, runner, tmp_path)
     results.out.assert_has_run(runner, '/bar.rst')
     results.out.assert_has_run(runner, '/parent/bar.rst')
@@ -184,9 +212,7 @@ def test_filter_just_filenames(tmp_path: Path, capsys: CaptureFixture[str], runn
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
 def test_filter_directory(tmp_path: Path, capsys: CaptureFixture[str], runner: str):
     make_tree(tmp_path)
-    write_config(tmp_path, runner,
-                 path=f"'{tmp_path / 'parent'}'",
-                 pattern="'*.rst'")
+    write_config(tmp_path, runner, path=f"'{tmp_path / 'parent'}'", pattern="'*.rst'")
     results = run(capsys, runner, tmp_path)
     results.out.assert_has_run(runner, '/parent/foo.rst')
     results.out.assert_has_run(runner, '/parent/bar.rst')
@@ -198,10 +224,9 @@ def test_filter_directory(tmp_path: Path, capsys: CaptureFixture[str], runner: s
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
 def test_filter_directory_with_excludes(tmp_path: Path, capsys: CaptureFixture[str], runner: str):
     make_tree(tmp_path)
-    write_config(tmp_path, runner,
-                 path=f"'{tmp_path / 'parent'}'",
-                 pattern="'*.rst'",
-                 exclude="'ba*.rst'")
+    write_config(
+        tmp_path, runner, path=f"'{tmp_path / 'parent'}'", pattern="'*.rst'", exclude="'ba*.rst'"
+    )
     results = run(capsys, runner, tmp_path)
     results.out.assert_has_run(runner, '/parent/foo.rst')
     results.out.assert_has_run(runner, '/parent/child/foo.rst')
@@ -211,10 +236,13 @@ def test_filter_directory_with_excludes(tmp_path: Path, capsys: CaptureFixture[s
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
 def test_filter_filenames_and_excludes(tmp_path: Path, capsys: CaptureFixture[str], runner: str):
     make_tree(tmp_path)
-    write_config(tmp_path, runner,
-                 path=f"'{tmp_path / 'parent'}'",
-                 filenames="{'bar.rst'}",
-                 excludes="['**child/*.rst']")
+    write_config(
+        tmp_path,
+        runner,
+        path=f"'{tmp_path / 'parent'}'",
+        filenames="{'bar.rst'}",
+        excludes="['**child/*.rst']",
+    )
     results = run(capsys, runner, tmp_path)
     results.out.assert_has_run(runner, '/parent/bar.rst')
     assert results.total == 1, results.out.text
@@ -226,9 +254,7 @@ def test_filter_exclude_by_name(tmp_path: Path, capsys: CaptureFixture[str], run
     write_doctest(tmp_path, 'bar.txt')
     write_doctest(tmp_path, 'child', 'foo.txt')
     write_doctest(tmp_path, 'child', 'bar.txt')
-    write_config(tmp_path, runner,
-                 pattern="'*.txt'",
-                 exclude="'bar.txt'")
+    write_config(tmp_path, runner, pattern="'*.txt'", exclude="'bar.txt'")
     results = run(capsys, runner, tmp_path)
     results.out.assert_has_run(runner, '/foo.txt')
     results.out.assert_has_run(runner, '/child/foo.txt')
@@ -240,8 +266,7 @@ def test_filter_include_filenames(tmp_path: Path, capsys: CaptureFixture[str], r
     write_doctest(tmp_path, 'foo.txt')
     write_doctest(tmp_path, 'bar.txt')
     write_doctest(tmp_path, 'baz', 'bar.txt')
-    write_config(tmp_path, runner,
-                 filenames="['bar.txt']")
+    write_config(tmp_path, runner, filenames="['bar.txt']")
     results = run(capsys, runner, tmp_path)
     results.out.assert_has_run(runner, '/bar.txt')
     results.out.assert_has_run(runner, '/baz/bar.txt')
@@ -253,9 +278,7 @@ def test_filter_globs(tmp_path: Path, capsys: CaptureFixture[str], runner: str):
     write_doctest(tmp_path, 'middle', 'interesting', 'foo.txt')
     write_doctest(tmp_path, 'middle', 'boring', 'bad1.txt')
     write_doctest(tmp_path, 'middle', 'boring', 'bad2.txt')
-    write_config(tmp_path, runner,
-                 patterns="['middle/**/*.txt']",
-                 excludes="['**/boring/*.txt']")
+    write_config(tmp_path, runner, patterns="['middle/**/*.txt']", excludes="['**/boring/*.txt']")
     results = run(capsys, runner, tmp_path)
     results.out.assert_has_run(runner, '/middle/interesting/foo.txt')
     assert results.total == 1, results.out.text
@@ -265,8 +288,7 @@ def test_filter_globs(tmp_path: Path, capsys: CaptureFixture[str], runner: str):
 def test_filter_multiple_patterns(tmp_path: Path, capsys: CaptureFixture[str], runner: str):
     write_doctest(tmp_path, 'test.rst')
     write_doctest(tmp_path, 'test.txt')
-    write_config(tmp_path, runner,
-                 patterns="['*.rst', '*.txt']")
+    write_config(tmp_path, runner, patterns="['*.rst', '*.txt']")
     results = run(capsys, runner, tmp_path)
     assert results.total == 2, results.out.text
 
@@ -274,9 +296,12 @@ def test_filter_multiple_patterns(tmp_path: Path, capsys: CaptureFixture[str], r
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
 def test_skips(tmp_path: Path, capsys: CaptureFixture[str], runner: str):
     root = clone_functional_sample('skips', tmp_path)
-    write_config(root, runner,
-                 parsers="[PythonCodeBlockParser(), SkipParser(), DocTestParser()]",
-                 patterns="['*.rst']")
+    write_config(
+        root,
+        runner,
+        parsers="[PythonCodeBlockParser(), SkipParser(), DocTestParser()]",
+        patterns="['*.rst']",
+    )
     results = run(capsys, runner, root)
     assert results.total == 10, results.out.text
     assert results.failures == 0, results.out.text
@@ -285,10 +310,13 @@ def test_skips(tmp_path: Path, capsys: CaptureFixture[str], runner: str):
 
 def clone_and_run_modules_tests(tmp_path: Path, capsys: CaptureFixture[str], runner: str):
     clone_functional_sample('modules', tmp_path)
-    write_config(tmp_path, runner,
-                 path="'./modules'",
-                 parsers="[PythonCodeBlockParser(), DocTestParser()]",
-                 patterns="['*.py']")
+    write_config(
+        tmp_path,
+        runner,
+        path="'./modules'",
+        parsers="[PythonCodeBlockParser(), DocTestParser()]",
+        patterns="['*.py']",
+    )
     results = run(capsys, runner, tmp_path)
     return results
 
@@ -310,12 +338,12 @@ def test_modules_not_importable_pytest(tmp_path: Path, capsys: CaptureFixture[st
     compare(results.failures, expected=5, suffix=results.out.text)
     out = results.out
     out.then_find('a.py line=3 column=1')
-    out.then_find(f"ImportError: 'a' not importable from {tmp_path/'modules'/'a.py'} as:")
+    out.then_find(f"ImportError: 'a' not importable from {tmp_path / 'modules' / 'a.py'} as:")
     out.then_find("ModuleNotFoundError: No module named 'a'")
     out.then_find('a.py line=7 column=1')
     out.then_find("ModuleNotFoundError: No module named 'a'")
     out.then_find('b.py line=2 column=1')
-    out.then_find(f"ImportError: 'b' not importable from {tmp_path/'modules'/'b.py'} as:")
+    out.then_find(f"ImportError: 'b' not importable from {tmp_path / 'modules' / 'b.py'} as:")
     out.then_find('b.py line=7 column=1')
     out.then_find("ModuleNotFoundError: No module named 'b'")
     out.then_find('b.py line=11 column=1')
@@ -328,22 +356,21 @@ def test_modules_not_importable_unittest(tmp_path: Path, capsys: CaptureFixture[
     assert results.total == 5, results.out.text
     assert results.failures == 0, results.out.text
     assert results.errors == 5, results.out.text
-    a_py = tmp_path/'modules'/'a.py'
-    b_py = tmp_path/'modules'/'b.py'
+    a_py = tmp_path / 'modules' / 'a.py'
+    b_py = tmp_path / 'modules' / 'b.py'
     out = results.out
     out.then_find(f'ERROR: {a_py},line:3,column:1')
-    out.then_find(f"ImportError: 'a' not importable from {tmp_path/'modules'/'a.py'} as:")
+    out.then_find(f"ImportError: 'a' not importable from {tmp_path / 'modules' / 'a.py'} as:")
     out.then_find("ModuleNotFoundError: No module named 'a'")
     out.then_find(f'ERROR: {b_py},line:2,column:1')
-    out.then_find(f"ImportError: 'b' not importable from {tmp_path/'modules'/'b.py'} as:")
+    out.then_find(f"ImportError: 'b' not importable from {tmp_path / 'modules' / 'b.py'} as:")
     out.then_find("ModuleNotFoundError: No module named 'b'")
 
 
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
 def test_package_and_docs(tmp_path: Path, capsys: CaptureFixture[str], runner: str):
     root = clone_functional_sample('package_and_docs', tmp_path)
-    write_config(root, runner,
-                 patterns="['**/*.py', '**/*.rst']")
+    write_config(root, runner, patterns="['**/*.py', '**/*.rst']")
     sys.path.append(str((root / 'src')))
     results = run(capsys, runner, root)
     assert results.total == 7, results.out.text
@@ -419,7 +446,7 @@ def test_myst(capsys: CaptureFixture[str], runner: str):
     # and they appear at the top of the output, hence the conditionals below.
 
     # Check counts:
-    assert results.total == 4+7, results.out.text
+    assert results.total == 4 + 7, results.out.text
     if runner == PYTEST:
         assert results.failures == 2 + 1, results.out.text
         assert results.errors == 0, results.out.text
@@ -455,7 +482,7 @@ def test_markdown(capsys: CaptureFixture[str], runner: str):
     # and they appear at the top of the output, hence the conditionals below.
 
     # Check counts:
-    assert results.total == 1+5, results.out.text
+    assert results.total == 1 + 5, results.out.text
     if runner == PYTEST:
         assert results.failures == 0 + 1, results.out.text
         assert results.errors == 0, results.out.text

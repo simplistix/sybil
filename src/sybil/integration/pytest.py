@@ -22,7 +22,6 @@ example_module_path = abspath(getsourcefile(example_module))
 
 
 class SybilFailureRepr(TerminalRepr):
-
     def __init__(self, item: 'SybilItem', message: str) -> None:
         self.item = item
         self.message = message
@@ -37,7 +36,6 @@ class SybilFailureRepr(TerminalRepr):
 
 
 class SybilItem(pytest.Item):
-
     obj = None
 
     def __init__(self, parent, sybil, example: Example) -> None:
@@ -50,16 +48,19 @@ class SybilItem(pytest.Item):
         fm = self.session._fixturemanager
         closure = fm.getfixtureclosure(initialnames=names, parentnode=self, ignore_args=set())
         names_closure, arg2fixturedefs = closure
-        fixtureinfo = FuncFixtureInfo(argnames=names, initialnames=names, names_closure=names_closure, name2fixturedefs=arg2fixturedefs)
+        fixtureinfo = FuncFixtureInfo(
+            argnames=names,
+            initialnames=names,
+            names_closure=names_closure,
+            name2fixturedefs=arg2fixturedefs,
+        )
         self._fixtureinfo = fixtureinfo
         self.funcargs = {}
         self._request = fixtures.TopRequest(pyfuncitem=self, _ispytest=True)
         self.fixturenames = names_closure
 
     def reportinfo(self) -> Tuple[Union["os.PathLike[str]", str], Optional[int], str]:
-        info = '%s line=%i column=%i' % (
-            self.path.name, self.example.line, self.example.column
-        )
+        info = '%s line=%i column=%i' % (self.path.name, self.example.line, self.example.column)
         return self.example.path, self.example.line, info
 
     def getparent(self, cls):
@@ -87,7 +88,7 @@ class SybilItem(pytest.Item):
     def repr_failure(
         self,
         excinfo: ExceptionInfo[BaseException],
-        style = None,
+        style=None,
     ) -> Union[str, TerminalRepr]:
         if isinstance(excinfo.value, SybilFailure):
             return SybilFailureRepr(self, str(excinfo.value))
@@ -95,7 +96,6 @@ class SybilItem(pytest.Item):
 
 
 class SybilFile(pytest.File):
-
     def __init__(self, *, sybils: Sequence[Sybil], **kwargs) -> None:
         super(SybilFile, self).__init__(**kwargs)
         self.sybils: Sequence[Sybil] = sybils
@@ -124,7 +124,6 @@ class SybilFile(pytest.File):
 
 
 def pytest_integration(*sybils: Sybil) -> Callable[[Path, Collector], Optional[SybilFile]]:
-
     def pytest_collect_file(file_path: Path, parent: Collector) -> Optional[SybilFile]:
         active_sybils = [sybil for sybil in sybils if sybil.should_parse(file_path)]
         if active_sybils:

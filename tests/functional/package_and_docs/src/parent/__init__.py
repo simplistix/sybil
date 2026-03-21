@@ -6,6 +6,7 @@ rather than being skipped!
 good
 
 """
+
 from .child.module_a import foo
 
 
@@ -15,5 +16,4 @@ def parent_init(text):
     True
 
     """
-    return foo('parent_init:'+text)
-
+    return foo('parent_init:' + text)

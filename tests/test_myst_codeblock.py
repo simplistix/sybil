@@ -24,7 +24,7 @@ def test_basic():
     assert namespace['z'] == 1
     assert examples[3].evaluate() is None
     assert namespace['bin'] == b'x'
-    assert namespace['uni'] == u'x'
+    assert namespace['uni'] == 'x'
     assert examples[4].evaluate() is None
     assert 'NoVars' in namespace
     assert examples[5].evaluate() is None
@@ -40,15 +40,15 @@ def test_complicated_nesting():
 
 
 def test_doctest_at_end_of_fenced_codeblock():
-    examples, namespace = parse('myst-codeblock-doctests-end-of-fenced-codeblocks.md',
-                                PythonCodeBlockParser(), expected=2)
+    examples, namespace = parse(
+        'myst-codeblock-doctests-end-of-fenced-codeblocks.md', PythonCodeBlockParser(), expected=2
+    )
     assert examples[0].evaluate() is None
     assert examples[1].evaluate() is None
     assert namespace['b'] == 2
 
 
 def test_other_language_composition_pass():
-
     def oh_hai(example):
         assert isinstance(example, Example)
         assert 'HAI' in example.parsed
@@ -56,7 +56,6 @@ def test_other_language_composition_pass():
     parser = CodeBlockParser(language='lolcode', evaluator=oh_hai)
     examples, namespace = parse('myst-codeblock.md', parser, expected=1)
     assert examples[0].evaluate() is None
-
 
 
 def test_other_language_composition_fail():
@@ -77,7 +76,6 @@ def test_other_language_no_evaluator():
 
 
 class LolCodeCodeBlockParser(CodeBlockParser):
-
     language = 'lolcode'
 
     def evaluate(self, example: Example):
@@ -94,7 +92,6 @@ def test_other_language_inheritance():
 
 
 class IgnoringPythonCodeBlockParser(CodeBlockParser):
-
     def __call__(self, document):
         for region in super().__call__(document):
             options = region.lexemes.get('options')
@@ -104,7 +101,6 @@ class IgnoringPythonCodeBlockParser(CodeBlockParser):
 
 
 class IgnoringCodeBlockParser(PythonCodeBlockParser):
-
     codeblock_parser_class = IgnoringPythonCodeBlockParser
 
 
@@ -155,18 +151,23 @@ def test_blank_lines():
     examples, namespace = parse(
         'myst-codeblock-blank-lines.md', PythonCodeBlockParser(), expected=1
     )
-    example, = examples
-    compare(example.parsed, expected=''.join((
-        '\n',
-        'y = 0\n',
-        '# now a blank line:\n',
-        '\n',
-        'y += 1\n',
-        '# two blank lines:\n',
-        '\n',
-        '\n',
-        "assert not y, 'Boom!'\n",
-    )))
+    (example,) = examples
+    compare(
+        example.parsed,
+        expected=''.join(
+            (
+                '\n',
+                'y = 0\n',
+                '# now a blank line:\n',
+                '\n',
+                'y += 1\n',
+                '# two blank lines:\n',
+                '\n',
+                '\n',
+                "assert not y, 'Boom!'\n",
+            )
+        ),
+    )
     with pytest.raises(AssertionError) as excinfo:
         example.evaluate()
 

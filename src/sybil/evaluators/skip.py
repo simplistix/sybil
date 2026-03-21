@@ -7,7 +7,6 @@ from sybil.example import NotEvaluated
 
 
 class If:
-
     def __init__(self, default_reason: str) -> None:
         self.default_reason = default_reason
 
@@ -26,7 +25,6 @@ class SkipState:
 
 
 class Skipper:
-
     def __init__(self, directive: str) -> None:
         self.document_state: Dict[Document, SkipState] = {}
         self.directive = directive
@@ -68,7 +66,9 @@ class Skipper:
         if state.last_action is None and action not in ('start', 'next'):
             raise ValueError(f"'{directive}: {action}' must follow '{directive}: start'")
         elif state.last_action and action != 'end':
-            raise ValueError(f"'{directive}: {action}' cannot follow '{directive}: {state.last_action}'")
+            raise ValueError(
+                f"'{directive}: {action}' cannot follow '{directive}: {state.last_action}'"
+            )
 
         state.last_action = action
 

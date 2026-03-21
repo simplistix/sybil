@@ -7,12 +7,12 @@ if TYPE_CHECKING:
 
 
 class SybilFailure(AssertionError):
-
     def __init__(self, example: 'Example', result: str) -> None:
-        super(SybilFailure, self).__init__((
-            'Example at {}, line {}, column {} did not evaluate as expected:\n'
-            '{}'
-        ).format(example.path, example.line, example.column, result))
+        super(SybilFailure, self).__init__(
+            ('Example at {}, line {}, column {} did not evaluate as expected:\n{}').format(
+                example.path, example.line, example.column, result
+            )
+        )
         self.example = example
         self.result = result
 
@@ -30,13 +30,18 @@ class NotEvaluated(Exception):
 class Example:
     """
     This represents a particular example from a documentation source file.
-    It is assembled from the :class:`~sybil.document.Document` and 
-    :class:`~sybil.Region` the example comes from and is passed to the region's 
+    It is assembled from the :class:`~sybil.document.Document` and
+    :class:`~sybil.Region` the example comes from and is passed to the region's
     evaluator.
     """
 
     def __init__(
-        self, document: 'Document', line: int, column: int, region: Region, namespace: Dict[str, Any]
+        self,
+        document: 'Document',
+        line: int,
+        column: int,
+        region: Region,
+        namespace: Dict[str, Any],
     ) -> None:
         #: The :class:`~sybil.document.Document` from which this example came.
         self.document: 'Document' = document

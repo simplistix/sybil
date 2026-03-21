@@ -28,11 +28,10 @@ class RawFencedCodeBlockLexer:
 
     """
 
-
     def __init__(
-            self,
-            info_pattern: Pattern[str] = re.compile(r'$\n', re.MULTILINE),
-            mapping: Optional[Dict[str, str]] = None,
+        self,
+        info_pattern: Pattern[str] = re.compile(r'$\n', re.MULTILINE),
+        mapping: Optional[Dict[str, str]] = None,
     ) -> None:
         self.info_pattern = info_pattern
         self.mapping = mapping
@@ -47,21 +46,21 @@ class RawFencedCodeBlockLexer:
         return same_type and okay_length and same_prefix
 
     def make_region(
-            self, opening: Match[str], document: Document, closing: Optional[Match[str]]
+        self, opening: Match[str], document: Document, closing: Optional[Match[str]]
     ) -> Optional[Region]:
         if closing is None:
             content_end = region_end = len(document.text)
         else:
             content_end = closing.start()
             region_end = closing.end()
-        content = document.text[opening.end(): content_end]
+        content = document.text[opening.end() : content_end]
         info = self.info_pattern.match(content)
         if info is None:
             return None
         lexemes = info.groupdict()
         lexemes['source'] = Lexeme(
-            strip_prefix(content[info.end():], opening.group('prefix')),
-            offset=len(opening.group(0))+info.end(),
+            strip_prefix(content[info.end() :], opening.group('prefix')),
+            offset=len(opening.group(0)) + info.end(),
             line_offset=0,
         )
         if self.mapping:
@@ -161,12 +160,12 @@ class DirectiveInHTMLCommentLexer(BlockLexer):
     """
 
     def __init__(
-            self, directive: str, arguments: str = '.*?', mapping: Optional[Dict[str, str]] = None
+        self, directive: str, arguments: str = '.*?', mapping: Optional[Dict[str, str]] = None
     ) -> None:
         super().__init__(
             start_pattern=re.compile(
                 DIRECTIVE_IN_HTML_COMMENT_START.format(directive=directive, arguments=arguments),
-                re.MULTILINE
+                re.MULTILINE,
             ),
             end_pattern_template=DIRECTIVE_IN_HTML_COMMENT_END,
             mapping=mapping,

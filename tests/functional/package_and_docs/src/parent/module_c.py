@@ -10,4 +10,4 @@ def bar(text):
     'barmodule_a.foo(something)'
 
     """
-    return 'bar'+foo(text)
+    return 'bar' + foo(text)

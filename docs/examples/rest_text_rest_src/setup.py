@@ -11,10 +11,7 @@ setup(
             'pytest',
             'pytest-cov',
             'sybil',
-            ],
-        docs=[
-            'furo',
-            'sphinx'
-        ]
+        ],
+        docs=['furo', 'sphinx'],
     ),
 )

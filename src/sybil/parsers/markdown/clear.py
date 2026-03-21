@@ -8,6 +8,8 @@ class ClearNamespaceParser(AbstractClearNamespaceParser):
     """
 
     def __init__(self) -> None:
-        super().__init__([
-            DirectiveInHTMLCommentLexer('clear-namespace'),
-        ])
+        super().__init__(
+            [
+                DirectiveInHTMLCommentLexer('clear-namespace'),
+            ]
+        )

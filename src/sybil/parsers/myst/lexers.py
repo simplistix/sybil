@@ -20,6 +20,7 @@ def parse_yaml_options(lexed: Region) -> None:
     if yaml_options is not None:
         # import here to avoid a dependency on PyYAML except where it's really needed:
         from yaml import safe_load
+
         options = safe_load(yaml_options)
         lexemes['options'].update(options)
 
@@ -58,7 +59,7 @@ class DirectiveLexer(RawFencedCodeBlockLexer):
     """
 
     def __init__(
-            self, directive: str, arguments: str = '.*', mapping: Optional[Dict[str, str]] = None
+        self, directive: str, arguments: str = '.*', mapping: Optional[Dict[str, str]] = None
     ) -> None:
         super().__init__(
             info_pattern=re.compile(
@@ -110,12 +111,12 @@ class DirectiveInPercentCommentLexer(BlockLexer):
     """
 
     def __init__(
-            self, directive: str, arguments: str = '.*', mapping: Optional[Dict[str, str]] = None
+        self, directive: str, arguments: str = '.*', mapping: Optional[Dict[str, str]] = None
     ) -> None:
         super().__init__(
             start_pattern=re.compile(
                 DIRECTIVE_IN_PERCENT_COMMENT_START.format(directive=directive, arguments=arguments),
-                re.MULTILINE
+                re.MULTILINE,
             ),
             end_pattern_template=DIRECTIVE_IN_PERCENT_COMMENT_END,
             mapping=mapping,

@@ -13,20 +13,20 @@ NUMBER = doctest.register_optionflag("NUMBER")
 
 class DocTest(doctest.DocTest):
     def __init__(
-            self,
-            examples: List[doctest.Example],
-            globs: Dict[str, Any],
-            name: str,
-            filename: Optional[str],
-            lineno: Optional[int],
-            docstring: Optional[str],
-        ) -> None:
+        self,
+        examples: List[doctest.Example],
+        globs: Dict[str, Any],
+        name: str,
+        filename: Optional[str],
+        lineno: Optional[int],
+        docstring: Optional[str],
+    ) -> None:
         # do everything like regular doctests, but don't make a copy of globs
         doctest.DocTest.__init__(self, examples, globs, name, filename, lineno, docstring)
         self.globs = globs
 
 
-def float_approx_equal(expected: str, actual: str, tolerance: float=1e-12) -> bool:
+def float_approx_equal(expected: str, actual: str, tolerance: float = 1e-12) -> bool:
     return abs(float(expected) - float(actual)) <= tolerance
 
 
@@ -71,13 +71,11 @@ class OutputChecker(doctest.OutputChecker):
                 precision = len(fraction)
             if exponent is not None:
                 precision -= int(exponent)
-            if float_approx_equal(w.group(), g.group(), tolerance=10 ** -precision):
+            if float_approx_equal(w.group(), g.group(), tolerance=10**-precision):
                 # They're close enough. Replace the text we actually
                 # got with the text we want, so that it will match when we
                 # check the string literally.
-                got = (
-                        got[: g.start() + offset] + w.group() + got[g.end() + offset:]
-                )
+                got = got[: g.start() + offset] + w.group() + got[g.end() + offset :]
                 offset += w.end() - w.start() - (g.end() - g.start())
         return got
 
@@ -89,7 +87,6 @@ class OutputChecker(doctest.OutputChecker):
 
 
 class DocTestRunner(doctest.DocTestRunner):
-
     def __init__(self, optionflags: int) -> None:
         _unittest_reportflags = set_unittest_reportflags(0)
         set_unittest_reportflags(_unittest_reportflags)
@@ -129,10 +126,16 @@ class DocTestEvaluator:
                 remove_name = True
                 namespace['__name__'] = '__test__'
             self.runner.run(
-                DocTest([example], namespace, name=sybil_example.path,
-                        filename=None, lineno=example.lineno, docstring=None),
+                DocTest(
+                    [example],
+                    namespace,
+                    name=sybil_example.path,
+                    filename=None,
+                    lineno=example.lineno,
+                    docstring=None,
+                ),
                 clear_globs=False,
-                out=output.append
+                out=output.append,
             )
         finally:
             if remove_name:

@@ -8,4 +8,4 @@ def func(txt: str):
     aa
 
     """
-    return txt*2
+    return txt * 2

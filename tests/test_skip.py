@@ -18,9 +18,7 @@ def test_basic():
 
 def test_conditional_edge_cases():
     examples, namespace = parse(
-        'skip-conditional-edges.txt',
-        DocTestParser(), SkipParser(),
-        expected=8
+        'skip-conditional-edges.txt', DocTestParser(), SkipParser(), expected=8
     )
     namespace['sys'] = sys
     namespace['run'] = []
@@ -42,7 +40,7 @@ def test_conditional_full():
         try:
             example.evaluate()
         except SkipTest as e:
-            result.append('skip:'+str(e))
+            result.append('skip:' + str(e))
     assert result == [
         'start',
         'skip:(2 > 1)',
@@ -112,6 +110,7 @@ def test_malformed_arguments():
     path = sample_path('skip-malformed-arguments.txt')
     with ShouldRaise(ValueError("malformed arguments to skip: '<:'")):
         Document.parse(path, SkipParser())
+
 
 def test_missing_arguments():
     path = sample_path('skip-missing-arguments.txt')

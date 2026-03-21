@@ -41,14 +41,17 @@ def lex(name: str, lexer: Lexer) -> List[Region]:
 
 
 def region_details(
-        document: Document, regions: Iterable[Region]
+    document: Document, regions: Iterable[Region]
 ) -> List[Tuple[Tuple[str, Union[Region, str]], ...]]:
     # return a list of tuple of tuples to make failures easier to work through:
-    return [(
-        ('start', document.line_column(region.start)),
-        ('end', document.line_column(region.end)),
-        ('region', region)
-    ) for region in regions]
+    return [
+        (
+            ('start', document.line_column(region.start)),
+            ('end', document.line_column(region.end)),
+            ('region', region),
+        )
+        for region in regions
+    ]
 
 
 def check_lexed_regions(name: str, lexer: Lexer, *, expected: List[Region]) -> None:
@@ -108,12 +111,12 @@ def check_tree(expected: str, path: str):
         first='folders',
         sort=True,
         regex=True,
-        exclude_folders=r'\..+|__pycache__'
+        exclude_folders=r'\..+|__pycache__',
     )
-    actual = '\n'+raw.split('\n', 1)[1]
+    actual = '\n' + raw.split('\n', 1)[1]
     text = compare(expected=expected.strip(), actual=actual.strip(), raises=False)
     if text:  # pragma: no cover
-        text += '\n\nShould be:\n'+actual
+        text += '\n\nShould be:\n' + actual
         raise AssertionError(text)
 
 
@@ -123,18 +126,17 @@ UNITTEST = 'unittest'
 
 TEST_OUTPUT_TEMPLATES = {
     PYTEST: '{file}::{sybil}line:{line},column:{column}',
-    UNITTEST: '{file},{sybil}line:{line},column:{column}'
+    UNITTEST: '{file},{sybil}line:{line},column:{column}',
 }
 
 
 class Finder:
-
     def __init__(self, text):
         self.text = text
         self.index = 0
 
     def then_find(self, substring):
-        assert substring in self.text[self.index:], self.text[self.index:]
+        assert substring in self.text[self.index :], self.text[self.index :]
         self.index = self.text.index(substring, self.index)
 
     def assert_present(self, text):
@@ -143,22 +145,27 @@ class Finder:
     def assert_not_present(self, text):
         index = self.text.find(text)
         if index > -1:
-            raise AssertionError('\n'+self.text[index-500:index+500])
+            raise AssertionError('\n' + self.text[index - 500 : index + 500])
 
     def assert_has_run(
-            self, integration: str, file: str, *, sybil: str = '', line: int = 1, column: int = 1
+        self, integration: str, file: str, *, sybil: str = '', line: int = 1, column: int = 1
     ):
         if sybil:
-            sybil=f'sybil:{sybil},'
-        self.assert_present(TEST_OUTPUT_TEMPLATES[integration].format(
-            sybil=sybil, file=file, line=line, column=column
-        ))
+            sybil = f'sybil:{sybil},'
+        self.assert_present(
+            TEST_OUTPUT_TEMPLATES[integration].format(
+                sybil=sybil, file=file, line=line, column=column
+            )
+        )
 
 
 class Results:
-
     def __init__(
-        self, capsys: CaptureFixture[str], total: int, errors: int = 0, failures: int = 0,
+        self,
+        capsys: CaptureFixture[str],
+        total: int,
+        errors: int = 0,
+        failures: int = 0,
         return_code: Optional[int] = None,
     ):
         self.total = total
@@ -187,21 +194,22 @@ def run_pytest(capsys: CaptureFixture[str], path: Path) -> Results:
             self.session = session
 
     results = CollectResults()
-    return_code = pytest_main(['-vvs', str(path), '-p', 'no:doctest'],
-                              plugins=[results])
+    return_code = pytest_main(['-vvs', str(path), '-p', 'no:doctest'], plugins=[results])
     return Results(
         capsys,
         results.session.testscollected,
         failures=results.session.testsfailed,
-        return_code=return_code
+        return_code=return_code,
     )
 
 
 def run_unittest(capsys: CaptureFixture[str], path: Path) -> Results:
     runner = TextTestRunner(verbosity=2, stream=sys.stdout)
     main = unittest_main(
-        exit=False, module=None, testRunner=runner,
-        argv=['x', 'discover', '-v', '-t', str(path), '-s', str(path)]
+        exit=False,
+        module=None,
+        testRunner=runner,
+        argv=['x', 'discover', '-v', '-t', str(path), '-s', str(path)],
     )
     return Results(
         capsys,
@@ -231,19 +239,14 @@ from sybil.parsers.rest import SkipParser
 ).{integration}()
 """
 
-CONFIG_FILENAMES = {
-    PYTEST: 'conftest.py',
-    UNITTEST: 'test_docs.py'
-}
+CONFIG_FILENAMES = {PYTEST: 'conftest.py', UNITTEST: 'test_docs.py'}
 
-CONFIG_ASSIGNED_NAME = {
-    PYTEST: 'pytest_collect_file',
-    UNITTEST: 'load_tests'
-}
+CONFIG_ASSIGNED_NAME = {PYTEST: 'pytest_collect_file', UNITTEST: 'load_tests'}
 
 
 def write_config(tmp_path: Path, integration: str, template=CONFIG_TEMPLATE, **params: str):
     import sys
+
     sys.modules.pop('test_docs', None)
     params_ = {'parsers': '[DocTestParser()]'}
     params_.update(params)

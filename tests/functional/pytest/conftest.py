@@ -38,29 +38,22 @@ def session_fixture():
 
 def check(letter, example):
     namespace = example.namespace
-    for name in (
-        'x', 'session_fixture', 'module_fixture',
-        'class_fixture', 'function_fixture'
-    ):
+    for name in ('x', 'session_fixture', 'module_fixture', 'class_fixture', 'function_fixture'):
         print(namespace[name], end='')
     print(end=' ')
     namespace['x'] += 1
     text, expected = example.parsed
     actual = text.count(letter)
     if actual != expected:
-        message = '{} count was {} instead of {}'.format(
-            letter, actual, expected
-        )
-        if letter=='X':
+        message = '{} count was {} instead of {}'.format(letter, actual, expected)
+        if letter == 'X':
             raise ValueError(message)
         return message
 
 
 def parse_for(letter, document):
     for m in re.finditer(r'(%s+) (\d+) check' % letter, document.text):
-        yield Region(m.start(), m.end(),
-                     (m.group(1), int(m.group(2))),
-                     partial(check, letter))
+        yield Region(m.start(), m.end(), (m.group(1), int(m.group(2))), partial(check, letter))
 
 
 def sybil_setup(namespace):
@@ -76,10 +69,10 @@ pytest_collect_file = Sybil(
     parsers=[
         partial(parse_for, 'X'),
         partial(parse_for, 'Y'),
-        PythonCodeBlockParser(['print_function'])
+        PythonCodeBlockParser(['print_function']),
     ],
     pattern='*.rst',
-    setup=sybil_setup, teardown=sybil_teardown,
-    fixtures=['function_fixture', 'class_fixture',
-              'module_fixture', 'session_fixture']
+    setup=sybil_setup,
+    teardown=sybil_teardown,
+    fixtures=['function_fixture', 'class_fixture', 'module_fixture', 'session_fixture'],
 ).pytest()

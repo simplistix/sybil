@@ -7,9 +7,7 @@ from textwrap import dedent
 from sybil import Region, Document
 from sybil.evaluators.capture import evaluate_capture
 
-CAPTURE_DIRECTIVE = re.compile(
-    r'^(?P<indent>(\t| )*)\.\.\s*-+>\s*(?P<name>\S+).*$'
-)
+CAPTURE_DIRECTIVE = re.compile(r'^(?P<indent>(\t| )*)\.\.\s*-+>\s*(?P<name>\S+).*$')
 
 
 def indent_matches(line: str, indent: str) -> bool:
@@ -30,7 +28,6 @@ def indent_matches(line: str, indent: str) -> bool:
 
 
 class DocumentReversedLines(List[str]):
-
     def __init__(self, document: Document) -> None:
         super().__init__()
         self[:] = document.text.splitlines(keepends=True)
@@ -49,14 +46,13 @@ class CaptureParser:
     """
     A :any:`Parser` for :ref:`captures <capture-parser>`.
     """
+
     def __call__(self, document: Document) -> Iterable[Region]:
         lines = DocumentReversedLines(document)
 
         for end_index, line in lines.iterate_with_line_number():
-
             directive = CAPTURE_DIRECTIVE.match(line)
             if directive:
-
                 region_end = lines.current_line_end_position
 
                 indent = directive.group('indent')
@@ -70,22 +66,17 @@ class CaptureParser:
                     start_index = end_index
 
                 if end_index - start_index < 2:
-                    raise ValueError((
-                        "couldn't find the start of the block to match "
-                        "%r on line %i of %s"
-                    ) % (directive.group(), end_index+1, document.path))
+                    raise ValueError(
+                        ("couldn't find the start of the block to match %r on line %i of %s")
+                        % (directive.group(), end_index + 1, document.path)
+                    )
 
                 # after dedenting, we need to remove excess leading and trailing
                 # newlines, before adding back the final newline that's strippped
                 # off
-                text = dedent(''.join(lines[start_index:end_index])).strip()+'\n'
+                text = dedent(''.join(lines[start_index:end_index])).strip() + '\n'
 
                 name = directive.group('name')
                 parsed = name, text
 
-                yield Region(
-                    lines.current_line_end_position,
-                    region_end,
-                    parsed,
-                    evaluate_capture
-                )
+                yield Region(lines.current_line_end_position, region_end, parsed, evaluate_capture)

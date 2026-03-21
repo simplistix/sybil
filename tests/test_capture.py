@@ -10,23 +10,15 @@ from tests.helpers import sample_path, parse
 def test_basic():
     examples, namespace = parse('capture.txt', CaptureParser(), expected=4)
     examples[0].evaluate()
-    assert namespace['expected_listing'] == (
-        'root.txt\n'
-        'subdir/\n'
-        'subdir/file.txt\n'
-        'subdir/logs/\n'
-    )
+    assert namespace['expected_listing'] == ('root.txt\nsubdir/\nsubdir/file.txt\nsubdir/logs/\n')
     examples[1].evaluate()
     assert namespace['foo'] == 'Third level of indentation.\n'
     examples[2].evaluate()
     assert namespace['bar'] == (
-        'Second level of indentation.\n\n'
-        '    Third level of indentation.\n\n.. -> foo\n'
+        'Second level of indentation.\n\n    Third level of indentation.\n\n.. -> foo\n'
     )
     examples[3].evaluate()
-    assert namespace['another'] == (
-        'example\n'
-    )
+    assert namespace['another'] == ('example\n')
 
 
 def test_directive_indent_beyond_block():
@@ -34,9 +26,8 @@ def test_directive_indent_beyond_block():
     with pytest.raises(ValueError) as excinfo:
         Document.parse(path, CaptureParser())
     assert str(excinfo.value) == (
-            "couldn't find the start of the block to match '        .. -> foo' "
-            f"on line 5 of {path}"
-        )
+        f"couldn't find the start of the block to match '        .. -> foo' on line 5 of {path}"
+    )
 
 
 def test_directive_indent_equal_to_block():
@@ -44,9 +35,8 @@ def test_directive_indent_equal_to_block():
     with pytest.raises(ValueError) as excinfo:
         Document.parse(path, CaptureParser())
     assert str(excinfo.value) == (
-            "couldn't find the start of the block to match '    .. -> foo' "
-            f"on line 5 of {path}"
-        )
+        f"couldn't find the start of the block to match '    .. -> foo' on line 5 of {path}"
+    )
 
 
 def test_capture_codeblock():

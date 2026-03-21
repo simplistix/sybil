@@ -32,30 +32,30 @@ class Region:
     """
     Parsers should yield instances of this class for each example they
     discover in a documentation source file.
-    
-    :param start: 
+
+    :param start:
         The character position at which the example starts in the
         :class:`~sybil.document.Document`.
-    
-    :param end: 
+
+    :param end:
         The character position at which the example ends in the
         :class:`~sybil.document.Document`.
-    
-    :param parsed: 
+
+    :param parsed:
         The parsed version of the example.
-    
-    :param evaluator: 
+
+    :param evaluator:
         The callable to use to evaluate this example and check if it is
         as it should be.
     """
 
     def __init__(
-            self,
-            start: int,
-            end: int,
-            parsed: Any = None,
-            evaluator: Optional[Evaluator] = None,
-            lexemes: Optional[LexemeMapping] = None,
+        self,
+        start: int,
+        end: int,
+        parsed: Any = None,
+        evaluator: Optional[Evaluator] = None,
+        lexemes: Optional[LexemeMapping] = None,
     ) -> None:
         #: The start of this region within the document's :attr:`~sybil.Document.text`.
         self.start: int = start
@@ -102,5 +102,5 @@ class Region:
         Adjust the start and end of this region based on the provided :class:`Lexeme`
         and ::class:`Region` that lexeme came from.
         """
-        self.start += (lexed.start + lexeme.offset)
+        self.start += lexed.start + lexeme.offset
         self.end += lexed.start

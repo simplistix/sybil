@@ -13,6 +13,7 @@ def test_imports():
     from sybil.parsers.codeblock import CodeBlockParser, PythonCodeBlockParser
     from sybil.parsers.doctest import DocTestParser
     from sybil.parsers.skip import skip
+
     pass
 
 

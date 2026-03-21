@@ -24,7 +24,6 @@ def pytest_in(*path: str):
 
 
 class TestIntegrationExamples:
-
     def test_pytest(self):
         session = pytest_in('integration', 'docs')
         assert session.exitstatus == 0
@@ -35,8 +34,10 @@ class TestIntegrationExamples:
         runner = TextTestRunner(verbosity=2, stream=sys.stdout)
         path = str(DOC_EXAMPLES / 'integration' / 'unittest')
         main = unittest_main(
-            exit=False, module=None, testRunner=runner,
-            argv=['x', 'discover', '-s', path, '-t', path]
+            exit=False,
+            module=None,
+            testRunner=runner,
+            argv=['x', 'discover', '-s', path, '-t', path],
         )
         assert main.result.testsRun == 3
         assert len(main.result.failures) == 0

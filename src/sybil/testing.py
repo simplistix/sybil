@@ -45,5 +45,5 @@ def check_lexer(
     regions = list(lexer(document))
     assert len(regions) == 1, f'Expected exactly one region, got: {regions}'
     region = regions[0]
-    assert expected_text == document.text[region.start:region.end]
+    assert expected_text == document.text[region.start : region.end]
     assert region.lexemes == expected_lexemes

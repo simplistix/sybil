@@ -9,6 +9,7 @@ can set it as follows:
     import myproj
     myproj.SEED = 0.2
 """
+
 import random
 
 SEED: float = random.random()
@@ -21,4 +22,4 @@ def foo(text: str):
     'stuff bar bar'
 
     """
-    return text+int(SEED*10)*' bar'
+    return text + int(SEED * 10) * ' bar'

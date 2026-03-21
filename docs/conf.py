@@ -7,16 +7,15 @@ intersphinx_mapping = {
     'myst': ('https://myst-parser.readthedocs.io/en/latest', None),
 }
 
-extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.intersphinx'
-    ]
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx']
 
 # General
 source_suffix = '.rst'
 master_doc = 'index'
 project = 'sybil'
-build_date = datetime.datetime.utcfromtimestamp(int(os.environ.get('SOURCE_DATE_EPOCH', time.time())))
+build_date = datetime.datetime.utcfromtimestamp(
+    int(os.environ.get('SOURCE_DATE_EPOCH', time.time()))
+)
 copyright = '2017 - %s Chris Withers' % build_date.year
 version = release = metadata.version(project)
 exclude_patterns = [
@@ -28,12 +27,11 @@ pygments_style = 'sphinx'
 # Options for HTML output
 html_theme = 'furo'
 html_title = 'Sybil'
-htmlhelp_basename = project+'doc'
+htmlhelp_basename = project + 'doc'
 
 # Options for LaTeX output
 latex_documents = [
-  ('index',project+'.tex', project+u' Documentation',
-   'Chris Withers', 'manual'),
+    ('index', project + '.tex', project + ' Documentation', 'Chris Withers', 'manual'),
 ]
 
 autodoc_member_order = 'bysource'

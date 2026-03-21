@@ -35,13 +35,16 @@ def test_fail():
     # Note on line numbers: This test shows how the example's line number is correct
     # however, doctest doesn't do the line padding trick Sybil does with codeblocks,
     # so the line number will never be correct, it's always 1.
-    compare(str(excinfo.value), expected=(
-        f"Example at {path}, line 1, column 1 did not evaluate as expected:\n"
-        "Expected:\n"
-        "    Not my output\n"
-        "Got:\n"
-        "    where's my output?\n"
-    ))
+    compare(
+        str(excinfo.value),
+        expected=(
+            f"Example at {path}, line 1, column 1 did not evaluate as expected:\n"
+            "Expected:\n"
+            "    Not my output\n"
+            "Got:\n"
+            "    where's my output?\n"
+        ),
+    )
     with pytest.raises(SybilFailure) as excinfo:
         examples[1].evaluate()
     actual = excinfo.value.result
@@ -50,7 +53,7 @@ def test_fail():
 
 
 def test_fail_with_options():
-    parser = DocTestParser(optionflags=REPORT_NDIFF|ELLIPSIS)
+    parser = DocTestParser(optionflags=REPORT_NDIFF | ELLIPSIS)
     examples, namespace = parse('doctest_fail.txt', parser, expected=2)
     with pytest.raises(SybilFailure) as excinfo:
         examples[0].evaluate()
@@ -96,13 +99,16 @@ def test_directive():
     examples[0].evaluate()
     with pytest.raises(SybilFailure) as excinfo:
         examples[1].evaluate()
-    compare(str(excinfo.value), expected = (
-        f"Example at {path}, line 13, column 1 did not evaluate as expected:\n"
-        "Expected:\n"
-        "    Unexpected!\n"
-        "Got:\n"
-        "    2\n"
-    ))
+    compare(
+        str(excinfo.value),
+        expected=(
+            f"Example at {path}, line 13, column 1 did not evaluate as expected:\n"
+            "Expected:\n"
+            "    Unexpected!\n"
+            "Got:\n"
+            "    2\n"
+        ),
+    )
     with pytest.raises(SybilFailure) as excinfo:
         examples[2].evaluate()
     actual = excinfo.value.result
@@ -112,16 +118,19 @@ def test_directive():
 
 def test_directive_with_options():
     path = sample_path('doctest_directive.txt')
-    parser = DocTestDirectiveParser(optionflags=REPORT_NDIFF|ELLIPSIS)
+    parser = DocTestDirectiveParser(optionflags=REPORT_NDIFF | ELLIPSIS)
     examples, namespace = parse('doctest_directive.txt', parser, expected=3)
     with pytest.raises(SybilFailure) as excinfo:
         examples[1].evaluate()
-    compare(str(excinfo.value), expected = (
-        f"Example at {path}, line 13, column 1 did not evaluate as expected:\n"
-        "Differences (ndiff with -expected +actual):\n"
-        "    - Unexpected!\n"
-        "    + 2\n"
-    ))
+    compare(
+        str(excinfo.value),
+        expected=(
+            f"Example at {path}, line 13, column 1 did not evaluate as expected:\n"
+            "Differences (ndiff with -expected +actual):\n"
+            "    - Unexpected!\n"
+            "    + 2\n"
+        ),
+    )
 
 
 def test_directive_with_inline_options():
@@ -134,18 +143,23 @@ def test_directive_with_inline_options():
     # ELLIPSIS deactivated by comment:
     with pytest.raises(SybilFailure) as excinfo:
         examples[1].evaluate()
-    compare(str(excinfo.value), expected = (
-        f"Example at {path}, line 4, column 1 did not evaluate as expected:\n"
-        "Expected:\n"
-        "    '...'\n"
-        "Got:\n"
-        "    'b'\n"
-    ))
+    compare(
+        str(excinfo.value),
+        expected=(
+            f"Example at {path}, line 4, column 1 did not evaluate as expected:\n"
+            "Expected:\n"
+            "    '...'\n"
+            "Got:\n"
+            "    'b'\n"
+        ),
+    )
     # SKIP activated by comment:
     examples[2].evaluate()
 
 
-@pytest.mark.parametrize("text", [
+@pytest.mark.parametrize(
+    "text",
+    [
         "1.",
         "+1.",
         "-1.",
@@ -164,17 +178,21 @@ def test_directive_with_inline_options():
         "-1e-5",
         "1.2e3",
         "-1.2e-3",
-    ])
+    ],
+)
 def test_number_re_matches(text: str) -> None:
     m = OutputChecker._number_re.match(text)
     assert m is not None
     assert float_approx_equal(m.group(), text)
 
 
-@pytest.mark.parametrize("text", [
-    "1",
-    "abc",
-])
+@pytest.mark.parametrize(
+    "text",
+    [
+        "1",
+        "abc",
+    ],
+)
 def test_number_re_no_matches(text: str) -> None:
     assert OutputChecker._number_re.match(text) is None
 
@@ -197,7 +215,7 @@ def test_number_option_failures():
 # Number of doctests that can't be parsed in a file when looking at the whole file source:
 ROOT = Path(FUNCTIONAL_TEST_DIR)
 UNPARSEABLE = {
-   ROOT / 'package_and_docs' / 'src' / 'parent' / 'child' / 'module_b.py': 1,
+    ROOT / 'package_and_docs' / 'src' / 'parent' / 'child' / 'module_b.py': 1,
 }
 MINIMUM_EXPECTED_DOCTESTS = 9
 
@@ -224,12 +242,14 @@ def check_sybil_against_doctest(path, text):
     regions = list(DocTestStringParser()(text, path))
     sybil_examples = [region.parsed for region in regions]
     doctest_examples = BaseDocTestParser().get_examples(text, name)
-    problems.append(compare(
-        expected=doctest_examples, actual=sybil_examples, raises=False, show_whitespace=True
-    ))
+    problems.append(
+        compare(
+            expected=doctest_examples, actual=sybil_examples, raises=False, show_whitespace=True
+        )
+    )
     for region in regions:
         example = region.parsed
-        region_source = text[region.start:region.end]
+        region_source = text[region.start : region.end]
         for name in 'source', 'want':
             expected = getattr(example, name)
             if name == 'source':
@@ -242,7 +262,7 @@ def check_sybil_against_doctest(path, text):
                 problems.append(f'{region}:{name}\n{expected!r} not in {expected_source!r}')
     problems = [problem for problem in problems if problem]
     if problems:  # pragma: no cover - Only on failures!
-        raise AssertionError('doctests not correctly extracted:\n\n'+'\n\n'.join(problems))
+        raise AssertionError('doctests not correctly extracted:\n\n' + '\n\n'.join(problems))
 
 
 def test_all_docstest_examples_extracted_from_source_correctly(python_file):

@@ -10,7 +10,7 @@ def pad(source: str, line: int) -> str:
     when the source is evaluated.
     """
     # There must be a nicer way to get line numbers to be correct...
-    return line  * '\n' + source
+    return line * '\n' + source
 
 
 class PythonEvaluator:

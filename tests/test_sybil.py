@@ -21,61 +21,71 @@ def document():
 
 
 class TestRegion:
-
     def test_repr_with_evaluator(self):
         region = Region(0, 1, parsed='parsed', evaluator='evaluator')
         compare(
             repr(region),
             expected=(
                 "<Region start=0 end=1 evaluator='evaluator'><Parsed>'parsed'</Parsed></Region>"
-            )
+            ),
         )
 
     def test_repr_with_lexemes(self):
         compare(
-            str(Region(36, 56, lexemes={
-                'language': 'python',
-                'foo': None,
-                'source': 'A'+'X'*1000+'Z',
-                'bar': {},
-                'baz': {f'a{i}': 'b' for i in range(11)},
-            })),
+            str(
+                Region(
+                    36,
+                    56,
+                    lexemes={
+                        'language': 'python',
+                        'foo': None,
+                        'source': 'A' + 'X' * 1000 + 'Z',
+                        'bar': {},
+                        'baz': {f'a{i}': 'b' for i in range(11)},
+                    },
+                )
+            ),
             expected="<Region start=36 end=56>\n"
-                     "language: 'python'\n"
-                     "foo: None\n"
-                     "source: 'AXXXXXXXXXXXXXXXXXXXX...XXXXXXXXXXXXXXXXXXXXZ'\n"
-                     "bar: {}\n"
-                     "baz: {'a0': 'b', 'a1': 'b', 'a2': 'b', 'a3': 'b', "
-                     "'a4': 'b', 'a5': 'b', 'a6': 'b', 'a7': 'b', 'a8': 'b', 'a9': 'b', "
-                     "'a10': 'b'}\n"
-                     "</Region>"
+            "language: 'python'\n"
+            "foo: None\n"
+            "source: 'AXXXXXXXXXXXXXXXXXXXX...XXXXXXXXXXXXXXXXXXXXZ'\n"
+            "bar: {}\n"
+            "baz: {'a0': 'b', 'a1': 'b', 'a2': 'b', 'a3': 'b', "
+            "'a4': 'b', 'a5': 'b', 'a6': 'b', 'a7': 'b', 'a8': 'b', 'a9': 'b', "
+            "'a10': 'b'}\n"
+            "</Region>",
         )
 
     def test_repr_with_parsed(self):
         compare(
-            str(Region(36, 56, parsed={
-                'language': 'python',
-                'foo': None,
-                'source': 'X'*1000,
-                'bar': {},
-                'baz': {f'a{i}': 'b' for i in range(11)},
-            })),
+            str(
+                Region(
+                    36,
+                    56,
+                    parsed={
+                        'language': 'python',
+                        'foo': None,
+                        'source': 'X' * 1000,
+                        'bar': {},
+                        'baz': {f'a{i}': 'b' for i in range(11)},
+                    },
+                )
+            ),
             expected="<Region start=36 end=56><Parsed>{'language': 'python'"
-                     "...9': 'b', 'a10': 'b'}}</Parsed></Region>"
+            "...9': 'b', 'a10': 'b'}}</Parsed></Region>",
         )
 
 
 class TestExample:
-
     def test_repr(self, document):
         region = Region(0, 1, 'parsed', 'evaluator')
         example = Example(document, 1, 2, region, {})
-        assert (repr(example) ==
-                "<Example path=/the/path line=1 column=2 using 'evaluator'>")
+        assert repr(example) == "<Example path=/the/path line=1 column=2 using 'evaluator'>"
 
     def test_evaluate_okay(self, document):
         def evaluator(example):
             example.namespace['parsed'] = example.parsed
+
         region = Region(0, 1, 'the data', evaluator)
         namespace = {}
         example = Example(document, 1, 2, region, namespace)
@@ -86,13 +96,13 @@ class TestExample:
     def test_evaluate_not_okay(self, document):
         def evaluator(example):
             return 'foo!'
+
         region = Region(0, 1, 'the data', evaluator)
         example = Example(document, 1, 2, region, {})
         with pytest.raises(SybilFailure) as excinfo:
             example.evaluate()
         assert str(excinfo.value) == (
-            'Example at /the/path, line 1, column 2 did not evaluate as '
-            'expected:\nfoo!'
+            'Example at /the/path, line 1, column 2 did not evaluate as expected:\nfoo!'
         )
         assert excinfo.value.example is example
         assert excinfo.value.result == 'foo!'
@@ -100,6 +110,7 @@ class TestExample:
     def test_evaluate_raises_exception(self, document):
         def evaluator(example):
             raise ValueError('foo!')
+
         region = Region(0, 1, 'the data', evaluator)
         example = Example(document, 1, 2, region, {})
         with pytest.raises(ValueError) as excinfo:
@@ -108,7 +119,6 @@ class TestExample:
 
 
 class TestDocument:
-
     def test_add(self, document):
         region = Region(0, 1, None, None)
         document.add(region)
@@ -148,7 +158,7 @@ class TestDocument:
         )
 
     def test_add_after_end(self, document):
-        region = Region(len(document.text), len(document.text)+1, None, None)
+        region = Region(len(document.text), len(document.text) + 1, None, None)
         with pytest.raises(ValueError) as excinfo:
             document.add(region)
         assert str(excinfo.value) == (
@@ -219,11 +229,10 @@ class TestDocument:
         text = 'R1XYZ\nR2XYZ\nR3XYZ\nR4XYZ\nR4XYZ\n'
         i = text.index
         document = Document(text, '')
-        document.add(Region(0,         i('R2')+2, None, None))
-        document.add(Region(i('R3')-1, i('R3')+2, None, None))
-        document.add(Region(i('R4')+3, len(text), None, None))
-        assert ([(e.line, e.column) for e in document] ==
-                [(1, 1), (2, 6), (4, 4)])
+        document.add(Region(0, i('R2') + 2, None, None))
+        document.add(Region(i('R3') - 1, i('R3') + 2, None, None))
+        document.add(Region(i('R4') + 3, len(text), None, None))
+        assert [(e.line, e.column) for e in document] == [(1, 1), (2, 6), (4, 4)]
 
 
 def check(letter, parsed, namespace):
@@ -232,55 +241,47 @@ def check(letter, parsed, namespace):
     assert set(text) == {letter}
     actual = text.count(letter)
     if actual != expected:
-        return '{} count was {} instead of {}'.format(
-            letter, actual, expected
-        )
+        return '{} count was {} instead of {}'.format(letter, actual, expected)
     # This would normally be wrong, but handy for testing here:
     return '{} count was {}, as expected'.format(letter, actual)
 
 
 def parse_for_x(document):
     for m in re.finditer(r'(X+) (\d+) check', document.text):
-        yield Region(m.start(), m.end(),
-                     (m.group(1), int(m.group(2))),
-                     partial(check, 'X'))
+        yield Region(m.start(), m.end(), (m.group(1), int(m.group(2))), partial(check, 'X'))
 
 
 def parse_for_y(document):
     for m in re.finditer(r'(Y+) (\d+) check', document.text):
-        yield Region(m.start(), m.end(),
-                     (m.group(1), int(m.group(2))),
-                     partial(check, 'Y'))
+        yield Region(m.start(), m.end(), (m.group(1), int(m.group(2))), partial(check, 'Y'))
 
 
 def evaluate_examples(examples):
-    return [e.region.evaluator(e.region.parsed, namespace=None)
-            for e in examples]
+    return [e.region.evaluator(e.region.parsed, namespace=None) for e in examples]
 
 
 class TestSybil:
-
     def test_parse(self):
         sybil = Sybil([parse_for_x, parse_for_y])
         document = sybil.parse(Path(sample_path('sample1.txt')))
-        assert (evaluate_examples(document) ==
-                ['X count was 4, as expected',
-                 'Y count was 3, as expected'])
+        assert evaluate_examples(document) == [
+            'X count was 4, as expected',
+            'Y count was 3, as expected',
+        ]
         document = sybil.parse(Path(sample_path('sample2.txt')))
-        assert (evaluate_examples(document) ==
-                ['X count was 3 instead of 4',
-                 'Y count was 3, as expected'])
+        assert evaluate_examples(document) == [
+            'X count was 3 instead of 4',
+            'Y count was 3, as expected',
+        ]
 
     def test_explicit_encoding(self, tmp_path: Path):
-        path = (tmp_path / 'encoded.txt')
-        path.write_text(u'X 1 check\n\xa3', encoding='charmap')
+        path = tmp_path / 'encoded.txt'
+        path.write_text('X 1 check\n\xa3', encoding='charmap')
         sybil = Sybil([parse_for_x], encoding='charmap')
         document = sybil.parse(path)
-        assert (evaluate_examples(document) ==
-                ['X count was 1, as expected'])
+        assert evaluate_examples(document) == ['X count was 1, as expected']
 
     def test_augment_document_mapping(self, tmp_path: Path):
-
         class TextDocument(Document):
             pass
 
@@ -293,13 +294,15 @@ class TestSybil:
     def test_override_document_mapping(self):
         sybil = Sybil([parse_for_x, parse_for_y], document_types={'.py': PythonDocument})
         document = sybil.parse(Path(sample_path('sample1.txt')))
-        assert (evaluate_examples(document) ==
-                ['X count was 4, as expected',
-                 'Y count was 3, as expected'])
+        assert evaluate_examples(document) == [
+            'X count was 4, as expected',
+            'Y count was 3, as expected',
+        ]
         document = sybil.parse(Path(sample_path('comments.py')))
-        assert (evaluate_examples(document) ==
-                ['X count was 4, as expected',
-                 'Y count was 3, as expected'])
+        assert evaluate_examples(document) == [
+            'X count was 4, as expected',
+            'Y count was 3, as expected',
+        ]
 
     def test_addition(self):
         rest = Sybil([parse_for_x])
@@ -359,11 +362,13 @@ def test_namespace(capsys):
         for example in document:
             print(split(example.path)[-1], example.line)
             example.evaluate()
-            actual.append((
-                split(example.path)[-1],
-                example.line,
-                document.namespace['parsed'].copy(),
-            ))
+            actual.append(
+                (
+                    split(example.path)[-1],
+                    example.line,
+                    document.namespace['parsed'].copy(),
+                )
+            )
     out, _ = capsys.readouterr()
     assert out.split('\n') == [
         'sample1.txt 1',
@@ -374,5 +379,5 @@ def test_namespace(capsys):
         '[0]',
         'sample2.txt 3',
         '[0, 13]',
-        ''
+        '',
     ]

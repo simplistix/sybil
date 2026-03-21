@@ -5,7 +5,7 @@ from typing import Optional, Dict
 from sybil import Document, Region
 from sybil.parsers.abstract.lexers import BlockLexer
 
-START_PATTERN_TEMPLATE =(
+START_PATTERN_TEMPLATE = (
     r'^(?P<prefix>[ \t]*)\.\.\s*(?P<directive>{directive})'
     r'{delimiter}[ \t]*'
     r'(?P<arguments>[^\n]+)?\n'
@@ -51,10 +51,10 @@ class DirectiveLexer(BlockLexer):
     delimiter = '::'
 
     def __init__(
-            self,
-            directive: str,
-            arguments: str = '',
-            mapping: Optional[Dict[str, str]] = None,
+        self,
+        directive: str,
+        arguments: str = '',
+        mapping: Optional[Dict[str, str]] = None,
     ) -> None:
         """
         A lexer for ReST directives.
@@ -63,11 +63,9 @@ class DirectiveLexer(BlockLexer):
         super().__init__(
             start_pattern=re.compile(
                 START_PATTERN_TEMPLATE.format(
-                    directive=directive,
-                    delimiter=self.delimiter,
-                    arguments=arguments
+                    directive=directive, delimiter=self.delimiter, arguments=arguments
                 ),
-                re.MULTILINE
+                re.MULTILINE,
             ),
             end_pattern_template=END_PATTERN_TEMPLATE,
             mapping=mapping,

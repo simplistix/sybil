@@ -1,6 +1,7 @@
 """
 This is a module doc string.
 """  # This is a comment on how annoying 3.7 and earlier are!
+
 import re
 from functools import partial
 from pathlib import Path
@@ -41,11 +42,10 @@ def test_all_docstrings_extracted_correctly(python_file):
         if check_result:  # pragma: no cover - Only on failures!
             problems.append(check_result)
     if problems:  # pragma: no cover - Only on failures!
-        raise AssertionError('docstrings not correctly extracted:\n\n'+'\n\n'.join(problems))
+        raise AssertionError('docstrings not correctly extracted:\n\n' + '\n\n'.join(problems))
 
 
 def test_evaluator_returns_non_string():
-
     def evaluator(example: Example) -> NotEvaluated:
         # This is a bug!
         return NotEvaluated()
@@ -59,7 +59,6 @@ def test_evaluator_returns_non_string():
 
 
 def test_nested_evaluators():
-
     def record(example: Example, evaluator_name):
         (instruction, id_, param) = example.parsed
         example.namespace['results'].append((instruction, id_, param, evaluator_name))
@@ -81,7 +80,7 @@ def test_nested_evaluators():
             return getattr(self, self.mode)(id_)
 
         def install(self, example: Example):
-            record(example, self.name+'-install')
+            record(example, self.name + '-install')
             example.document.push_evaluator(self)
 
         def remove(self, example: Example):
@@ -118,27 +117,29 @@ def test_nested_evaluators():
     namespace['results'] = results = []
     for e in examples:
         e.evaluate()
-    compare(results, expected=[
-        ('example', 0, None, 'normal'),
-        ('install', 1, 'passthrough', '1-passthrough-install'),
-        ('example', 2, None, '1-passthrough'),
-        ('example', 2, None, 'normal'),
-        ('install', 3, 'all', '3-all-install'),
-        ('example', 4, None, '3-all'),
-        ('install', 5, 'even', '5-even-install'),
-        ('example', 6, None, '5-even'),
-        ('example', 7, None, '5-even'),
-        ('example', 7, None, '3-all'),
-        ('remove', 5, None, '5-even-remove'),
-        ('example', 8, None, '3-all'),
-        ('remove', 3, None, '3-all-remove'),
-        ('example', 9, None, '1-passthrough'),
-        ('example', 9, None, 'normal'),
-    ])
+    compare(
+        results,
+        expected=[
+            ('example', 0, None, 'normal'),
+            ('install', 1, 'passthrough', '1-passthrough-install'),
+            ('example', 2, None, '1-passthrough'),
+            ('example', 2, None, 'normal'),
+            ('install', 3, 'all', '3-all-install'),
+            ('example', 4, None, '3-all'),
+            ('install', 5, 'even', '5-even-install'),
+            ('example', 6, None, '5-even'),
+            ('example', 7, None, '5-even'),
+            ('example', 7, None, '3-all'),
+            ('remove', 5, None, '5-even-remove'),
+            ('example', 8, None, '3-all'),
+            ('remove', 3, None, '3-all-remove'),
+            ('example', 9, None, '1-passthrough'),
+            ('example', 9, None, 'normal'),
+        ],
+    )
 
 
 def test_nested_evaluators_not_evaluated_from_region():
-
     def evaluator(example: Example):
         raise NotEvaluated()
 

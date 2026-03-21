@@ -62,6 +62,12 @@ ignore_errors = true
 module = "tests.*"
 ignore_errors = true
 
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.format]
+quote-style = "preserve"
+
 [tool.coverage.run]
 source = ["sybil", "tests"]
 
