@@ -1,5 +1,9 @@
 from importlib import metadata
-import os, datetime, time
+
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.intersphinx',
+]
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
@@ -7,34 +11,23 @@ intersphinx_mapping = {
     'myst': ('https://myst-parser.readthedocs.io/en/latest', None),
 }
 
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx']
-
 # General
 source_suffix = '.rst'
 master_doc = 'index'
 project = 'sybil'
-build_date = datetime.datetime.utcfromtimestamp(
-    int(os.environ.get('SOURCE_DATE_EPOCH', time.time()))
-)
-copyright = '2017 - %s Chris Withers' % build_date.year
+copyright = '2017 onwards Chris Withers'
 version = release = metadata.version(project)
 exclude_patterns = [
     '_build',
     'example*',
 ]
 pygments_style = 'sphinx'
+autodoc_member_order = 'bysource'
 
 # Options for HTML output
 html_theme = 'furo'
-html_title = 'Sybil'
 htmlhelp_basename = project + 'doc'
 
-# Options for LaTeX output
-latex_documents = [
-    ('index', project + '.tex', project + ' Documentation', 'Chris Withers', 'manual'),
-]
-
-autodoc_member_order = 'bysource'
 nitpicky = True
 nitpick_ignore = [
     ('py:class', 'Evaluator'),  # https://github.com/sphinx-doc/sphinx/issues/10785
