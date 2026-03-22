@@ -51,3 +51,4 @@ Config: `pyproject.toml`. Optional dep: `pytest` extra for pytest integration.
 - The `sybil.integration.pytest` module is excluded from mypy strict checking (too many pytest internals)
 - Coverage tracks both `sybil` package and `tests` directory
 - The project dogfoods itself — sybil is used to test its own documentation examples via `conftest.py`
+- `ShouldAssert` strings in `tests/test_testing.py` may include hardcoded line numbers — this fragility is intentional; update the number, don't work around it
