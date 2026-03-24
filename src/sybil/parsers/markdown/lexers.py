@@ -5,7 +5,7 @@ from typing import Optional, Dict, Pattern, Match, List
 from sybil import Document, Region, Lexeme
 from sybil.parsers.abstract.lexers import BlockLexer, strip_prefix
 
-FENCE = re.compile(r"^(?P<prefix>[ \t]*)(?P<fence>`{3,}|~{3,})", re.MULTILINE)
+FENCE = re.compile(r"^(?P<prefix>[ \t]*)(?P<fence>`{3,}|~{3,})(?P<trailing>[^\n]*)", re.MULTILINE)
 
 
 class RawFencedCodeBlockLexer:
@@ -43,7 +43,8 @@ class RawFencedCodeBlockLexer:
         same_type = current_fence[0] == existing_fence[0]
         okay_length = len(current_fence) >= len(existing_fence)
         same_prefix = len(current.group('prefix')) == len(existing.group('prefix'))
-        return same_type and okay_length and same_prefix
+        no_info = not current.group('trailing').strip()
+        return same_type and okay_length and same_prefix and no_info
 
     def make_region(
         self, opening: Match[str], document: Document, closing: Optional[Match[str]]
@@ -53,14 +54,15 @@ class RawFencedCodeBlockLexer:
         else:
             content_end = closing.start()
             region_end = closing.end()
-        content = document.text[opening.end() : content_end]
+        content_start = opening.start('trailing')
+        content = document.text[content_start:content_end]
         info = self.info_pattern.match(content)
         if info is None:
             return None
         lexemes = info.groupdict()
         lexemes['source'] = Lexeme(
             strip_prefix(content[info.end() :], opening.group('prefix')),
-            offset=len(opening.group(0)) + info.end(),
+            offset=content_start - opening.start() + info.end(),
             line_offset=0,
         )
         if self.mapping:
