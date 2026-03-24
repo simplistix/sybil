@@ -20,6 +20,28 @@ def test_fenced_code_block():
     )
 
 
+def test_fenced_code_block_info_string_not_a_closer():
+    text = """
+    ```python
+    import asyncio
+    ```python
+    print()
+    ```
+    """
+    lexer = FencedCodeBlockLexer(language=r'.+')
+    check_lexed_text_regions(
+        text,
+        lexer,
+        expected=[
+            Region(
+                1,
+                67,
+                lexemes={'language': 'python', 'source': 'import asyncio\n```python\nprint()\n'},
+            ),
+        ],
+    )
+
+
 def test_fenced_code_block_with_mapping():
     lexer = FencedCodeBlockLexer('python', mapping={'source': 'body'})
     check_lexed_regions(
