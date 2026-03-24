@@ -6,7 +6,11 @@ from sybil import Document, Region, Lexeme
 from sybil.parsers.abstract.lexers import BlockLexer, strip_prefix
 
 FENCE = re.compile(
-    r"^(?P<prefix>[ \t]*(?:[-*+]|\d+[.)])[ \t]+|[ \t]*)(?P<fence>`{3,}|~{3,})(?P<trailing>[^\n]*)",
+    r"^(?P<prefix>"
+    r"(?:[ \t]*>)+[ \t]*"
+    r"|[ \t]*(?:[-*+]|\d+[.)])[ \t]+"
+    r"|[ \t]*"
+    r")(?P<fence>`{3,}|~{3,})(?P<trailing>[^\n]*)",
     re.MULTILINE,
 )
 

@@ -43,6 +43,30 @@ def test_fenced_code_block_list_item():
     )
 
 
+def test_fenced_code_block_block_quote():
+    text = """\
+> ```python
+> def hello() -> None:
+>     print("Hello")
+> ```
+"""
+    lexer = FencedCodeBlockLexer(language=r'.+')
+    check_lexed_text_regions(
+        text,
+        lexer,
+        expected=[
+            Region(
+                0,
+                61,
+                lexemes={
+                    'language': 'python',
+                    'source': 'def hello() -> None:\n    print("Hello")\n',
+                },
+            ),
+        ],
+    )
+
+
 def test_fenced_code_block_info_string_not_a_closer():
     text = """
     ```python
