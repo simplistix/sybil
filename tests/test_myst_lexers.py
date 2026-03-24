@@ -20,6 +20,29 @@ def test_fenced_code_block():
     )
 
 
+def test_fenced_code_block_list_item():
+    text = """\
+- ```python
+  import asyncio
+  ```
+"""
+    lexer = FencedCodeBlockLexer(language=r'.+')
+    check_lexed_text_regions(
+        text,
+        lexer,
+        expected=[
+            Region(
+                0,
+                34,
+                lexemes={
+                    'language': 'python',
+                    'source': 'import asyncio\n',
+                },
+            ),
+        ],
+    )
+
+
 def test_fenced_code_block_info_string_not_a_closer():
     text = """
     ```python
