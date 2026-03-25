@@ -29,6 +29,7 @@ class PythonEvaluator:
             self.flags |= getattr(__future__, future_import).compiler_flag
 
     def __call__(self, example: Example) -> None:
+        __tracebackhide__ = True
         # There must be a nicer way to get line numbers to be correct...
         source = pad(example.parsed, example.line + example.parsed.line_offset)
         code = compile(source, example.path, 'exec', flags=self.flags, dont_inherit=True)

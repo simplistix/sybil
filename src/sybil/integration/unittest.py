@@ -16,6 +16,7 @@ class TestCase(BaseTestCase):
         self.example = example
 
     def runTest(self) -> None:
+        __tracebackhide__ = True
         self.example.evaluate()
 
     def id(self) -> str:

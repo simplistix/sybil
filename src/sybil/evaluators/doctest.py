@@ -117,6 +117,7 @@ class DocTestEvaluator:
         self.runner = DocTestRunner(optionflags)
 
     def __call__(self, sybil_example: Example) -> str:
+        __tracebackhide__ = True
         example = sybil_example.parsed
         namespace = sybil_example.namespace
         output: List[str] = []

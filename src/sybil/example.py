@@ -74,5 +74,6 @@ class Example:
         )
 
     def evaluate(self) -> None:
+        __tracebackhide__ = True
         if self.region.evaluator is not None:
             self.document.evaluate(self, self.region.evaluator)
