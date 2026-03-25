@@ -1,3 +1,4 @@
+import copy
 import types
 from collections.abc import Callable, Sequence
 from pathlib import Path
@@ -6,8 +7,6 @@ from typing import Any
 
 from sybil import Sybil, Document
 from sybil.typing import Parser, Lexer, LexemeMapping
-
-_COLLECTION_PATH = Path(__file__).with_suffix('.py')
 
 
 def check_sybil(sybil: Sybil, text: str) -> Document:
@@ -66,54 +65,60 @@ def run_pytest(
     :param fixtures: A fixture function, or sequence of fixture functions, needed by the tests.
     :param expected_failed: The number of tests expected to fail, defaulting to ``0``.
     """
-
-    # local import in case pytest not available
+    # local imports in case pytest is not available
     import pytest
+    from _pytest.config import get_config
+    from _pytest.main import Session
+    from _pytest.runner import runtestprotocol
 
+    # Build a virtual module containing our fixture and test functions.
     module = types.ModuleType(f'_sybil_run_pytest_{id(tests)}')
     for func in list(fixtures) + list(tests):
         setattr(module, func.__name__, func)
+
+    # Create an isolated config using only pytest's built-in default plugins.
+    # get_config() never calls parse(), so load_setuptools_entrypoints("pytest11")
+    # is never called — external plugins such as pytest-django are not loaded and
+    # their pytest_configure hooks never fire.
+    config = get_config(args=['-p', 'no:terminal'])
+    config._rootpath = Path.cwd()
+    config._inipath = None
+    config._inicfg = {}
+    # Populate config.option with all option defaults (e.g. cacheclear=False, capture='fd').
+    # Normally done by parse(); we skip parse() to avoid loading setuptools entry points.
+    config._parser.optparser.parse_known_args([], namespace=config.option)
+    config.option.tbstyle = 'short'
+    config.known_args_namespace = copy.copy(config.option)
+    config._do_configure()
 
     class VirtualModule(pytest.Module):
         def _getobj(self) -> object:
             return module
 
-        def collect(self) -> Any:
-            self.session._fixturemanager.parsefactories(self)
-            for func in tests:
-                yield pytest.Function.from_parent(self, name=func.__name__, callobj=func)
+    failures: list[str] = []
+    session = Session.from_config(config)
+    config.hook.pytest_sessionstart(session=session)
 
-    class Plugin:
-        def __init__(self) -> None:
-            self.failure_reprs: list[str] = []
+    virtual_module = VirtualModule.from_parent(session, path=Path(__file__))
+    session._fixturemanager.parsefactories(virtual_module)
 
-        def pytest_collect_file(self, parent: pytest.Collector, file_path: Path) -> Any:
-            if file_path == _COLLECTION_PATH:
-                return VirtualModule.from_parent(parent, path=file_path)
+    items = [pytest.Function.from_parent(virtual_module, name=f.__name__, callobj=f) for f in tests]
 
-        def pytest_runtest_logreport(self, report: pytest.TestReport) -> None:
-            if report.failed:
-                self.failure_reprs.append(str(report.longrepr))
+    for i, item in enumerate(items):
+        nextitem = items[i + 1] if i + 1 < len(items) else None
+        reports = runtestprotocol(item, nextitem=nextitem)
+        for report in reports:
+            if report.failed and report.when in ('setup', 'call'):
+                failures.append(str(report.longrepr))
 
-        def pytest_sessionfinish(self, session: pytest.Session) -> None:
-            self.session = session
+    config.hook.pytest_sessionfinish(session=session, exitstatus=0)
+    config._ensure_unconfigure()
 
-    plugin = Plugin()
-    pytest.main(
-        [str(_COLLECTION_PATH), '--noconftest', '-p', 'no:cacheprovider', '-q', '--tb=short'],
-        plugins=[plugin],
-    )
-
-    expected_run = len(tests)
-    actual_run = plugin.session.testscollected
-    actual_failed = plugin.session.testsfailed
-    assert actual_run == expected_run, (
-        f'Expected {expected_run} test(s) to run, but {actual_run} ran'
-    )
+    actual_failed = len(failures)
     if actual_failed != expected_failed:
         if actual_failed == 0:
             raise AssertionError(f'Expected {expected_failed} test(s) to fail, but none did')
-        failure_text = '\n\n'.join(plugin.failure_reprs)
+        failure_text = '\n\n'.join(failures)
         raise AssertionError(
             f'Expected {expected_failed} test(s) to fail, but {actual_failed} did:\n\n'
             f'{failure_text}'
