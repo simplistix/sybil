@@ -1,6 +1,27 @@
 Changes
 =======
 
+10.0.0 (25 Mar 2026)
+--------------------
+
+- Moved to a `uv`__-based, ``pyproject.toml``-driven project layout, with ``main`` replacing
+  ``master`` as the default git branch.
+
+  __ https://docs.astral.sh/uv/
+
+- Move from Circle CI to Github Actions for continuous integration and releasing.
+
+- Introduce `ruff`__ code formatting.
+
+  __ https://docs.astral.sh/ruff/
+
+- Fixed several issues with lexing of Markdown fenced code blocks.
+
+- Add :func:`~sybil.testing.run_pytest` to for in-process pytest execution of example tests
+  that use :any:`fixtures <fixture>` in documentation.
+
+- Supported Python versions are now 3.11 onwards.
+
 9.3.0 (2 Dec 2025)
 ------------------
 
