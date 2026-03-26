@@ -1,6 +1,12 @@
 Changes
 =======
 
+10.0.1 (26 Mar 2026)
+--------------------
+
+- Re-work :func:`~sybil.testing.run_pytest` to fix problems caused by re-invoking external plugins
+  during the nested runs.
+
 10.0.0 (25 Mar 2026)
 --------------------
 
