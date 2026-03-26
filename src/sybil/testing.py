@@ -1,4 +1,3 @@
-import copy
 import types
 from collections.abc import Callable, Sequence
 from pathlib import Path
@@ -77,18 +76,13 @@ def run_pytest(
         setattr(module, func.__name__, func)
 
     # Create an isolated config using only pytest's built-in default plugins.
-    # get_config() never calls parse(), so load_setuptools_entrypoints("pytest11")
-    # is never called — external plugins such as pytest-django are not loaded and
-    # their pytest_configure hooks never fire.
+    # Patching load_setuptools_entrypoints on our own private PytestPluginManager
+    # prevents external plugins (e.g. pytest-django) from being loaded and their
+    # pytest_configure hooks from firing — without affecting the outer session.
     config = get_config(args=['-p', 'no:terminal'])
-    config._rootpath = Path.cwd()
-    config._inipath = None
-    config._inicfg = {}
-    # Populate config.option with all option defaults (e.g. cacheclear=False, capture='fd').
-    # Normally done by parse(); we skip parse() to avoid loading setuptools entry points.
-    config._parser.optparser.parse_known_args([], namespace=config.option)
+    config.pluginmanager.load_setuptools_entrypoints = lambda *a, **kw: None  # type: ignore[method-assign,assignment]
+    config.parse(['--noconftest'], addopts=False)
     config.option.tbstyle = 'short'
-    config.known_args_namespace = copy.copy(config.option)
     config._do_configure()
 
     class VirtualModule(pytest.Module):
