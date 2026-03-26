@@ -1,8 +1,10 @@
-import pytest
-from testfixtures import ShouldAssert, ShouldRaise
+from unittest.mock import Mock
 
+import pytest
+from _pytest.config import PytestPluginManager
 from sybil import Sybil
 from sybil.testing import check_sybil, check_lexer, run_pytest
+from testfixtures import ShouldAssert, ShouldRaise, replace_on_class
 
 
 class TestCheckSybil:
@@ -50,7 +52,7 @@ class TestRunPytest:
 
         with ShouldAssert(
             'Expected 0 test(s) to fail, but 1 did:\n\n'
-            'tests/test_testing.py:49: in test_fails\n'
+            'tests/test_testing.py:51: in test_fails\n'
             '    assert False, "intentional failure"\n'
             'E   AssertionError: intentional failure\n'
             'E   assert False'
@@ -98,6 +100,19 @@ class TestRunPytest:
             assert value_a + value_b == 3
 
         run_pytest(test_both, fixtures=[value_a, value_b])
+
+    def test_outer_session_plugins_not_re_invoked(self):
+        load_setuptools_entrypoints = Mock()
+
+        def test_simple():
+            pass
+
+        with replace_on_class(
+            PytestPluginManager.load_setuptools_entrypoints, load_setuptools_entrypoints
+        ):
+            run_pytest(test_simple)
+
+        load_setuptools_entrypoints.assert_not_called()
 
     def test_fixture_not_requested(self):
         @pytest.fixture()
