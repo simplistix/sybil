@@ -7,7 +7,6 @@ import pytest
 from testfixtures import ShouldRaise
 
 from sybil import Sybil, Document
-from sybil.example import NotEvaluated
 from sybil.parsers.rest import CodeBlockParser, PythonCodeBlockParser, DocTestParser, SkipParser
 from .helpers import parse, sample_path
 
@@ -133,10 +132,7 @@ def test_skip_next_resolves_by_document_order_not_evaluation_order(
     )
     examples = list(sybil.parse(path=path).examples())
     for example in reversed(examples):
-        try:
-            example.evaluate()
-        except NotEvaluated:
-            pass
+        example.evaluate()
     assert sorted(ran) == [4, 14], sorted(ran)
 
 
@@ -161,10 +157,7 @@ def test_concurrent_skip_next(tmp_path: Path) -> None:
         with ThreadPoolExecutor(max_workers=len(examples)) as pool:
             futures = [pool.submit(e.evaluate) for e in examples]
             for future in as_completed(futures):
-                try:
-                    future.result()
-                except NotEvaluated:
-                    pass
+                future.result()
         assert sorted(ran) == [4, 14], sorted(ran)
 
 
