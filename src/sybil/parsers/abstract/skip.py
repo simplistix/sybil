@@ -25,6 +25,7 @@ class AbstractSkipParser:
         self.skipper = Skipper(self.directive)
 
     def __call__(self, document: Document) -> Iterable[Region]:
+        produced = False
         for lexed in self.lexers(document):
             arguments = lexed.lexemes['arguments']
             if arguments is None:
@@ -32,4 +33,7 @@ class AbstractSkipParser:
             match = SKIP_ARGUMENTS_PATTERN.match(arguments)
             if match is None:
                 raise ValueError(f'malformed arguments to {self.directive}: {arguments!r}')
+            produced = True
             yield Region(lexed.start, lexed.end, match.groups(), self.skipper)
+        if produced:
+            document.push_evaluator(self.skipper)

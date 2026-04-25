@@ -1,11 +1,13 @@
 import sys
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
 from unittest import SkipTest
 
 import pytest
 from testfixtures import ShouldRaise
 
-from sybil import Document
-from sybil.parsers.rest import PythonCodeBlockParser, DocTestParser, SkipParser
+from sybil import Sybil, Document
+from sybil.parsers.rest import CodeBlockParser, PythonCodeBlockParser, DocTestParser, SkipParser
 from .helpers import parse, sample_path
 
 
@@ -104,6 +106,59 @@ def test_next_follows_next():
     for example in examples:
         example.evaluate()
     assert result == [1]
+
+
+_SKIP_NEXT_RST = (
+    "Title\n=====\n\n"
+    ".. code-block:: python\n\n   x = 1\n\n"
+    ".. skip: next\n\n"
+    ".. code-block:: python\n\n   bad_undefined_name\n\n"
+    ".. code-block:: python\n\n   y = 2\n"
+)
+
+
+def test_skip_next_resolves_by_document_order_not_evaluation_order(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "doc.rst"
+    path.write_text(_SKIP_NEXT_RST)
+
+    ran: list[int] = []
+    sybil = Sybil(
+        parsers=[
+            SkipParser(),
+            CodeBlockParser("python", lambda e: ran.append(e.line)),
+        ],
+    )
+    examples = list(sybil.parse(path=path).examples())
+    for example in reversed(examples):
+        example.evaluate()
+    assert sorted(ran) == [4, 14], sorted(ran)
+
+
+def test_concurrent_skip_next(tmp_path: Path) -> None:
+    # Under stock CPython the GIL tends to serialise the small ops in
+    # Skipper enough to hide the underlying ordering bug, so this test
+    # rarely fails against unfixed code on a standard interpreter. It
+    # reliably reproduces under free-threaded CPython (e.g. 3.13t), and
+    # exercises the locking paths in either case.
+    path = tmp_path / "doc.rst"
+    path.write_text(_SKIP_NEXT_RST)
+
+    for _ in range(50):
+        ran: list[int] = []
+        sybil = Sybil(
+            parsers=[
+                SkipParser(),
+                CodeBlockParser("python", lambda e, ran=ran: ran.append(e.line)),
+            ],
+        )
+        examples = list(sybil.parse(path=path).examples())
+        with ThreadPoolExecutor(max_workers=len(examples)) as pool:
+            futures = [pool.submit(e.evaluate) for e in examples]
+            for future in as_completed(futures):
+                future.result()
+        assert sorted(ran) == [4, 14], sorted(ran)
 
 
 def test_malformed_arguments():
