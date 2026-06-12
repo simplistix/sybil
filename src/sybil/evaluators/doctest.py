@@ -1,6 +1,7 @@
 import re
 
 import doctest
+from copy import copy
 from doctest import set_unittest_reportflags
 from typing import Any, Dict, List, Optional
 
@@ -9,6 +10,11 @@ from sybil import Example
 #: A doctest option flag to limit comparison of numbers in expected output to the precision
 #: specified in the example.
 NUMBER = doctest.register_optionflag("NUMBER")
+
+#: A doctest option flag to preserve trailing whitespace when comparing expected and actual
+#: output, as the standard library's :mod:`doctest` module does. By default, Sybil ignores
+#: trailing whitespace, since editors often strip it from documentation source files.
+KEEP_TRAILING_WHITESPACE = doctest.register_optionflag("KEEP_TRAILING_WHITESPACE")
 
 
 class DocTest(doctest.DocTest):
@@ -31,6 +37,8 @@ def float_approx_equal(expected: str, actual: str, tolerance: float = 1e-12) -> 
 
 
 class OutputChecker(doctest.OutputChecker):
+    _trailing_whitespace_re = re.compile(r'[ \t]+$', re.MULTILINE)
+
     _number_re = re.compile(
         r"""
         (?P<number>
@@ -83,7 +91,19 @@ class OutputChecker(doctest.OutputChecker):
         allow_number = optionflags & NUMBER
         if allow_number:
             got = self._remove_unwanted_precision(want, got)
+        if not optionflags & KEEP_TRAILING_WHITESPACE:
+            want = self._trailing_whitespace_re.sub('', want)
+            got = self._trailing_whitespace_re.sub('', got)
         return doctest.OutputChecker.check_output(self, want, got, optionflags)
+
+    def output_difference(self, example: doctest.Example, got: str, optionflags: int) -> str:
+        if not optionflags & KEEP_TRAILING_WHITESPACE:
+            # Make sure failure reports don't show whitespace differences that are
+            # ignored by check_output:
+            example = copy(example)
+            example.want = self._trailing_whitespace_re.sub('', example.want)
+            got = self._trailing_whitespace_re.sub('', got)
+        return doctest.OutputChecker.output_difference(self, example, got, optionflags)
 
 
 class DocTestRunner(doctest.DocTestRunner):

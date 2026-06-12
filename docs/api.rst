@@ -153,6 +153,9 @@ See the :term:`Evaluator` concept definition for information.
 
 .. autoclass:: sybil.typing.Evaluator
 
+.. autodata:: sybil.evaluators.doctest.KEEP_TRAILING_WHITESPACE
+   :annotation:
+
 .. autodata:: sybil.evaluators.doctest.NUMBER
    :annotation:
 

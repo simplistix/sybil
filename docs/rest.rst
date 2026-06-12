@@ -82,6 +82,24 @@ However, it can be checked with the following configuration:
   from tests.helpers import check_path
   check_path('examples/rest/number.rst', sybil, expected=2)
 
+Since most editors strip trailing whitespace when saving files, it is ignored when
+comparing expected output with actual output. As a result, an example such as this one
+will pass, even though its actual output ends in a space:
+
+>>> print('See: ')
+See:
+
+If you need trailing whitespace to be matched exactly, as the standard library's
+:mod:`doctest` module does, a :data:`~sybil.evaluators.doctest.KEEP_TRAILING_WHITESPACE`
+option flag is provided:
+
+.. code-block:: python
+
+   from sybil import Sybil
+   from sybil.parsers.rest import DocTestParser
+   from sybil.evaluators.doctest import KEEP_TRAILING_WHITESPACE
+   sybil = Sybil(parsers=[DocTestParser(optionflags=KEEP_TRAILING_WHITESPACE)])
+
 .. _codeblock-parser:
 
 Code blocks
