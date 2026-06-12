@@ -38,6 +38,7 @@ def float_approx_equal(expected: str, actual: str, tolerance: float = 1e-12) -> 
 
 class OutputChecker(doctest.OutputChecker):
     _trailing_whitespace_re = re.compile(r'[ \t]+$', re.MULTILINE)
+    _whitespace_before_ellipsis_re = re.compile(r'[ \t]+(?=\.\.\.$)', re.MULTILINE)
 
     _number_re = re.compile(
         r"""
@@ -94,6 +95,10 @@ class OutputChecker(doctest.OutputChecker):
         if not optionflags & KEEP_TRAILING_WHITESPACE:
             want = self._trailing_whitespace_re.sub('', want)
             got = self._trailing_whitespace_re.sub('', got)
+            if optionflags & doctest.ELLIPSIS:
+                # Trailing whitespace in the actual output has been stripped above, so
+                # whitespace before a line-ending ellipsis could never match anything:
+                want = self._whitespace_before_ellipsis_re.sub('', want)
         return doctest.OutputChecker.check_output(self, want, got, optionflags)
 
     def output_difference(self, example: doctest.Example, got: str, optionflags: int) -> str:

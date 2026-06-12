@@ -267,6 +267,73 @@ def test_output_checker_trailing_whitespace():
     assert not checker.check_output('foo \n', 'foo\n', KEEP_TRAILING_WHITESPACE)
 
 
+@pytest.mark.parametrize(
+    ("want", "got", "optionflags", "matches"),
+    [
+        pytest.param(
+            'AssertionError: ...\nNot equal\n',
+            'AssertionError: \nNot equal\n',
+            ELLIPSIS,
+            True,
+            id='space-then-ellipsis-at-eol-matches-stripped-actual',
+        ),
+        pytest.param(
+            'Mismatched elements: 1 / 3 (33.3%)...\nMax difference: 0.5\n',
+            'Mismatched elements: 1 / 3 (33.3%)\nMax difference: 0.5\n',
+            ELLIPSIS,
+            True,
+            id='ellipsis-abutting-text-at-eol',
+        ),
+        pytest.param(
+            'Mismatched elements: 1 / 3 (33.3%)...\nMax difference: 0.5\n',
+            'Mismatched elements: 1 / 3 (33.3%) \nMax difference: 0.5\n',
+            ELLIPSIS,
+            True,
+            id='ellipsis-abutting-text-at-eol-with-trailing-whitespace-in-actual',
+        ),
+        pytest.param(
+            'foo ...\n',
+            'foo bar\n',
+            ELLIPSIS,
+            True,
+            id='space-then-ellipsis-still-matches-real-content',
+        ),
+        pytest.param(
+            'foo ...\n',
+            'foo ...\n',
+            0,
+            True,
+            id='literal-dots-without-ellipsis-flag-match-exactly',
+        ),
+        pytest.param(
+            'foo ...\n',
+            'foo bar\n',
+            0,
+            False,
+            id='literal-dots-without-ellipsis-flag-are-not-a-wildcard',
+        ),
+        pytest.param(
+            'AssertionError: ...\nNot equal\n',
+            'AssertionError: \nNot equal\n',
+            ELLIPSIS | KEEP_TRAILING_WHITESPACE,
+            True,
+            id='keep-flag-restores-space-matching-trailing-whitespace',
+        ),
+        pytest.param(
+            'AssertionError: ...\n',
+            'AssertionError:\n',
+            ELLIPSIS | KEEP_TRAILING_WHITESPACE,
+            False,
+            id='keep-flag-requires-space-before-ellipsis-to-be-present',
+        ),
+    ],
+)
+def test_output_checker_ellipsis_and_trailing_whitespace(
+    want: str, got: str, optionflags: int, matches: bool
+) -> None:
+    assert OutputChecker().check_output(want, got, optionflags) is matches
+
+
 # Number of doctests that can't be parsed in a file when looking at the whole file source:
 ROOT = Path(FUNCTIONAL_TEST_DIR)
 UNPARSEABLE = {
