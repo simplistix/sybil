@@ -6,8 +6,8 @@ Sybil
 .. |CI| image:: https://github.com/simplistix/sybil/actions/workflows/ci.yml/badge.svg
 .. _CI: https://github.com/simplistix/sybil/actions/workflows/ci.yml
 
-.. |Docs| image:: https://readthedocs.org/projects/sybil/badge/?version=latest
-.. _Docs: http://sybil.readthedocs.org/en/latest/
+.. |Docs| image:: https://readthedocs.io/projects/sybil/badge/?version=latest
+.. _Docs: http://sybil.readthedocs.io/en/latest/
 
 
 This library provides a way to check examples in your code and documentation by parsing
