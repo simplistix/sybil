@@ -194,7 +194,9 @@ def run_pytest(capsys: CaptureFixture[str], path: Path) -> Results:
             self.session = session
 
     results = CollectResults()
-    return_code = pytest_main(['-vvs', str(path), '-p', 'no:doctest'], plugins=[results])
+    return_code = pytest_main(
+        ['-vvs', '--color=no', str(path), '-p', 'no:doctest'], plugins=[results]
+    )
     return Results(
         capsys,
         results.session.testscollected,

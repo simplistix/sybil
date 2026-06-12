@@ -4,7 +4,7 @@ import pytest
 from _pytest.config import PytestPluginManager
 from sybil import Sybil
 from sybil.testing import check_sybil, check_lexer, run_pytest
-from testfixtures import ShouldAssert, ShouldRaise, replace_on_class
+from testfixtures import Replacer, ShouldAssert, ShouldRaise, not_there, replace_on_class
 
 
 class TestCheckSybil:
@@ -123,3 +123,20 @@ class TestRunPytest:
 
         with ShouldRaise(AssertionError, match=r"fixture 'value_b' not found"):
             run_pytest(test_both, fixtures=[value_a])
+
+    def test_failure_output_immune_to_color_env(self):
+        def test_fails():
+            assert False, "intentional failure"
+
+        with Replacer() as replace:
+            replace.in_environ('PY_COLORS', not_there)
+            replace.in_environ('NO_COLOR', not_there)
+            replace.in_environ('FORCE_COLOR', '3')
+            with ShouldAssert(
+                'Expected 0 test(s) to fail, but 1 did:\n\n'
+                'tests/test_testing.py:129: in test_fails\n'
+                '    assert False, "intentional failure"\n'
+                'E   AssertionError: intentional failure\n'
+                'E   assert False'
+            ):
+                run_pytest(test_fails)

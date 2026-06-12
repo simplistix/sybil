@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 from pytest import CaptureFixture
-from testfixtures import compare
+from testfixtures import Replacer, compare, not_there
 
 from sybil import Sybil
 from sybil.parsers.rest import PythonCodeBlockParser, DocTestParser
@@ -129,6 +129,15 @@ def test_pytest(capsys: CaptureFixture[str]):
     assert results.return_code == 1
     assert results.failures == 4
     assert results.total == 10
+
+
+def test_pytest_output_immune_to_color_env(capsys: CaptureFixture[str]):
+    with Replacer() as replace:
+        replace.in_environ('PY_COLORS', not_there)
+        replace.in_environ('NO_COLOR', not_there)
+        replace.in_environ('FORCE_COLOR', '3')
+        results = run_pytest(capsys, functional_sample('pytest'))
+    results.out.assert_not_present('\x1b[')
 
 
 def test_unittest(capsys: CaptureFixture[str]):

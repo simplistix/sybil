@@ -1,5 +1,6 @@
 import types
 from collections.abc import Callable, Sequence
+from io import StringIO
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import Any
@@ -66,6 +67,7 @@ def run_pytest(
     """
     # local imports in case pytest is not available
     import pytest
+    from _pytest._io import TerminalWriter
     from _pytest.config import get_config
     from _pytest.main import Session
     from _pytest.runner import runtestprotocol
@@ -103,7 +105,14 @@ def run_pytest(
         reports = runtestprotocol(item, nextitem=nextitem)
         for report in reports:
             if report.failed and report.when in ('setup', 'call'):
-                failures.append(str(report.longrepr))
+                # str(longrepr) turns on markup based on environment variables such as
+                # FORCE_COLOR, so render explicitly with markup disabled:
+                file = StringIO()
+                writer = TerminalWriter(file)
+                writer.hasmarkup = False
+                longrepr: Any = report.longrepr
+                longrepr.toterminal(writer)
+                failures.append(file.getvalue().strip())
 
     config.hook.pytest_sessionfinish(session=session, exitstatus=0)
     config._ensure_unconfigure()
