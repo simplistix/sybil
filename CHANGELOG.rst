@@ -1,6 +1,14 @@
 Changes
 =======
 
+10.1.0 (13 Jun 2026)
+--------------------
+
+- Ignore trailing whitespace in doctest output by default, see
+  :data:`~sybil.evaluators.doctest.KEEP_TRAILING_WHITESPACE` if you need whitespace sensitivity.
+
+- Make :func:`~sybil.testing.run_pytest` runs immune to ambient color environment variables.
+
 10.0.1 (26 Mar 2026)
 --------------------
 
