@@ -1,0 +1,18 @@
+Trailing whitespace in actual output is ignored by default:
+
+>>> print('comparing: ')
+comparing:
+
+>>> print('tab\t')
+tab
+
+Unless switched off with an inline option:
+
+>>> print('comparing: ')  # doctest: +KEEP_TRAILING_WHITESPACE
+comparing:
+
+Trailing whitespace is also stripped from failure reports:
+
+>>> print('one \nthree')
+one
+two

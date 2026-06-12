@@ -6,7 +6,12 @@ import pytest
 from testfixtures import compare
 
 from sybil.document import Document, PythonDocStringDocument
-from sybil.evaluators.doctest import NUMBER, float_approx_equal, OutputChecker
+from sybil.evaluators.doctest import (
+    KEEP_TRAILING_WHITESPACE,
+    NUMBER,
+    float_approx_equal,
+    OutputChecker,
+)
 from sybil.example import SybilFailure
 from sybil.parsers.abstract import DocTestStringParser
 from sybil.parsers.rest import DocTestParser, DocTestDirectiveParser
@@ -210,6 +215,56 @@ def test_number_option_failures():
     for example in examples:
         with pytest.raises(SybilFailure):
             example.evaluate()
+
+
+def test_trailing_whitespace_ignored_by_default():
+    path = sample_path('doctest_trailing_whitespace.txt')
+    examples, _ = parse('doctest_trailing_whitespace.txt', DocTestParser(), expected=4)
+    examples[0].evaluate()
+    examples[1].evaluate()
+    with pytest.raises(SybilFailure) as excinfo:
+        examples[2].evaluate()
+    compare(
+        str(excinfo.value),
+        expected=(
+            f"Example at {path}, line 11, column 1 did not evaluate as expected:\n"
+            "Expected:\n"
+            "    comparing:\n"
+            "Got:\n"
+            "    comparing: \n"
+        ),
+    )
+    with pytest.raises(SybilFailure) as excinfo:
+        examples[3].evaluate()
+    compare(
+        str(excinfo.value),
+        expected=(
+            f"Example at {path}, line 16, column 1 did not evaluate as expected:\n"
+            "Expected:\n"
+            "    one\n"
+            "    two\n"
+            "Got:\n"
+            "    one\n"
+            "    three\n"
+        ),
+    )
+
+
+def test_keep_trailing_whitespace_option():
+    parser = DocTestParser(optionflags=KEEP_TRAILING_WHITESPACE)
+    examples, _ = parse('doctest_trailing_whitespace.txt', parser, expected=4)
+    for example in examples:
+        with pytest.raises(SybilFailure):
+            example.evaluate()
+
+
+def test_output_checker_trailing_whitespace():
+    checker = OutputChecker()
+    assert checker.check_output('foo\n', 'foo \n', 0)
+    assert checker.check_output('foo \n', 'foo\n', 0)
+    assert checker.check_output('foo\tbar\n', 'foo\tbar\t\n', 0)
+    assert not checker.check_output('foo\n', 'foo \n', KEEP_TRAILING_WHITESPACE)
+    assert not checker.check_output('foo \n', 'foo\n', KEEP_TRAILING_WHITESPACE)
 
 
 # Number of doctests that can't be parsed in a file when looking at the whole file source:

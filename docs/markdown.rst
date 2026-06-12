@@ -64,6 +64,18 @@ However, it can be checked with the following configuration:
   from tests.helpers import check_path
   check_path('examples/markdown/number.md', sybil, expected=2)
 
+Since most editors strip trailing whitespace when saving files, it is ignored when
+comparing expected output with actual output. If you need trailing whitespace to be
+matched exactly, as the standard library's :mod:`doctest` module does, a
+:data:`~sybil.evaluators.doctest.KEEP_TRAILING_WHITESPACE` option flag is provided:
+
+.. code-block:: python
+
+   from sybil import Sybil
+   from sybil.evaluators.doctest import KEEP_TRAILING_WHITESPACE
+   from sybil.parsers.markdown import PythonCodeBlockParser
+   sybil = Sybil(parsers=[PythonCodeBlockParser(doctest_optionflags=KEEP_TRAILING_WHITESPACE)])
+
 .. _markdown-codeblock-parser:
 
 Code blocks
