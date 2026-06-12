@@ -89,6 +89,10 @@ will pass, even though its actual output ends in a space:
 >>> print('See: ')
 See:
 
+When :data:`doctest.ELLIPSIS` is in use, whitespace before a line-ending ``...`` is
+also ignored, so expected output written as ``AssertionError: ...`` continues to match
+actual output of ``AssertionError:`` followed by a space and a newline.
+
 If you need trailing whitespace to be matched exactly, as the standard library's
 :mod:`doctest` module does, a :data:`~sybil.evaluators.doctest.KEEP_TRAILING_WHITESPACE`
 option flag is provided:
