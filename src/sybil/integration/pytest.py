@@ -80,9 +80,12 @@ class SybilItem(pytest.Item):
     def _traceback_filter(self, excinfo: ExceptionInfo[BaseException]) -> Traceback:
         traceback = excinfo.traceback
         tb = traceback.cut(path=example_module_path)
-        tb_entry = tb[1]
-        if getattr(tb_entry, '_rawentry', None) is not None:
-            traceback = Traceback(tb_entry._rawentry)
+        # ``tb`` has a single entry when the example frame is the deepest in
+        # the traceback, leaving no frame below it to re-root at.
+        if len(tb) > 1:
+            tb_entry = tb[1]
+            if getattr(tb_entry, '_rawentry', None) is not None:
+                traceback = Traceback(tb_entry._rawentry)
         return traceback
 
     def repr_failure(

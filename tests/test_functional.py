@@ -1,11 +1,15 @@
 import sys
+from inspect import getsourcefile
+from os.path import abspath
 from pathlib import Path
 
 import pytest
-from pytest import CaptureFixture
+from pytest import CaptureFixture, ExceptionInfo
 from testfixtures import Replacer, compare, not_there
 
-from sybil import Sybil
+from sybil import Sybil, example as example_module
+from sybil.document import Document
+from sybil.integration.pytest import SybilItem
 from sybil.parsers.rest import PythonCodeBlockParser, DocTestParser
 from sybil.python import import_cleanup
 from .helpers import (
@@ -129,6 +133,32 @@ def test_pytest(capsys: CaptureFixture[str]):
     assert results.return_code == 1
     assert results.failures == 4
     assert results.total == 10
+
+
+def test_traceback_filter_single_entry_cut() -> None:
+    # A failure whose deepest frame is the example frame cuts to a single
+    # traceback entry; filtering it must not raise IndexError.
+    source = getsourcefile(example_module)
+    assert source is not None
+    example_path = abspath(source)
+
+    document = Document(".. code-block:: python\n\n    raise ValueError('boom')\n", "x.rst")
+    for region in PythonCodeBlockParser()(document):
+        document.add(region)
+
+    with pytest.raises(ValueError) as excinfo:
+        next(iter(document.examples())).evaluate()
+
+    # Truncate so the example frame is the deepest, collapsing the cut to one.
+    raw = excinfo.tb
+    while raw is not None and raw.tb_frame.f_code.co_filename != example_path:
+        raw = raw.tb_next
+    assert raw is not None
+    raw.tb_next = None
+
+    truncated = ExceptionInfo.from_exc_info((excinfo.type, excinfo.value, raw))
+    result = SybilItem.__new__(SybilItem)._traceback_filter(truncated)
+    assert len(result) == 1
 
 
 def test_pytest_output_immune_to_color_env(capsys: CaptureFixture[str]):
