@@ -32,6 +32,9 @@ See the :term:`Document` concept definition for information.
 .. autoclass:: sybil.document.PythonDocStringDocument
   :members:
 
+.. autoclass:: sybil.document.NamespacePackageDocument
+  :members:
+
 Regions
 -------
 

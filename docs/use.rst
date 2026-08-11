@@ -56,7 +56,8 @@ to check:
 
 - For Python source code, typically ``.py`` files, it depends on the markup used in
   the docstrings; both the :doc:`ReST parsers <rest>` and :doc:`MyST parsers <myst>` will work.
-  The source files are presented as :any:`PythonDocument` instances that import the document's
+  The source files are presented as :any:`PythonDocument` or
+  :ref:`NamespacePackageDocument <namespace-packages>` instances that import the document's
   source file as a Python module, making names within it available in the document's
   :attr:`~sybil.Document.namespace`.
 
