@@ -1,19 +1,20 @@
 import ast
 import re
-from ast import AsyncFunctionDef, FunctionDef, ClassDef, Constant, Module, Expr
+import sys
+from ast import AsyncFunctionDef, ClassDef, Constant, Expr, FunctionDef, Module
 from bisect import bisect
 from collections.abc import Iterator
 from io import open
 from itertools import chain
 from pathlib import Path
-from typing import Any, Dict
-from typing import List, Tuple
+from types import ModuleType
+from typing import Any, Dict, List, Tuple
 
-from .example import Example, SybilFailure, NotEvaluated
-from .python import import_path
+from .example import Example, NotEvaluated, SybilFailure
+from .python import find_container, find_spec, import_module_from_path, module_name
 from .region import Region
 from .text import LineNumberOffsets
-from .typing import Parser, Evaluator
+from .typing import Evaluator, Parser
 
 
 class Document:
@@ -164,10 +165,19 @@ class PythonDocument(Document):
         Imports the document's source file as a Python module when the first
         :class:`~sybil.example.Example` from it is evaluated.
         """
-        module = import_path(Path(self.path))
+        module = self.import_path(Path(self.path))
         self.namespace.update(module.__dict__)
         self.pop_evaluator(self.import_document)
         raise NotEvaluated()
+
+    def import_path(self, path: Path) -> ModuleType:
+        """
+        Import the module contained in the file at ``path``.
+
+        The module's dotted name is worked out by walking up from ``path`` until a
+        directory without an ``__init__.py`` is found.
+        """
+        return import_module_from_path(module_name(path, find_container(path)), path)
 
 
 class PythonDocStringDocument(PythonDocument):
@@ -217,3 +227,29 @@ class PythonDocStringDocument(PythonDocument):
                         region.end += start
                         document.add(region)
         return document
+
+
+class NamespacePackageDocument(PythonDocStringDocument):
+    """
+    A :class:`~sybil.document.PythonDocStringDocument` subclass for source that
+    lives in a :pep:`420` namespace package, where the module's dotted name
+    cannot be worked out by looking for ``__init__.py`` files alone.
+
+    See :ref:`namespace-packages` for how to use it.
+    """
+
+    def import_path(self, path: Path) -> ModuleType:
+        """
+        Import the module contained in the file at ``path``, allowing for
+        :pep:`420` namespace packages.
+        """
+        container = find_container(path)
+        module = module_name(path, container)
+        if module not in sys.modules and find_spec(module) is None:
+            for candidate in container.parents:
+                longer = module_name(path, candidate)
+                spec = find_spec(longer)
+                if spec is not None and spec.origin is not None and Path(spec.origin) == path:
+                    module = longer
+                    break
+        return import_module_from_path(module, path)

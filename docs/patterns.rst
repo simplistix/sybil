@@ -80,6 +80,58 @@ your examples are correct:
 
 .. literalinclude:: examples/myst_text_rest_src/conftest.py
 
+.. _namespace-packages:
+
+Source in a namespace package
+-----------------------------
+
+A project that uses :pep:`420` namespaces will have a layout as follows, where ``myorg`` has
+no ``__init__.py``::
+
+    ├─src/
+    │ └─myorg/
+    │   ├─config.py
+    │   └─greeting.py
+    ├─conftest.py
+    └─pyproject.toml
+
+.. --> tree
+
+.. invisible-code-block: python
+
+  check_tree(tree, 'examples/namespace_package')
+
+A ``pyproject.toml`` such as the following then tells the build backend where the package is.
+Installing it in editable mode, such as with ``pip install -e .``, results in ``src`` being added
+to :data:`sys.path`.
+
+.. literalinclude:: examples/namespace_package/pyproject.toml
+  :language: toml
+
+When your examples in ``src/myorg/greeting.py`` look like this:
+
+.. literalinclude:: examples/namespace_package/src/myorg/greeting.py
+
+Then the following configuration in a ``conftest.py`` will ensure all
+your examples are correct:
+
+.. literalinclude:: examples/namespace_package/conftest.py
+
+Without the ``document_types`` mapping, Sybil works out the module's name by walking up to the
+first directory without an ``__init__.py``. That stops *inside* the namespace package, so
+``greeting.py`` would be imported as ``greeting`` rather than ``myorg.greeting``, and every
+example in it would fail with::
+
+    ImportError: 'greeting' not importable from .../src/myorg/greeting.py as:
+    ModuleNotFoundError: No module named 'greeting'
+
+:class:`~sybil.document.NamespacePackageDocument` isn't the default because nothing distinguishes
+a namespace package from an ordinary directory of modules: Python will import any directory
+without an ``__init__.py`` as a namespace package, provided the directory above it is on
+:data:`sys.path`. For example, when your project root is on :data:`sys.path`, as it often is during
+a test run, :class:`~sybil.document.NamespacePackageDocument` would incorrectly import
+``scripts/tool.py`` as ``scripts.tool``.
+
 Linting and checking examples
 -----------------------------
 

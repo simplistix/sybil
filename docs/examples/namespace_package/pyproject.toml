@@ -1,0 +1,13 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "myorg-myproj"
+version = "1.0.0"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/myorg"]
+
+[tool.pytest.ini_options]
+addopts = "-p no:doctest"

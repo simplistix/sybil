@@ -71,6 +71,15 @@ def test_myst_text_rest_src():
     assert session.testscollected == 5
 
 
+def test_namespace_package():
+    directory = 'namespace_package'
+    # Stands in for the .pth file an editable install of the project adds:
+    with add_to_python_path(DOC_EXAMPLES / directory / 'src'):
+        session = pytest_in(directory)
+    assert session.testsfailed == 0
+    assert session.testscollected == 1
+
+
 def test_linting_and_checking():
     directory = 'linting_and_checking'
     with add_to_python_path(DOC_EXAMPLES / directory / 'src'):
