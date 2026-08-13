@@ -392,6 +392,56 @@ def test_package_and_docs(tmp_path: Path, capsys: CaptureFixture[str], runner: s
     results.out.then_find('bad')
 
 
+NAMESPACE_CONFIG_TEMPLATE = """
+from sybil import Sybil
+from sybil.document import NamespacePackageDocument
+from sybil.parsers.rest import PythonCodeBlockParser
+from sybil.parsers.rest import DocTestParser
+from sybil.parsers.rest import SkipParser
+{assigned_name} = Sybil(
+{params}
+).{integration}()
+"""
+
+
+@pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
+def test_namespace_package(tmp_path: Path, capsys: CaptureFixture[str], runner: str):
+    """
+    The sample holds both cases the opt-in exists to tell apart:
+
+    - ``src/ns/`` is a real namespace package, with ``src`` on sys.path.
+    - ``isolated/`` is not on sys.path at all, but the directory above it is,
+      which is all it takes to make it resolve too.
+
+    Each module's doctest asserts its own ``__name__``, so the names Sybil
+    picked are visible in the sample rather than only here.
+    """
+    root = clone_functional_sample('namespace_package', tmp_path)
+    write_config(
+        root,
+        runner,
+        template=NAMESPACE_CONFIG_TEMPLATE,
+        patterns="['**/*.py']",
+        document_types="{'.py': NamespacePackageDocument}",
+    )
+    sys.path.append(str((root / 'src')))
+    results = run(capsys, runner, root)
+    assert results.total == 5, results.out.text
+    assert results.failures == 0, results.out.text
+    assert results.errors == 0, results.out.text
+
+
+@pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
+def test_namespace_package_not_opted_in(tmp_path: Path, capsys: CaptureFixture[str], runner: str):
+    """Without opting in, the leading parts of the name are missing."""
+    root = clone_functional_sample('namespace_package', tmp_path)
+    write_config(root, runner, patterns="['**/*.py']")
+    sys.path.append(str((root / 'src')))
+    results = run(capsys, runner, root)
+    assert results.total == 5, results.out.text
+    results.out.then_find("No module named 'module_a'")
+
+
 @pytest.mark.parametrize('runner', [PYTEST, UNITTEST])
 def test_multiple_sybils_process_all(tmp_path: Path, capsys: CaptureFixture[str], runner: str):
     write_doctest(tmp_path, 'test.rst')
