@@ -1,6 +1,11 @@
 Changes
 =======
 
+Next release
+------------
+
+- Report chained exceptions raised in Python examples without crashing pytest's failure formatter.
+
 10.1.0 (13 Jun 2026)
 --------------------
 
