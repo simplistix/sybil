@@ -1,3 +1,5 @@
+import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -138,6 +140,65 @@ def test_pytest_output_immune_to_color_env(capsys: CaptureFixture[str]):
         replace.in_environ('FORCE_COLOR', '3')
         results = run_pytest(capsys, functional_sample('pytest'))
     results.out.assert_not_present('\x1b[')
+
+
+@pytest.mark.parametrize(
+    'raise_statement, message, show_context',
+    [
+        ('undefined_two', "NameError: name 'undefined_two' is not defined", True),
+        ('raise ValueError("outer") from error', 'ValueError: outer', True),
+        ('raise ValueError("outer") from None', 'ValueError: outer', False),
+    ],
+)
+def test_pytest_chained_exception(
+    tmp_path: Path,
+    raise_statement: str,
+    message: str,
+    show_context: bool,
+):
+    write_config(
+        tmp_path,
+        PYTEST,
+        template='''
+from sybil import Sybil
+from sybil.parsers.markdown import PythonCodeBlockParser
+{assigned_name} = Sybil(parsers=[PythonCodeBlockParser()], patterns=["*.md"]).pytest()
+''',
+    )
+    (tmp_path / 'example.md').write_text(
+        '```python\n'
+        'try:\n'
+        '    undefined_one\n'
+        'except NameError as error:\n'
+        f'    {raise_statement}\n'
+        '```\n\n'
+        '```python\n'
+        'assert 2 + 2 == 4\n'
+        '```\n',
+        encoding='utf-8',
+    )
+    env = dict(os.environ, PYTEST_DISABLE_PLUGIN_AUTOLOAD='1')
+    env.pop('PYTEST_ADDOPTS', None)
+    result = subprocess.run(
+        [sys.executable, '-m', 'pytest', '--color=no', '-q', 'example.md'],
+        cwd=tmp_path,
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    output = result.stdout
+    assert result.returncode == 1, output + result.stderr
+    assert '1 failed, 1 passed' in output
+    assert message in output
+    assert 'example.md:5' in output
+    assert 'INTERNALERROR' not in output
+    assert 'sybil/example.py' not in output.replace('\\', '/')
+    context = "NameError: name 'undefined_one' is not defined"
+    if show_context:
+        assert context in output
+    else:
+        assert context not in output
 
 
 def test_unittest(capsys: CaptureFixture[str]):
