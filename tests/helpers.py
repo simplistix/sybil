@@ -233,9 +233,7 @@ def run(capsys: CaptureFixture[str], integration: str, path: Path) -> Results:
 
 CONFIG_TEMPLATE = """
 from sybil import Sybil
-from sybil.parsers.rest import PythonCodeBlockParser
-from sybil.parsers.rest import DocTestParser
-from sybil.parsers.rest import SkipParser
+{imports}
 {assigned_name} = Sybil(
 {params}
 ).{integration}()
@@ -246,13 +244,24 @@ CONFIG_FILENAMES = {PYTEST: 'conftest.py', UNITTEST: 'test_docs.py'}
 CONFIG_ASSIGNED_NAME = {PYTEST: 'pytest_collect_file', UNITTEST: 'load_tests'}
 
 
-def write_config(tmp_path: Path, integration: str, template=CONFIG_TEMPLATE, **params: str):
+def write_config(
+    tmp_path: Path,
+    integration: str,
+    template=CONFIG_TEMPLATE,
+    imports: Sequence[str] = (
+        'from sybil.parsers.rest import PythonCodeBlockParser',
+        'from sybil.parsers.rest import DocTestParser',
+        'from sybil.parsers.rest import SkipParser',
+    ),
+    **params: str,
+) -> None:
     import sys
 
     sys.modules.pop('test_docs', None)
     params_ = {'parsers': '[DocTestParser()]'}
     params_.update(params)
     config = dedent(template).format(
+        imports='\n'.join(imports),
         assigned_name=CONFIG_ASSIGNED_NAME[integration],
         params='\n'.join([f'    {name}={value},' for name, value in params_.items()]),
         integration=integration,
