@@ -140,6 +140,49 @@ def test_pytest_output_immune_to_color_env(capsys: CaptureFixture[str]):
     results.out.assert_not_present('\x1b[')
 
 
+@pytest.mark.parametrize(
+    'statement, message, show_context',
+    [
+        ('undefined_two', "NameError: name 'undefined_two' is not defined", True),
+        ('raise ValueError("outer") from error', 'ValueError: outer', True),
+        ('raise ValueError("outer") from None', 'ValueError: outer', False),
+    ],
+)
+def test_pytest_chained_exception(
+    tmp_path: Path,
+    capsys: CaptureFixture[str],
+    statement: str,
+    message: str,
+    show_context: bool,
+):
+    write_config(tmp_path, PYTEST, parsers='[PythonCodeBlockParser()]', pattern="'*.rst'")
+    path = tmp_path / 'example.rst'
+    path.write_text(
+        '.. code-block:: python\n\n'
+        '    try:\n'
+        '        undefined_one\n'
+        '    except NameError as error:\n'
+        f'        {statement}\n\n'
+        '.. code-block:: python\n\n'
+        '    assert 2 + 2 == 4\n',
+        encoding='utf-8',
+    )
+    results = run_pytest(capsys, path)
+    assert results.return_code == 1
+    assert results.failures == 1
+    assert results.total == 2
+    out = results.out
+    out.assert_present(message)
+    out.assert_present('example.rst:6')
+    out.assert_not_present('INTERNALERROR')
+    out.assert_not_present('sybil/example.py')
+    context = "NameError: name 'undefined_one' is not defined"
+    if show_context:
+        out.assert_present(context)
+    else:
+        out.assert_not_present(context)
+
+
 def test_unittest(capsys: CaptureFixture[str]):
     results = run_unittest(capsys, functional_sample('unittest'))
     out = results.out
