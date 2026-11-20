@@ -10,7 +10,7 @@ from typing import Any, Dict
 from typing import List, Tuple
 
 from .example import Example, SybilFailure, NotEvaluated
-from .python import import_path
+from .python import import_namespace_path, import_path
 from .region import Region
 from .text import LineNumberOffsets
 from .typing import Parser, Evaluator
@@ -155,6 +155,11 @@ class PythonDocument(Document):
     :attr:`~sybil.Document.namespace`.
     """
 
+    #: How the document's source file is turned into a module. Override in a
+    #: subclass to change the way its dotted name is worked out; see
+    #: :class:`~sybil.document.NamespacePackageDocument`.
+    import_path = staticmethod(import_path)
+
     def __init__(self, text: str, path: str) -> None:
         super().__init__(text, path)
         self.push_evaluator(self.import_document)
@@ -164,7 +169,7 @@ class PythonDocument(Document):
         Imports the document's source file as a Python module when the first
         :class:`~sybil.example.Example` from it is evaluated.
         """
-        module = import_path(Path(self.path))
+        module = self.import_path(Path(self.path))
         self.namespace.update(module.__dict__)
         self.pop_evaluator(self.import_document)
         raise NotEvaluated()
@@ -217,3 +222,20 @@ class PythonDocStringDocument(PythonDocument):
                         region.end += start
                         document.add(region)
         return document
+
+
+class NamespacePackageDocument(PythonDocStringDocument):
+    """
+    A :class:`~sybil.document.PythonDocStringDocument` subclass for source that
+    lives in a :pep:`420` namespace package, where the module's dotted name
+    cannot be worked out by looking for ``__init__.py`` files alone.
+
+    Pass it to :class:`~sybil.Sybil` as ``document_types={'.py': NamespacePackageDocument}``.
+
+    This is not the default because a directory that is not itself on
+    :data:`sys.path` is indistinguishable from a namespace package as soon as
+    any directory above it is: both resolve, so opting in is the only way to
+    say which you meant. See :func:`~sybil.python.import_namespace_path`.
+    """
+
+    import_path = staticmethod(import_namespace_path)

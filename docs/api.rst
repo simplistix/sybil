@@ -32,6 +32,13 @@ See the :term:`Document` concept definition for information.
 .. autoclass:: sybil.document.PythonDocStringDocument
   :members:
 
+.. autoclass:: sybil.document.NamespacePackageDocument
+  :members:
+
+.. autofunction:: sybil.python.import_path
+
+.. autofunction:: sybil.python.import_namespace_path
+
 Regions
 -------
 

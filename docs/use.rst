@@ -60,4 +60,26 @@ to check:
   source file as a Python module, making names within it available in the document's
   :attr:`~sybil.Document.namespace`.
 
+  If your source lives in a :pep:`420` namespace package, the module name is worked out by
+  walking up to the first directory without an ``__init__.py``, which stops *inside* the
+  namespace package and so leaves the name missing its leading parts. Use
+  :class:`~sybil.document.NamespacePackageDocument` for those:
+
+  .. code-block:: python
+
+    from sybil import Sybil
+    from sybil.document import NamespacePackageDocument
+    from sybil.parsers.rest import DocTestParser
+
+
+    sybil = Sybil(
+        parsers=[DocTestParser()],
+        patterns=['*.py'],
+        document_types={'.py': NamespacePackageDocument},
+    )
+
+  This isn't the default because a directory that is not itself on :data:`sys.path` is
+  indistinguishable from a namespace package as soon as any directory above it is: both
+  resolve, so saying which you meant is the only way to tell them apart.
+
 It's also relatively easy to :doc:`develop your own parsers <parsers>`.
