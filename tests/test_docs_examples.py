@@ -6,6 +6,8 @@ from unittest.runner import TextTestRunner
 
 from pytest import main as pytest_main
 
+from sybil.python import import_cleanup
+
 from tests.helpers import add_to_python_path
 
 DOC_EXAMPLES = Path(__file__).parent.parent / 'docs' / 'examples'
@@ -33,12 +35,13 @@ class TestIntegrationExamples:
     def test_unittest(self):
         runner = TextTestRunner(verbosity=2, stream=sys.stdout)
         path = str(DOC_EXAMPLES / 'integration' / 'unittest')
-        main = unittest_main(
-            exit=False,
-            module=None,
-            testRunner=runner,
-            argv=['x', 'discover', '-s', path, '-t', path],
-        )
+        with import_cleanup():
+            main = unittest_main(
+                exit=False,
+                module=None,
+                testRunner=runner,
+                argv=['x', 'discover', '-s', path, '-t', path],
+            )
         assert main.result.testsRun == 3
         assert len(main.result.failures) == 0
         assert len(main.result.errors) == 0
