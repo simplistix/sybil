@@ -19,10 +19,11 @@ class CollectResults:
 
 
 def pytest_in(*path: str):
-    results = CollectResults()
-    return_code = pytest_main([join(DOC_EXAMPLES, *path)], plugins=[results])
-    assert return_code == results.session.exitstatus
-    return results.session
+    with import_cleanup():
+        results = CollectResults()
+        return_code = pytest_main([join(DOC_EXAMPLES, *path)], plugins=[results])
+        assert return_code == results.session.exitstatus
+        return results.session
 
 
 class TestIntegrationExamples:
