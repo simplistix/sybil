@@ -1,6 +1,18 @@
 Changes
 =======
 
+10.2.0 (22 Nov 2026)
+--------------------
+
+- Added :class:`~sybil.document.NamespacePackageDocument` for testing examples in source files that
+  live in :pep:`420` namespace packages, see :ref:`namespace-packages`.
+
+- Fixed a bug where pytest could raise an ``IndexError`` while reporting a failure caused by a
+  chained exception in an example.
+
+Thanks to Nathaniel Starkman for the namespace package support and Mayank Dhingra for the
+chained exception fix.
+
 10.1.0 (13 Jun 2026)
 --------------------
 
